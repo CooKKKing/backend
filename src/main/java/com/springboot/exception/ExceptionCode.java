@@ -10,7 +10,9 @@ public enum ExceptionCode {
     MEMBER_PHONE_NUMBER_EXISTS(409, "Member Phone Number exists"),
     USER_NOT_LOGGED_IN(401, "You are not logged in"),
     LOGOUT_ERROR(409, "logout error"),
-    INVALID_REFRESH_TOKEN(400, "유효하지 않은 리플래시 토큰입니다.");
+    INVALID_REFRESH_TOKEN(400, "유효하지 않은 리플래시 토큰입니다."),
+    UNAUTHORIZED_ACCESS(403, "인증이 필요합니다."),
+    ACCESS_DENIED(403, "권한이 없습니다.");
 
 
     @Getter

@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional
 @Service
 public class MemberService {
@@ -21,7 +23,9 @@ public class MemberService {
     }
 
     public Member createMember(Member member){
-
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        List<String> roles = authorityUtils.createAuthorities(member.getEmail());
+        member.setRoles(roles);
         return memberRepository.save(member);
     }
 

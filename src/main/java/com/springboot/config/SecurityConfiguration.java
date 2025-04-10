@@ -32,7 +32,6 @@ import java.util.Arrays;
 //이후 수정이 필요할 수 있다.
 //CrossOrigin은 해당 주소에서 오는 요청만 허용한다.
 @Configuration
-@CrossOrigin(origins = "http://localhost:3000")
 public class SecurityConfiguration {
     private final JwtTokenizer jwtTokenizer;
     private final AuthorityUtils authorityUtils;
@@ -65,6 +64,7 @@ public class SecurityConfiguration {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
+                        .antMatchers("/hello").hasAnyRole("USER", "ADMIN")
                         .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         //WebSocket 관련 경로 허용
                         .antMatchers("/ws-stomp/**", "/pub/**", "/sub/**").permitAll()

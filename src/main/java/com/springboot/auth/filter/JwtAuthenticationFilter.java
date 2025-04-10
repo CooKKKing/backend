@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         //Username, Password 정보를 포함한 UsernamePasswordAuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+                new UsernamePasswordAuthenticationToken(loginDto.getId(), loginDto.getPassword());
 
         //위에서 생성한 토큰을 AuthenticationManager에게 전달하여 인증처리 위임
         //AuthenticationManager가 실행하면서 인증을 처리한다.
@@ -85,8 +85,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Map<String, Object> claims = new HashMap<>();
         //claims에 memeberId를 넣지 않으면 메세지를 입력할때마다 db에서 회원을 조회해야 하여 성능이 저하됨
         claims.put("memberId", member.getMemberId());
-        claims.put("username", member.getEmail());
+        claims.put("email", member.getEmail());
         claims.put("roles", member.getRoles());
+        claims.put("loginId", member.getLoginId());
+        claims.put("nickName", member.getNickName());
 
         String subject = member.getEmail();
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());

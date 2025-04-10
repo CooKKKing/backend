@@ -27,7 +27,7 @@ public class MemberDetailsService implements UserDetailsService {
     //인증하려는 사용자의 이메일을 찾고 UserDetails 타입으로 반환한다.
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Member> optionalMember = memberRepository.findByEmail(username);
+        Optional<Member> optionalMember = memberRepository.findByLoginId(username);
         Member findmember = optionalMember.orElseThrow(()
                 -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
 
@@ -46,6 +46,8 @@ public class MemberDetailsService implements UserDetailsService {
             setRoles(member.getRoles());
             setPassword(member.getPassword());
             setEmail(member.getEmail());
+            setLoginId(member.getLoginId());
+            setNickName(member.getNickName());
         }
 
         @Override
