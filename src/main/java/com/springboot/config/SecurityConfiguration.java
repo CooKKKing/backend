@@ -64,7 +64,6 @@ public class SecurityConfiguration {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .antMatchers("/hello").hasAnyRole("USER", "ADMIN")
                         .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         //WebSocket 관련 경로 허용
                         .antMatchers("/ws-stomp/**", "/pub/**", "/sub/**").permitAll()

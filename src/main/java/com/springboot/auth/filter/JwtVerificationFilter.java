@@ -29,7 +29,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     private final RedisTemplate<String, Object> redisTemplate;
 
     public JwtVerificationFilter(JwtTokenizer jwtTokenizer, AuthorityUtils authorityUtils,
-            MemberDetailsService memberDetailsService, RedisTemplate<String, Object> redisTemplate) {
+                                 MemberDetailsService memberDetailsService, RedisTemplate<String, Object> redisTemplate) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
         this.memberDetailsService = memberDetailsService;
@@ -85,8 +85,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     //Authentication 객체를 SecurityContext에 저장하기 위한 메서드
     private void setAuthenticationToContext(Map<String, Object> claims) {
         //JWT에서 파싱한 Claims에서 username을 얻어온다.
-        String username = (String) claims.get("username");
-        //SecurityContextHolder에 이메일을 넣어 UserDetails를 넣어준다. (검증된 사용자를 찾기위해)
+        String username = (String) claims.get("loginId");
+        //SecurityContextHolder에 loginId을 넣어 UserDetails를 넣어준다. (검증된 사용자를 찾기위해)
         //JWT에서 파싱한 username을 알아와서 그 사용자의 정보를 가져와야한다.
         UserDetails memberDetails = memberDetailsService.loadUserByUsername(username);
 
@@ -114,15 +114,15 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 
     // Redis에서 토큰을 검증하는 메서드 추가
     private void isTokenValidInRedis(Map<String, Object> claims) {
-        String username = Optional.ofNullable((String) claims.get("username"))
-                .orElseThrow(() -> new NullPointerException("Username is null"));
+        String loginId = Optional.ofNullable((String) claims.get("loginId"))
+                .orElseThrow(() -> new NullPointerException("loginId is null"));
 
         // Redis에 해당 키(username)가 존재하는지 확인
-        Boolean hasKey = redisTemplate.hasKey(username);
+        Boolean hasKey = redisTemplate.hasKey(loginId);
 
         // 키가 존재하지 않거나 null일 경우 예외를 던진다.
         if (Boolean.FALSE.equals(hasKey)) {
-            throw new IllegalStateException("Redis key does not exist for username: " + username);
+            throw new IllegalStateException("Redis key does not exist for username: " + loginId);
         }
     }
 }

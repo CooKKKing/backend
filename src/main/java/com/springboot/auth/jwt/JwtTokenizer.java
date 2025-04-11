@@ -84,7 +84,7 @@ public class JwtTokenizer {
         // Redis의 ListOperations 객체를 사용하여 리스트 형태로 데이터를 처리한다.
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         // claims에 저장된 이메일을 키로 accessToken 값을 추가한다.
-        valueOperations.set((String) claims.get("username"), accessToken, accessTokenExpirationMinutes, TimeUnit.MINUTES);
+        valueOperations.set((String) claims.get("loginId"), accessToken, accessTokenExpirationMinutes, TimeUnit.MINUTES);
         return accessToken;
     }
 
