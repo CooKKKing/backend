@@ -33,16 +33,16 @@ jwt:
 mail:
   address:
     admin: admin@google.com
-#file:
-#  upload-dir: /app/fileImage
-#  default-image: http://ec2-3-39-190-50.ap-northeast-2.compute.amazonaws.com:8080/images/noImage.png
+file:
+  upload-dir: /app/fileImage
+  default-image: http://ec2-3-39-190-50.ap-northeast-2.compute.amazonaws.com:8080/images/noImage.png
 cloud:
   aws:
     credentials:
-      accessKey: ${AWS_ACCESS_KEY}
-      secretKey: ${AWS_SECRET_ACCESS_KEY}
-#      accessKey: asdjlaksjdlkj1lk2jlkj1lkdjasd
-#      secretKey: 284c320984c09283mc4098m230c49823
+#      accessKey: ${AWS_ACCESS_KEY}
+#      secretKey: ${AWS_SECRET_ACCESS_KEY}
+      accessKey: asdjlaksjdlkj1lk2jlkj1lkdjasd
+      secretKey: 284c320984c09283mc4098m230c49823
     region:
       static: ap-northeast-2
     s3:

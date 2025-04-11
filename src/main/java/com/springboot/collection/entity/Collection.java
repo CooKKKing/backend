@@ -25,7 +25,7 @@ public class Collection {
     @Column(nullable = false)
     private CollectionStatus collectionStatus = CollectionStatus.PUBLIC;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "collection", cascade = CascadeType.PERSIST)
     private List<CollectionItem> collectionItems = new ArrayList<>();
 
     @ManyToOne
