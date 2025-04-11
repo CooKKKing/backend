@@ -12,7 +12,11 @@ public enum ExceptionCode {
     LOGOUT_ERROR(409, "logout error"),
     INVALID_REFRESH_TOKEN(400, "유효하지 않은 리플래시 토큰입니다."),
     UNAUTHORIZED_ACCESS(403, "인증이 필요합니다."),
-    ACCESS_DENIED(403, "권한이 없습니다.");
+    ACCESS_DENIED(403, "권한이 없습니다."),
+    MENU_NOT_FOUND(404, "메뉴가 존재하지 않습니다."),
+    RECIPEBOARD_NOT_FOUND(404, "레시피 게시글이 존재하지 않습니다."),
+    MEMBER_NOT_MATCH(403, "작성자만 접근할 수 있습니다."),
+    INVALID_KEYWORD(400, "검색어가 유효하지 않습니다.");
 
 
     @Getter
