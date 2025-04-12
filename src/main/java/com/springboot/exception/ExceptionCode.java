@@ -16,7 +16,11 @@ public enum ExceptionCode {
     MENU_NOT_FOUND(404, "메뉴가 존재하지 않습니다."),
     RECIPEBOARD_NOT_FOUND(404, "레시피 게시글이 존재하지 않습니다."),
     MEMBER_NOT_MATCH(403, "작성자만 접근할 수 있습니다."),
-    INVALID_KEYWORD(400, "검색어가 유효하지 않습니다.");
+    INVALID_KEYWORD(400, "검색어가 유효하지 않습니다."),
+    COLLECTION_NOT_FOUND(404, "도감이 존재하지 않습니다."),
+    COLLECTION_ITEM_NOT_FOUND(404, "도감 메뉴가 존재하지 않습니다."),
+    DUPLICATE_COLLECTION_MENU(409, "도감에 동일한 메뉴명이 이미 존재합니다.");
+
 
 
     @Getter
