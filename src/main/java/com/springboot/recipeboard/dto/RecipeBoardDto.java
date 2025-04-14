@@ -70,7 +70,7 @@ public class RecipeBoardDto {
 
     @Getter
     @Builder
-    public class Response {
+    public static class Response {
 
         @Schema(description = "레시피 게시글 ID", example = "1")
         private Long recipeBoardId;
