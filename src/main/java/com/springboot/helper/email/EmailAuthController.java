@@ -1,8 +1,10 @@
 package com.springboot.helper.email;
 
-import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.EmailVerificationException;
-import com.springboot.exception.ExceptionCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+@Tag(name = "이메일 인증 컨트롤러", description = "이메일 인증 관련 컨트롤러")
 @RestController
 @RequestMapping("/auth/email")
 public class EmailAuthController {
@@ -24,6 +27,12 @@ public class EmailAuthController {
         this.emailSender = emailSender;
     }
 
+    @Operation(summary = "이메일 인증 코드 발송", description = "입력한 이메일로 인증 코드를 전송합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인증번호 전송 성공"),
+            @ApiResponse(responseCode = "400", description = "이메일 형식 오류 또는 요청 값 유효성 실패"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류 (이메일 발송 실패 등)")
+    })
     @PostMapping("/verify")
     public ResponseEntity sendVerificationCode(@RequestBody EmailDto.Request dto) throws InterruptedException {
         String code = generateCode(); // ex: 6자리
@@ -37,6 +46,13 @@ public class EmailAuthController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "이메일 인증 코드 검증", description = "입력한 인증 코드가 일치하는지 확인합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인증번호 확인 성공"),
+            @ApiResponse(responseCode = "401", description = "인증번호가 틀리거나 만료됨"),
+            @ApiResponse(responseCode = "400", description = "요청 데이터 유효성 검사 실패"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
     @PostMapping("/confirm")
     public ResponseEntity checkVerificationCode(@RequestBody EmailDto.Confirm dto) {
         String savedCode = redisTemplate.opsForValue().get(dto.getEmail());
