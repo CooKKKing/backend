@@ -47,6 +47,9 @@ dependencies {
 	// 스웨거
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	// 메일 인증 관련
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('javadoc') {
