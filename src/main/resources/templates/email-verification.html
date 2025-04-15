@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CookKing 이메일 인증</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fffdf7;
+            padding: 30px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            border-radius: 20px;
+            background-color: #fffbe7;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            color: #ff914d;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .code {
+            font-size: 28px;
+            font-weight: bold;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 2px dashed #ff914d;
+            display: inline-block;
+            color: #ff4d4d;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #888;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo">🍳 CookKing</div>
+    <div class="message">
+        안녕하세요! <br>
+        아래 인증번호를 입력하여 이메일 인증을 완료해주세요.
+    </div>
+    <div class="code">
+        [[${message}]]
+    </div>
+    <div class="footer">
+        이 메일은 발신 전용입니다.<br>
+        CookKing 팀 드림 💌
+    </div>
+</div>
+</body>
+</html>
