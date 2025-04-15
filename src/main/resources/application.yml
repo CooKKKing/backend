@@ -34,8 +34,8 @@ mail:
   smtp:
     host: smtp.gmail.com
     port: 587
-    username: tjsk2222@gmail.com  # 민감한 정보는 시스템 환경 변수로..
-    password: fewc bqyc pekv ygqg  # 민감한 정보는 시스템 환경 변수로..
+    username: ${EMAIL_USERNAME}  # 민감한 정보는 시스템 환경 변수로..
+    password: ${EMAIL_PASSWORD}  # 민감한 정보는 시스템 환경 변수로..
     auth: true
     starttls:
       enable: true
