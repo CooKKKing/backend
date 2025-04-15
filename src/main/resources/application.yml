@@ -31,6 +31,21 @@ jwt:
   access-token-expiration-minutes: 30
   refresh-token-expiration-minutes: 60
 mail:
+  smtp:
+    host: smtp.gmail.com
+    port: 587
+    username: tjsk2222@gmail.com  # 민감한 정보는 시스템 환경 변수로..
+    password: fewc bqyc pekv ygqg  # 민감한 정보는 시스템 환경 변수로..
+    auth: true
+    starttls:
+      enable: true
+  subject:
+    member:
+      registration: Thank you for joining our cookking!
+  template:
+    name:
+      member:
+        join: email-registration-member
   address:
     admin: admin@google.com
 file:
@@ -50,3 +65,11 @@ cloud:
       bucket: 109m28301928mc0318c231
     stack:
       auto: false
+stability:
+  api-key: sk-zsbr25lnsSSn4fLMfmmXsV6TyhlUpBvJRIGQvO6X9k2wFrWS
+  engine-id: stable-diffusion-v1-5
+  base-url: https://api.stability.ai
+server:
+  servlet:
+    encoding:
+      force-response: true
