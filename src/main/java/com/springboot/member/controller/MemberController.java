@@ -1,5 +1,6 @@
 package com.springboot.member.controller;
 
+import com.springboot.dto.SingleResponseDto;
 import com.springboot.member.dto.MemberDto;
 import com.springboot.member.entity.Member;
 import com.springboot.member.mapper.MemberMapper;
@@ -56,6 +57,10 @@ public class MemberController {
     @PatchMapping
     public ResponseEntity patchMember(@RequestBody @Valid MemberDto.Patch memberPatchDto,
                                       @Parameter(hidden = true) @AuthenticationPrincipal Member authenticatedmember){
+        Member member = mapper.memberPatchToMember(memberPatchDto);
+
+        memberService.updateMember(member, authenticatedmember.getMemberId());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -66,8 +71,9 @@ public class MemberController {
     })
     @GetMapping("/{member-id}")
     public ResponseEntity getMember(@PathVariable("member-id") @Positive long memberId){
+        Member member = memberService.findMember(memberId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(new SingleResponseDto<>(mapper.memberToMemberResponse(member)), HttpStatus.OK);
     }
 
     @Operation(summary = "회원 탈퇴(자신)", description = "자신(회원)이 탈퇴 합니다.")
@@ -76,9 +82,42 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "Member not found")
     })
     @DeleteMapping
-    public ResponseEntity deleteMember(@Parameter(hidden = true) @AuthenticationPrincipal Member authenticatedmember) {;
-
+    public ResponseEntity deleteMember(@Valid @RequestBody MemberDto.Delete memberDeleteDto) {
+        Member member = mapper.memberDeleteToMember(memberDeleteDto);
+        memberService.deleteMember(member);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Operation(summary = "아이디 찾기", description = "이메일 인증 후 이메일 + 전화번호로 아이디를 찾습니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "아이디 찾기 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 회원이 존재하지 않음")
+    })
+    @PostMapping("/id")
+    public ResponseEntity findLoginId(
+            @Valid @RequestBody MemberDto.FindId findIdDto) {
+
+        String loginId = memberService.findLoginId(findIdDto.getEmail(), findIdDto.getPhoneNumber());
+        return new ResponseEntity<>(new SingleResponseDto<>(loginId), HttpStatus.OK);
+    }
+
+    @Operation(summary = "비밀번호 재설정", description = "이메일 인증 후 로그인 ID + 이메일로 비밀번호를 재설정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 재설정 완료"),
+            @ApiResponse(responseCode = "404", description = "해당 회원이 존재하지 않음")
+    })
+    @PatchMapping("/password")
+    public ResponseEntity resetPassword(
+            @Valid @RequestBody MemberDto.ResetPassword resetPasswordDto) {
+
+        memberService.resetPassword(
+                resetPasswordDto.getLoginId(),
+                resetPasswordDto.getEmail(),
+                resetPasswordDto.getNewPassword()
+        );
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
 
