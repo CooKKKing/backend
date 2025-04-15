@@ -15,7 +15,7 @@ public class EmailDto {
     public static class Request {
         @NotBlank(message = "이메일은 공백일 수 없습니다.")
         @Email(message = "올바른 이메일 형식이어야 합니다.")
-        @Schema(description = "이메일 주소", example = "cookking@example.com")
+        @Schema(description = "이메일 주소", example = "tjsk2222@gmail.com")
         private String email;
     }
 
@@ -24,7 +24,7 @@ public class EmailDto {
     public static class Confirm {
         @NotBlank(message = "이메일은 공백일 수 없습니다.")
         @Email(message = "올바른 이메일 형식이어야 합니다.")
-        @Schema(description = "이메일 주소", example = "cookking@example.com")
+        @Schema(description = "이메일 주소", example = "tjsk2222@gmail.com")
         private String email;
 
         @NotBlank(message = "인증번호는 공백일 수 없습니다.")
