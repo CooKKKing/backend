@@ -22,7 +22,8 @@ public enum ExceptionCode {
     DUPLICATE_COLLECTION_MENU(409, "도감에 동일한 메뉴명이 이미 존재합니다."),
     CHALLENGE_NOT_FOUND(404, "도전과제가 존재하지 않습니다."),
     CHALLENGE_CATEGORY_NOT_FOUND(404, "도전과제 카테고리가 존재하지 않습니다."),
-    EMAIL_VERIFY_FAILED(400, "이메일 인증이 필요합니다");
+    EMAIL_VERIFY_FAILED(400, "이메일 인증이 필요합니다"),
+    EMAIL_CODE_MISMATCH(400, "인증번호가 일치하지 않거나 만료되었습니다.");
 
 
 
