@@ -1,6 +1,7 @@
 package com.springboot.helper.email;
 
 import com.springboot.exception.BusinessLogicException;
+import com.springboot.exception.EmailVerificationException;
 import com.springboot.exception.ExceptionCode;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class EmailAuthController {
     public ResponseEntity checkVerificationCode(@RequestBody EmailDto.Confirm dto) {
         String savedCode = redisTemplate.opsForValue().get(dto.getEmail());
         if (savedCode == null || !savedCode.equals(dto.getCode())) {
-            throw new RuntimeException("인증번호가 일치하지 않거나 만료됨");
+            throw new EmailVerificationException();
         }
         redisTemplate.delete(dto.getEmail()); // 인증 완료되면 제거
         redisTemplate.opsForValue().set(dto.getEmail() + ":verified", "true", 10, TimeUnit.MINUTES);
