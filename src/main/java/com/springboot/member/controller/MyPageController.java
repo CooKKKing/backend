@@ -4,7 +4,10 @@ import com.springboot.dto.MultiResponseDto;
 import com.springboot.dto.SingleResponseDto;
 import com.springboot.member.dto.MemberDto;
 import com.springboot.member.dto.MyPageResponseDto;
+import com.springboot.member.dto.MyRecipeBoardResponse;
 import com.springboot.member.entity.Member;
+import com.springboot.member.entity.MemberTheme;
+import com.springboot.member.entity.MemberTitle;
 import com.springboot.member.mapper.MemberMapper;
 import com.springboot.member.service.MemberService;
 import com.springboot.member.service.MyPageService;
@@ -32,13 +35,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/mypage")
 @Validated
 public class MyPageController {
-    private final MemberService memberService;
     private final MemberMapper memberMapper;
     private final RecipeBoardMapper recipeBoardMapper;
     private final MyPageService myPageService;
 
-    public MyPageController(MemberService memberService, MemberMapper mapper, RecipeBoardMapper recipeBoardMapper, MyPageService myPageService) {
-        this.memberService = memberService;
+    public MyPageController(MemberMapper mapper, RecipeBoardMapper recipeBoardMapper, MyPageService myPageService) {
         this.memberMapper = mapper;
         this.recipeBoardMapper = recipeBoardMapper;
         this.myPageService = myPageService;
@@ -85,6 +86,8 @@ public class MyPageController {
             @PathVariable("recipe-id") @Positive long recipeBoardId,
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
 
+        myPageService.deleteMyBookmark(recipeBoardId, member.getMemberId());
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -96,7 +99,9 @@ public class MyPageController {
     public ResponseEntity getMyTitles(
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        List<MemberTitle> titles = myPageService.findMyTitles(member.getMemberId());
+
+        return new ResponseEntity<>(new SingleResponseDto<>(titles), HttpStatus.OK);
     }
 
     @Operation(summary = "내 레시피 게시글 조회", description = "내가 작성한 레시피 게시글들을 조회")
@@ -109,8 +114,9 @@ public class MyPageController {
             @Positive @RequestParam int size,
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         Page<RecipeBoard> recipeBoards = myPageService.findMyRecipeBoards(member.getMemberId(), page, size);
-        List<RecipeBoardDto.Response> content = recipeBoards.getContent().stream()
-                .map(recipeBoardMapper::recipeBoardToRecipeBoardResponseDto)
+
+        List<MyRecipeBoardResponse> content = recipeBoards.getContent().stream()
+                .map(recipeBoardMapper::recipeBoardToMyRecipeBoardResponse)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new MultiResponseDto<>(content, recipeBoards));
@@ -124,7 +130,9 @@ public class MyPageController {
     public ResponseEntity getMyThemes(
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        List<MemberTheme> themes = myPageService.findMyThemes(member.getMemberId());
+
+        return new ResponseEntity<>(new SingleResponseDto<>(themes), HttpStatus.OK);
     }
 
     @Operation(summary = "내 레시피 게시글 검색", description = "내가 작성한 레시피 게시글에서 검색하는 기능")
@@ -133,7 +141,14 @@ public class MyPageController {
     })
     @GetMapping("/search")
     public ResponseEntity getSearchMyRecipeBoard(@Parameter(hidden = true) @AuthenticationPrincipal Member member,
-                                                 @RequestParam(value = "keyword", required = false) String keyword) {
-        return new ResponseEntity<>(HttpStatus.OK);
+                                                 @RequestParam(value = "keyword", required = false) String keyword,
+                                                 @RequestParam @Positive int page,
+                                                 @RequestParam @Positive int size) {
+        Page<RecipeBoard> recipeBoards = myPageService.findSearchMyRecipeBoards(member.getMemberId(), keyword, page, size);
+        List<MyRecipeBoardResponse> content = recipeBoards.getContent().stream()
+                .map(recipeBoardMapper::recipeBoardToMyRecipeBoardResponse)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new MultiResponseDto<>(content, recipeBoards));
     }
 }
