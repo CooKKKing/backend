@@ -23,20 +23,27 @@ public class RecipeBoard extends BaseEntity {
     private long recipeBoardId;
 
     @Column(nullable = false)
-    private String title;
+    private String title; // 레시피 게시글 제목
 
     @Column(nullable = false)
-    private String menuName;
+    private String menuName; // 음식 이름
 
     @Column(nullable = false)
-    private String content;
+    private String content; // 설명
 
     @Column(nullable = false)
     private String image;
 
+    @Column(nullable = false)
+    private String recipeTime;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RecipeStatus recipeStatus = RecipeStatus.RECIPE_PUBLIC;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RecipeBoardStatus recipeBoardStatus = RecipeBoardStatus.RECIPE_BOARD_POST;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -51,6 +58,9 @@ public class RecipeBoard extends BaseEntity {
 
     @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<RecipeStep> recipeSteps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "recipeBoard", cascade = CascadeType.PERSIST)
+    private List<RecipeBoardIngredient> recipeBoardIngredients = new ArrayList<>();
 
     public void setMember(Member member) {
         this.member = member;
@@ -80,6 +90,13 @@ public class RecipeBoard extends BaseEntity {
         }
     }
 
+    public void setRecipeBoardIngredient(RecipeBoardIngredient recipeBoardIngredient) {
+        recipeBoardIngredients.add(recipeBoardIngredient);
+        if (recipeBoardIngredient.getRecipeBoard() != this) {
+            recipeBoardIngredient.setRecipeBoard(this);
+        }
+    }
+
     public enum RecipeStatus {
         RECIPE_PUBLIC("공개글"),
         RECIPE_PRIVATE("비밀글");
@@ -88,6 +105,18 @@ public class RecipeBoard extends BaseEntity {
         private String status;
 
         RecipeStatus(String status) {
+            this.status = status;
+        }
+    }
+
+    public enum RecipeBoardStatus {
+        RECIPE_BOARD_POST("게시글 등록 상태"),
+        RECIPE_BOARD_DELETE("게시글 삭제 상태");
+
+        @Getter
+        private String status;
+
+        RecipeBoardStatus(String status) {
             this.status = status;
         }
     }
