@@ -1,6 +1,7 @@
 package com.springboot.member.mapper;
 
 import com.springboot.member.dto.MemberDto;
+import com.springboot.member.dto.MyPageResponseDto;
 import com.springboot.member.entity.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,4 +17,5 @@ public interface MemberMapper {
     Member memberDeleteToMember(MemberDto.Delete memberDeleteDto);
     MemberDto.Response memberToMemberResponse(Member member);
     List<MemberDto.Response> membersToMemberResponses(List<Member> members);
+    MyPageResponseDto memberToMyPageResponseDto(Member member);
 }
