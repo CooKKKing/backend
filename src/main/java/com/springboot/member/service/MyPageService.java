@@ -1,5 +1,6 @@
 package com.springboot.member.service;
 
+import com.springboot.bookmark.entitiy.Bookmark;
 import com.springboot.bookmark.repository.BookmarkRepository;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
@@ -45,13 +46,19 @@ public class MyPageService {
     }
 
     // 내 북마크 해제
-    public void deleteMyBookmark(long memberId) {
+    public void deleteMyBookmark(long recipeBoardId, long memberId) {
+        Member member = memberService.findMember(memberId);
 
+        Bookmark bookmark = bookmarkRepository.findByMemberAndRecipeBoardId(member, recipeBoardId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.BOOKMARK_NOT_FOUND));
+
+        bookmarkRepository.delete(bookmark);
     }
 
     // 내 보유 칭호 전체 조회
-    public List<MemberTitle> findMyTitle(long memberId) {
-        return null;
+    public List<MemberTitle> findMyTitles(long memberId) {
+        Member member = memberService.findMember(memberId);
+        return member.getMemberTitles();
     }
 
     // 내 레시피 게시글 조회
@@ -68,12 +75,21 @@ public class MyPageService {
     }
 
     // 내 테마 리스트 조회
-    public List<MemberTheme> findMyTheme(long memberId) {
-        return null;
+    public List<MemberTheme> findMyThemes(long memberId) {
+        Member member = memberService.findMember(memberId);
+        return member.getMemberThemes();
     }
 
     // 내 레시피 게시글 검색
-    public List<RecipeBoard> findSearchMyRecipeBoard(long memberId, String keyword) {
-        return null;
+    public Page<RecipeBoard> findSearchMyRecipeBoards(long memberId, String keyword, int page, int size) {
+        // 검증
+        Member member = memberService.findMember(memberId);
+
+        return recipeBoardRepository.searchMyRecipeBoards(
+                member,
+                RecipeBoard.RecipeBoardStatus.RECIPE_BOARD_DELETE,
+                keyword,
+                PageRequest.of(page - 1, size, Sort.by("recipeBoardId").descending())
+        );
     }
 }
