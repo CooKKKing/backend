@@ -2,6 +2,9 @@ package com.springboot.recipeboard.controller;
 
 import com.springboot.member.entity.Member;
 import com.springboot.recipeboard.dto.RecipeBoardDto;
+import com.springboot.recipeboard.entity.RecipeBoard;
+import com.springboot.recipeboard.mapper.RecipeBoardMapper;
+import com.springboot.recipeboard.service.RecipeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +24,14 @@ import javax.validation.constraints.Positive;
 @RequestMapping("/recipes")
 @Validated
 public class RecipeBoardController {
+    private final RecipeBoardService recipeBoardService;
+    private final RecipeBoardMapper mapper;
+
+    public RecipeBoardController(RecipeBoardService recipeBoardService, RecipeBoardMapper mapper) {
+        this.recipeBoardService = recipeBoardService;
+        this.mapper = mapper;
+    }
+
     @Operation(summary = "레시피 게시글 등록", description = "레시피 게시글 등록합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "레시피 게시글 등록 완료"),
@@ -30,6 +41,9 @@ public class RecipeBoardController {
     public ResponseEntity postRecipeBoard(@Valid @RequestBody RecipeBoardDto.Post recipeBoardPostDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // Post Controller 로직 작성 해야함
+        RecipeBoard recipeBoard = mapper.recipeBoardPostDtoToRecipeBoard(recipeBoardPostDto);
+
+        recipeBoardService.createRecipeBoard(recipeBoard, member.getMemberId());
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
