@@ -84,11 +84,14 @@ public class RecipeBoardDto {
         @Schema(description = "대표 이미지", example = "https://image.url")
         private String image;
 
-        @Schema(description = "게시글 상태", example = "RECIPE_PUBLIC")
+        @Schema(description = "게시글 공개 상태", example = "RECIPE_PUBLIC")
         private RecipeBoard.RecipeStatus recipeStatus;
 
+        @Schema(description = "게시글 상태", example = "RECIPE_BOARD_POST")
+        private RecipeBoard.RecipeBoardStatus recipeBoardStatus;
+
         @Schema(description = "작성자 닉네임", example = "요리왕김요리")
-        private String writerNickName;
+        private String nickName;
 
         @Schema(description = "작성 일시", example = "2024-04-08T12:34:56")
         private LocalDateTime createdAt;
