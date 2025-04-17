@@ -37,6 +37,9 @@ public class RecipeBoard extends BaseEntity {
     @Column(nullable = false)
     private String recipeTime;
 
+    @Column(nullable = false)
+    private int likeCount = 0;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RecipeStatus recipeStatus = RecipeStatus.RECIPE_PUBLIC;
