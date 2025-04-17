@@ -46,6 +46,9 @@ public class Member extends BaseEntity {
     @Column
     private String title;
 
+    @Column(nullable = false)
+    private int ricePoint = 0; // 현재 보유 밥풀
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MemberStatus memberStatus = MemberStatus.MEMBER_ACTIVE;
