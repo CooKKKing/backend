@@ -23,7 +23,7 @@ public class Payment {
     private int amount; // 결제 금액
 
     @Column(nullable = false)
-    private int point; // 전환 포인트
+    private int riceAmount; // 해당 결제로 지급된 밥풀 양 (ex. 10밥풀)
 
     @CreatedDate
     @Column(nullable = false)
