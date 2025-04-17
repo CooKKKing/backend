@@ -26,7 +26,8 @@ public enum ExceptionCode {
     EMAIL_NOT_VERIFIED(400, "이메일 인증이 완료되지 않았습니다."),
     EMAIL_CODE_MISMATCH(400, "인증번호가 일치하지 않거나 만료되었습니다."),
     PASSWORD_MISMATCH(401, "비밀번호가 일치하지 않습니다."),
-    PASSWORD_DUPLICATED(400, "이미 사용 중인 비밀번호입니다.");
+    PASSWORD_DUPLICATED(400, "이미 사용 중인 비밀번호입니다."),
+    BOOKMARK_NOT_FOUND(404, "해당 북마크를 찾을 수 없습니다.");
 
 
 
