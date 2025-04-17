@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 public class MyPageResponseDto {
     private String profileImage;
-    private String nickname;
-    private String currentTitle;
+    private String nickName;
+    private String title;
     private int point;
 }
