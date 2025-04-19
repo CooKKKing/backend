@@ -36,12 +36,13 @@ public class StorageConfiguration {
                 .build();
     }
 
-    @Primary  // 우선순위 부여: S3StorageService가 기본 StorageService가 됨
+//    @Primary  // 우선순위 부여: S3StorageService가 기본 StorageService가 됨
     @Bean
     public StorageService s3StorageService(AmazonS3 amazonS3) {
         return new S3StorageService(amazonS3);
     }
 
+    @Primary
     @Bean
     public StorageService fileSystemStorageService(@Value("${file.upload-dir}") String uploadDir) {
         return new FileSystemStorageService(uploadDir);
