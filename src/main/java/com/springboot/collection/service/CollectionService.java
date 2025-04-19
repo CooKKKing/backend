@@ -6,57 +6,105 @@ import com.springboot.collection.repository.CollectionItemRepository;
 import com.springboot.collection.repository.CollectionRepository;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
+import com.springboot.file.Service.StorageService;
 import com.springboot.member.entity.Member;
 import com.springboot.member.repository.MemberRepository;
-import org.springframework.data.domain.Page;
+import com.springboot.member.service.MemberService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 public class CollectionService {
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final CollectionRepository collectionRepository;
     private final CollectionItemRepository collectionItemRepository;
+    private final StorageService storageService;
 
-    public CollectionService(MemberRepository memberRepository, CollectionRepository collectionRepository, CollectionItemRepository collectionItemRepository) {
+    public CollectionService(MemberService memberService, MemberRepository memberRepository, CollectionRepository collectionRepository, CollectionItemRepository collectionItemRepository, StorageService storageService) {
+        this.memberService = memberService;
         this.memberRepository = memberRepository;
         this.collectionRepository = collectionRepository;
         this.collectionItemRepository = collectionItemRepository;
+        this.storageService = storageService;
     }
 
 
     // 도감 카테고리 생성
     public Collection createCollection(Collection collection, long memberId) {
-        return null;
+        Member member = memberService.findMember(memberId);
+
+        // 도감 카테고리명 중복 검증
+        if (collectionRepository.existsByMemberAndCustomCategoryName(member, collection.getCustomCategoryName())) {
+            throw new BusinessLogicException(ExceptionCode.DUPLICATE_COLLECTION_CATEGORY);
+        }
+
+        collection.setMember(member);
+        return collectionRepository.save(collection);
     }
 
     // 도감 카테고리 수정
     public Collection updateCollection(Collection collection, long memberId) {
-        return null;
+        Collection existing = verifyOwnedCollection(collection.getCollectionId(), memberId);
+
+        boolean isDuplicate = collectionRepository.existsByCustomCategoryNameAndMember_MemberId(
+                collection.getCustomCategoryName(), memberId);
+
+        if (isDuplicate && !existing.getCustomCategoryName().equals(collection.getCustomCategoryName())) {
+            throw new BusinessLogicException(ExceptionCode.DUPLICATE_COLLECTION_CATEGORY);
+        }
+
+        existing.setCustomCategoryName(collection.getCustomCategoryName());
+        return collectionRepository.save(existing);
     }
 
     // 도감 카테고리 전체 조회
-    public Page<Collection> findCollections(int page, int size, long memberId) {
-        return null;
+    public List<Collection> findCollections(long memberId) {
+        Member member = verifyMemberExists(memberId);
+        return collectionRepository.findByMember(member);
     }
 
     // 도감 카테고리 삭제
     public void deleteCollection(long collectionId, long memberId) {
-
+        Collection collection = verifyOwnedCollection(collectionId, memberId); // 존재 + 소유자 검증
+        collectionRepository.delete(collection);
     }
 
     // 도감 카테고리 내 메뉴 목록 조회
-    public Page<CollectionItem> findCollectionItems(long collectionId, int page, int size, long memberId) {
-        return null;
+    public List<CollectionItem> findCollectionItems(long collectionId, long memberId) {
+        Collection collection = verifyOwnedCollection(collectionId, memberId); // 소유자 확인까지 포함
+        return collectionItemRepository.findByCollection(collection);
     }
 
     // 도감 카테고리 메뉴 추가
-    public CollectionItem addCollectionItem(long collectionId, CollectionItem collectionItem, long memberId) {
-        return null;
+    public CollectionItem addCollectionItem(long collectionId, CollectionItem collectionItem, MultipartFile imageFile, long memberId) {
+        Collection collection = verifyOwnedCollection(collectionId, memberId); // 도감 소유자 검증
+
+        // 중복 메뉴 이름 검증
+        boolean isDuplicate = collection.getCollectionItems().stream()
+                .anyMatch(item -> item.getMenuName().equals(collectionItem.getMenuName()));
+        if (isDuplicate) {
+            throw new BusinessLogicException(ExceptionCode.DUPLICATE_COLLECTION_MENU);
+        }
+
+        // 📂 이미지 저장 (있을 때만)
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String fileName = "collection_" + System.currentTimeMillis();
+            String imageUrl = storageService.store(imageFile, fileName);
+            collectionItem.setImage(imageUrl);
+        }
+
+        collectionItem.setCollection(collection); // 소속 설정
+        return collectionItemRepository.save(collectionItem);
     }
 
     // 도감 카테고리 메뉴 삭제
     public void deleteCollectionItem(long collectionItemId, long memberId) {
-
+        CollectionItem item = verifyCollectionItemExists(collectionItemId);
+        verifyCollectionItemOwner(item.getCollection(), memberId);
+        collectionItemRepository.delete(item);
     }
 
     // 회원 존재 확인
