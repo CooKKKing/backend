@@ -1,7 +1,7 @@
 package com.springboot.recipeboard.dto;
 
 import com.springboot.recipeboard.entity.RecipeBoard;
-import com.springboot.recipestep.dto.RecipeStepDto;
+import com.springboot.recipestepdetail.dto.RecipeStepDetailDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,13 +43,12 @@ public class RecipeBoardDto {
 
         @Schema(description = "레시피 단계 본문 리스트")
         @Size(min = 1, message = "레시피 본문은 최소 1단계 이상 작성해야 합니다.")
-        private List<RecipeStepDto> recipeSteps;
+        private List<RecipeStepDetailDto> recipeSteps;
     }
 
     @Getter
     @Setter
     public static class Patch {
-
         @Schema(description = "레시피 게시글 제목", example = "존나 맛있는 공기밥 레시피")
         @Size(min = 1, max = 20, message = "제목은 1자 이상 20자 이내여야 합니다.")
         @Pattern(
@@ -65,7 +64,7 @@ public class RecipeBoardDto {
         private RecipeBoard.RecipeStatus recipeStatus;
 
         @Schema(description = "레시피 단계 본문 리스트")
-        private List<RecipeStepDto> recipeSteps;
+        private List<RecipeStepDetailDto> recipeSteps;
     }
 
     @Getter
@@ -97,6 +96,6 @@ public class RecipeBoardDto {
         private LocalDateTime createdAt;
 
         @Schema(description = "레시피 단계 리스트")
-        private List<RecipeStepDto.Response> recipeSteps;
+        private List<RecipeStepDetailDto.Response> recipeSteps;
     }
 }
