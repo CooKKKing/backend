@@ -16,7 +16,7 @@ public class CollectionItem {
     private long collectionItemId;
 
     @Column(nullable = false)
-    private String name; // 음식 이름
+    private String menuName; // 음식 이름
 
     @Column(nullable = false)
     private String image; // 음식 사진 URL
