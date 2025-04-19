@@ -1,30 +1,38 @@
 package com.springboot.recipestep.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
 public class RecipeStepDto {
-    public static class Post {
-        @Schema(description = "요리 순서", example = "1")
-        private int stepOrder;
+    @Getter
+    public static class post {
+        @NotBlank(message = "ID는 공백이 아니어야 합니다.")
+        @Schema(description = "레시피_스텝_아이디", example = "1")
+        private long recipeStepId;
 
-        @Schema(description = "요리 설명", example = "밥을 뜨겁게 데워줍니다.")
-        @NotBlank(message = "요리 설명은 필수입니다.")
-        private String description;
-
-        @Schema(description = "요리 사진 URL", example = "https://image.url/step1.jpg")
-        private String image;
+        @NotBlank(message = "스텝_이름은 공백이 아니어야 합니다.")
+        @Schema(description = "레시피_스텝_이름", example = "재료준비")
+        private String title;
     }
 
     @Getter
-    @Builder
+    @Setter
+    public static class patch {
+        private long recipeStepId;
+
+        @NotBlank(message = "스텝_이름은 공백이 아니어야 합니다.")
+        @Schema(description = "레시피_스텝_이름", example = "재료준비")
+        private String title;
+    }
+
+    @AllArgsConstructor
+    @Getter
     public static class Response {
-        private int stepOrder;
-        private String description;
-        private String image;
+        private long recipeStepId;
+        private String title;
     }
 }
