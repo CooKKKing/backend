@@ -49,7 +49,7 @@ public class MyPageService {
     public void deleteMyBookmark(long recipeBoardId, long memberId) {
         Member member = memberService.findMember(memberId);
 
-        Bookmark bookmark = bookmarkRepository.findByMemberAndRecipeBoardId(member, recipeBoardId)
+        Bookmark bookmark = bookmarkRepository.findByMemberAndRecipeBoard_RecipeBoardId(member, recipeBoardId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.BOOKMARK_NOT_FOUND));
 
         bookmarkRepository.delete(bookmark);
