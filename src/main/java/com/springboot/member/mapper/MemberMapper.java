@@ -4,7 +4,6 @@ import com.springboot.member.dto.MemberDto;
 import com.springboot.member.dto.MyPageResponseDto;
 import com.springboot.member.entity.Member;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
