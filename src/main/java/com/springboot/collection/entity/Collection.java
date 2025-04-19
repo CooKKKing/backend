@@ -1,5 +1,6 @@
 package com.springboot.collection.entity;
 
+import com.springboot.audit.BaseEntity;
 import com.springboot.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Collection {
+public class Collection extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long collectionId;
@@ -25,7 +26,7 @@ public class Collection {
     @Column(nullable = false)
     private CollectionStatus collectionStatus = CollectionStatus.PUBLIC;
 
-    @OneToMany(mappedBy = "collection", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "collection", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<CollectionItem> collectionItems = new ArrayList<>();
 
     @ManyToOne
