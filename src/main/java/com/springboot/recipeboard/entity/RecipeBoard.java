@@ -4,7 +4,6 @@ import com.springboot.audit.BaseEntity;
 import com.springboot.bookmark.entitiy.Bookmark;
 import com.springboot.member.entity.Member;
 import com.springboot.menu.entity.Menu;
-import com.springboot.recipestep.entity.RecipeStep;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,13 +31,13 @@ public class RecipeBoard extends BaseEntity {
     private String content; // 설명
 
     @Column(nullable = false)
+    private int likeCount = 0;
+
+    @Column(nullable = false)
     private String image;
 
     @Column(nullable = false)
     private String recipeTime;
-
-    @Column(nullable = false)
-    private int likeCount = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -59,11 +58,20 @@ public class RecipeBoard extends BaseEntity {
     @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Bookmark> bookmarks = new ArrayList<>();
 
+    //    @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+//    private List<RecipeStepDetail> recipeStepDetails = new ArrayList<>();
     @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<RecipeStep> recipeSteps = new ArrayList<>();
+    private List<RecipeBoardStep> recipeBoardSteps = new ArrayList<>();
 
     @OneToMany(mappedBy = "recipeBoard", cascade = CascadeType.PERSIST)
     private List<RecipeBoardIngredient> recipeBoardIngredients = new ArrayList<>();
+
+    public void setRecipeBoardStep(RecipeBoardStep recipeBoardStep) {
+        recipeBoardSteps.add(recipeBoardStep);
+        if (recipeBoardStep.getRecipeBoard() != this) {
+            recipeBoardStep.setRecipeBoard(this);
+        }
+    }
 
     public void setMember(Member member) {
         this.member = member;
@@ -86,12 +94,12 @@ public class RecipeBoard extends BaseEntity {
         }
     }
 
-    public void setRecipeStep(RecipeStep recipeStep) {
-        recipeSteps.add(recipeStep);
-        if (recipeStep.getRecipeBoard() != this) {
-            recipeStep.setRecipeBoard(this);
-        }
-    }
+//    public void setRecipeStep(RecipeStepDetail recipeStepDetail) {
+//        recipeStepDetails.add(recipeStepDetail);
+//        if (recipeStepDetail.getRecipeBoard() != this) {
+//            recipeStepDetail.setRecipeBoard(this);
+//        }
+//    }
 
     public void setRecipeBoardIngredient(RecipeBoardIngredient recipeBoardIngredient) {
         recipeBoardIngredients.add(recipeBoardIngredient);
