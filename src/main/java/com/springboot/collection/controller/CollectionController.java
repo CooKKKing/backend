@@ -134,7 +134,7 @@ public class CollectionController {
     public ResponseEntity postCollectionItem(
             @PathVariable("collection-id") @Positive long collectionId,
             @RequestPart @Valid CollectionItemDto.Post collectionItemPostDto,
-            @RequestPart(value = "collectionItemImage", required = false) MultipartFile collectionItemImage,
+            @RequestPart(required = false) MultipartFile collectionItemImage,
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
 
         CollectionItem collectionItem = mapper.collectionItemPostDtoToCollectionItem(collectionItemPostDto);
