@@ -79,7 +79,7 @@ public class CollectionService {
     }
 
     // 도감 카테고리 메뉴 추가
-    public CollectionItem addCollectionItem(long collectionId, CollectionItem collectionItem, MultipartFile imageFile, long memberId) {
+    public CollectionItem addCollectionItem(long collectionId, CollectionItem collectionItem, MultipartFile image, long memberId) {
         Collection collection = verifyOwnedCollection(collectionId, memberId); // 도감 소유자 검증
 
         // 중복 메뉴 이름 검증
@@ -89,12 +89,13 @@ public class CollectionService {
             throw new BusinessLogicException(ExceptionCode.DUPLICATE_COLLECTION_MENU);
         }
 
-        // 📂 이미지 저장 (있을 때만)
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String fileName = "collection_" + System.currentTimeMillis();
-            String imageUrl = storageService.store(imageFile, fileName);
-            collectionItem.setImage(imageUrl);
+        if (image == null || image.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.IMAGE_REQUIRED);
         }
+
+        String pathWithoutExt = "collections/" + collection.getCollectionId() + "/item_" + System.currentTimeMillis();
+        String imageUrl = storageService.store(image, pathWithoutExt);
+        collectionItem.setImage(imageUrl);
 
         collectionItem.setCollection(collection); // 소속 설정
         return collectionItemRepository.save(collectionItem);
