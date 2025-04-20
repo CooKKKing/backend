@@ -1,4 +1,4 @@
-package com.springboot.file.Service;
+package com.springboot.file.service;
 
 import com.springboot.exception.StorageException;
 import lombok.extern.slf4j.Slf4j;

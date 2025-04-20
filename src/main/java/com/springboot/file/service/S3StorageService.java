@@ -1,4 +1,4 @@
-package com.springboot.file.Service;
+package com.springboot.file.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
