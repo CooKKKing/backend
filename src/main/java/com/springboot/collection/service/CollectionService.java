@@ -6,7 +6,7 @@ import com.springboot.collection.repository.CollectionItemRepository;
 import com.springboot.collection.repository.CollectionRepository;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
-import com.springboot.file.Service.StorageService;
+import com.springboot.file.service.StorageService;
 import com.springboot.member.entity.Member;
 import com.springboot.member.repository.MemberRepository;
 import com.springboot.member.service.MemberService;

@@ -39,8 +39,6 @@ public class FileSystemStorageService implements StorageService{
             String fullRelativePath = fileNameWithoutExt + "." + extension;
             Path destinationFile = this.rootLocation.resolve(fullRelativePath)
                     .normalize().toAbsolutePath();
-//            Path destinationFile = this.rootLocation.resolve(
-//                    Paths.get(newFileName)).normalize().toAbsolutePath();
 
             //equals는 서로 다르다고 판단하므로 startWith() 사용
             if (!destinationFile.startsWith(this.rootLocation.toAbsolutePath())) {
