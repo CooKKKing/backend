@@ -30,7 +30,7 @@ public class MemberService {
 
     public Member createMember(Member member){
         // 중복 아이디 여부 확인
-        verifyExistsId(member.getLoginId());
+        verifyExistsLoginId(member.getLoginId());
 
         // 중복 닉네임 여부 확인
         verifyExistsName(member.getNickName());
@@ -136,11 +136,11 @@ public class MemberService {
     }
 
     // 아이디 중복 여부 확인 메서드
-    public void verifyExistsId(String loginId){
+    public void verifyExistsLoginId(String loginId){
         Optional<Member> member = memberRepository.findByLoginId(loginId);
 
         if (member.isPresent())
-            throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
+            throw new BusinessLogicException(ExceptionCode.DUPLICATE_LOGIN_ID);
     }
 
     // 닉네임 중복 여부 확인 메서드
