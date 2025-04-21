@@ -31,7 +31,8 @@ public enum ExceptionCode {
     RECIPE_STEP_NOT_FOUND(404, "레시피 스텝이 존재하지 않습니다."),
     RECIPE_STEP_EXISTS(409, "레시피 스텝이 이미 존재합니다."),
     DUPLICATE_COLLECTION_CATEGORY(409, "도감 카테고리가 이미 존재합니다"),
-    IMAGE_REQUIRED(400, "아직 이미지를 업로드 하지 않았습니다");
+    IMAGE_REQUIRED(400, "아직 이미지를 업로드 하지 않았습니다"),
+    DUPLICATE_LOGIN_ID(409, "해당 아이디는 이미 존재합니다.");
 
 
     @Getter
