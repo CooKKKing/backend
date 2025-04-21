@@ -12,6 +12,30 @@ import javax.validation.constraints.Pattern;
 
 public class MemberDto {
     @Getter
+    public static class Id{
+        @NotBlank(message = "ID는 공백이 아니어야 합니다.")
+        @Schema(description = "사용자 아이디", example = "tjsk2222")
+        private String loginId;
+    }
+
+    @Getter
+    public static class Name{
+        @NotBlank(message = "닉네임은 공백이 아니어야 합니다.")
+        @Pattern(regexp = "^(?!\\s)(?!.*\\s{2,})(?!.*[~!@#$%^&*()_+=|<>?:{}\\[\\]\"';,.\\\\/`])[^\\s]{1,8}(?<!\\s)$",
+                message = "닉네임은 공백 없이 8자 이내, 특수문자를 포함하지 않아야 합니다.")
+        @Schema(description = "사용자 닉네임", example = "택택")
+        private String nickName;
+    }
+
+    @Getter
+    public static class Phone{
+        @Pattern(regexp = "^010-\\d{3,4}-\\d{4}$",
+                message = "휴대폰 번호는 010으로 시작하는 11자리 숫자와 '-'로 구성되어야 합니다.")
+        @Schema(description = "사용자 전화번호", example = "010-1111-2222")
+        private String phoneNumber;
+    }
+
+    @Getter
     public static class Post {
         @NotBlank(message = "ID는 공백이 아니어야 합니다.")
         @Schema(description = "사용자 아이디", example = "tjsk2222")
