@@ -8,7 +8,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
@@ -18,8 +25,10 @@ jobs:
           distribution: 'zulu'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Set active profile for Spring Boot
+        run: echo "SPRING_PROFILES_ACTIVE=server" # =server, =local 로 환경설정
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build -x test
       - name: Docker build
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -52,6 +61,13 @@ jobs:
               'fi',
               'sudo docker pull taeckhyun/spring-cicd:${GITHUB_SHA::7}',
               'sudo docker tag taeckhyun/spring-cicd:${GITHUB_SHA::7} spring-cicd',
-              'sudo docker run -d --name server -p 8080:8080 spring-cicd'
+              'sudo docker run -d --name server -p 8080:8080 \\
+                -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \\
+                -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \\
+                -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \\
+                -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \\
+                -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \\
+                -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \\
+                  spring-cicd'
             ]" \
             --output text
