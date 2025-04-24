@@ -6,4 +6,5 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("MAIN")
 public class MainIngredient extends Ingredient {
+    private String subIngredient;
 }
