@@ -5,7 +5,7 @@ import com.springboot.bookmark.repository.BookmarkRepository;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.entity.Member;
-import com.springboot.member.entity.MemberTheme;
+import com.springboot.member.entity.MemberChallenge;
 import com.springboot.member.entity.MemberTitle;
 import com.springboot.member.repository.MemberRepository;
 import com.springboot.recipeboard.entity.RecipeBoard;
@@ -62,34 +62,41 @@ public class MyPageService {
     }
 
     // 내 레시피 게시글 조회
-    public Page<RecipeBoard> findMyRecipeBoards(long memberId, int page, int size) {
-        // 회원 검증
-        Member member = memberService.findMember(memberId);
+//    public Page<RecipeBoard> findMyRecipeBoards(long memberId, int page, int size) {
+//        // 회원 검증
+//        Member member = memberService.findMember(memberId);
+//
+//        // 본인이 작성한 게시글 조회 (삭제 상태 제외하고)
+//        return recipeBoardRepository.findByMemberAndRecipeBoardStatusNot(
+//                member,
+//                RecipeBoard.RecipeBoardStatus.RECIPE_BOARD_DELETE,  // 만약 삭제 상태가 있다면 필터링, 없으면 이 조건 제거
+//                PageRequest.of(page - 1, size, Sort.by("recipeBoardId").descending())
+//        );
+//    }
+//
+//    // 내 레시피 게시글 검색
+//    public Page<RecipeBoard> findSearchMyRecipeBoards(long memberId, String keyword, int page, int size) {
+//        // 검증
+//        Member member = memberService.findMember(memberId);
+//
+//        return recipeBoardRepository.searchMyRecipeBoards(
+//                member,
+//                RecipeBoard.RecipeBoardStatus.RECIPE_BOARD_DELETE,
+//                keyword,
+//                PageRequest.of(page - 1, size, Sort.by("recipeBoardId").descending())
+//        );
+//    }
 
-        // 본인이 작성한 게시글 조회 (삭제 상태 제외하고)
-        return recipeBoardRepository.findByMemberAndRecipeBoardStatusNot(
-                member,
-                RecipeBoard.RecipeBoardStatus.RECIPE_BOARD_DELETE,  // 만약 삭제 상태가 있다면 필터링, 없으면 이 조건 제거
-                PageRequest.of(page - 1, size, Sort.by("recipeBoardId").descending())
-        );
-    }
+//    // 내 도전과제 전체 조회
+//    public List<MemberChallenge> getMyChallenges(long memberId) {
+//        Member member = memberService.findMember(memberId);
+//
+//        return member.getMemberChallenges();
+//    }
+//
+//    public int calculateCurrentProgress(Member member, String categoryName) {
+//        return recipeBoardRepository.countByMemberAndMenu_MenuCategory_MenuCategoryName(member, categoryName);
+//    }
 
-    // 내 테마 리스트 조회
-    public List<MemberTheme> findMyThemes(long memberId) {
-        Member member = memberService.findMember(memberId);
-        return member.getMemberThemes();
-    }
 
-    // 내 레시피 게시글 검색
-    public Page<RecipeBoard> findSearchMyRecipeBoards(long memberId, String keyword, int page, int size) {
-        // 검증
-        Member member = memberService.findMember(memberId);
-
-        return recipeBoardRepository.searchMyRecipeBoards(
-                member,
-                RecipeBoard.RecipeBoardStatus.RECIPE_BOARD_DELETE,
-                keyword,
-                PageRequest.of(page - 1, size, Sort.by("recipeBoardId").descending())
-        );
-    }
 }
