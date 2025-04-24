@@ -60,6 +60,7 @@ jobs:
                 -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \\
                 -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \\
                 -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \\
+                -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \\
                 spring-cicd'
             ]" \
             --output text
