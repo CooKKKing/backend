@@ -2,7 +2,7 @@ package com.springboot.member.entity;
 
 import com.springboot.audit.BaseEntity;
 import com.springboot.bookmark.entitiy.Bookmark;
-import com.springboot.collection.entity.Collection;
+import com.springboot.collectioncamera.entity.CollectionCamera;
 import com.springboot.payment.entity.Payment;
 import com.springboot.recipeboard.entity.RecipeBoard;
 import lombok.Getter;
@@ -54,16 +54,13 @@ public class Member extends BaseEntity {
     private MemberStatus memberStatus = MemberStatus.MEMBER_ACTIVE;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-    private List<Collection> collections = new ArrayList<>();
+    private List<CollectionCamera> collectionCameras = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<RecipeBoard> recipeBoards = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<Bookmark> bookmarks = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<MemberTheme> memberThemes = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<MemberTitle> memberTitles = new ArrayList<>();
@@ -74,10 +71,10 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST})
     private List<Payment> payments = new ArrayList<>();
 
-    public void setCollection(Collection collection) {
-        collections.add(collection);
-        if (collection.getMember() != this) {
-            collection.setMember(this);
+    public void setCollectionCamera(CollectionCamera collectionCamera) {
+        collectionCameras.add(collectionCamera);
+        if (collectionCamera.getMember() != this) {
+            collectionCamera.setMember(this);
         }
     }
 
@@ -92,13 +89,6 @@ public class Member extends BaseEntity {
         bookmarks.add(bookmark);
         if (bookmark.getMember() != this) {
             bookmark.setMember(this);
-        }
-    }
-
-    public void setMemberTheme(MemberTheme memberTheme) {
-        memberThemes.add(memberTheme);
-        if (memberTheme.getMember() != this) {
-            memberTheme.setMember(this);
         }
     }
 
