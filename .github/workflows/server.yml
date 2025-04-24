@@ -58,6 +58,7 @@ jobs:
                 -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \\
             -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \\
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \\
+            -e AWS_BUCKET_NAME={{ secrets.AWS_BUCKET_NAME }} \\
                 spring-cicd'
             ]" \
             --output text
