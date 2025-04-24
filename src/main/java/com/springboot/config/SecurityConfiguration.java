@@ -65,31 +65,28 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        //WebSocket 관련 경로 허용
-                        .antMatchers("/ws-stomp/**", "/pub/**", "/sub/**").permitAll()
-                        //Admin
+                        // Admin
                         .antMatchers("/admin/**").hasRole("ADMIN")
-                        //Memeber
+                        // Member
                         .antMatchers(HttpMethod.POST, "/members").permitAll()
                         .antMatchers(HttpMethod.GET, "/members").hasRole("ADMIN")
                         .antMatchers(HttpMethod.GET,"/members/**").hasAnyRole("USER", "ADMIN")
                         .antMatchers(HttpMethod.PATCH, "/members/**").hasRole("USER")
                         .antMatchers(HttpMethod.DELETE, "/members").hasAnyRole("USER")
                         .antMatchers(HttpMethod.DELETE, "/members/**").hasAnyRole("USER", "ADMIN")
-                        //Group
-                        .antMatchers(HttpMethod.POST, "/groups").hasRole("USER")
-                        .antMatchers(HttpMethod.POST, "/groups/**").hasRole("USER")
-                        .antMatchers(HttpMethod.GET, "/groups").hasRole("USER")
-                        .antMatchers(HttpMethod.GET,"/groups/**").hasAnyRole("USER", "ADMIN")
-                        .antMatchers(HttpMethod.PATCH, "/groups/**").hasRole("USER")
-                        .antMatchers(HttpMethod.DELETE, "/groups").hasAnyRole("USER")
-                        .antMatchers(HttpMethod.DELETE, "/groups/**").hasAnyRole("USER", "ADMIN")
-                        //Board
-                        .antMatchers(HttpMethod.POST, "/boards").hasRole("USER")
-                        .antMatchers(HttpMethod.GET, "/boards").hasRole("USER")
-                        .antMatchers(HttpMethod.GET,"/boards/**").hasAnyRole("USER", "ADMIN")
-                        .antMatchers(HttpMethod.PATCH, "/boards/**").hasRole("USER")
-                        .antMatchers(HttpMethod.DELETE, "/boards/**").hasAnyRole("USER", "ADMIN")
+                        .antMatchers(HttpMethod.POST, "/members/**").permitAll()
+                        .antMatchers(HttpMethod.PATCH, "/members/password").permitAll()
+                        // MyPage
+                        .antMatchers(HttpMethod.GET, "/mypage").hasRole("USER")
+                        .antMatchers(HttpMethod.GET, "/mypage/**").hasRole("USER")
+                        .antMatchers(HttpMethod.DELETE, "/mypage/**").hasRole("USER")
+                        // Collection
+                        .antMatchers(HttpMethod.POST, "/collections").hasRole("USER")
+                        .antMatchers(HttpMethod.POST, "/collections/**").hasRole("USER")
+                        .antMatchers(HttpMethod.PATCH, "/collections/**").hasRole("USER")
+                        .antMatchers(HttpMethod.GET, "/collections").hasRole("USER")
+                        .antMatchers(HttpMethod.GET, "/collections/**").hasRole("USER")
+                        .antMatchers(HttpMethod.DELETE, "/collections/**").hasRole("USER")
                         //Comment
                         .antMatchers(HttpMethod.POST, "/comments").hasRole("USER")
                         .antMatchers(HttpMethod.GET, "/comments").hasRole("USER")
