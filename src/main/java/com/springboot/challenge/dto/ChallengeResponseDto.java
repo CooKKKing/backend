@@ -17,8 +17,6 @@ public class ChallengeResponseDto {
 
     private int progress; // 0~100 (%)
 
-    private Challenge.ChallengeStatus challengeStatus; // 달성, 미달성
-
     private String rewardTitle; // 칭호 이름
 
     private int difficultyLevel; // 쉬움 : 1, 보통 : 2, 어려움 : 3
