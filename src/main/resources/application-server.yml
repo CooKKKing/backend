@@ -70,3 +70,5 @@ server:
   servlet:
     encoding:
       force-response: true
+file:
+  upload-dir: /fileImage
