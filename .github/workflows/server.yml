@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     env:
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
@@ -16,41 +15,49 @@ jobs:
       AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'zulu'
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Set active profile for Spring Boot
-        run: echo "SPRING_PROFILES_ACTIVE=server" # =server, =local 로 환경설정
+        run: echo "SPRING_PROFILES_ACTIVE=server"
+
       - name: Build with Gradle
         run: ./gradlew build -x test
+
       - name: Docker build
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
           docker build -t spring-cicd .
           docker tag spring-cicd taeckhyun/spring-cicd:${GITHUB_SHA::7}
           docker push taeckhyun/spring-cicd:${GITHUB_SHA::7}
-      #위 내용은 지속적 통합을 위한 스크립트입니다.
-      #지속적 통합을 위한 스크립트 아래에 작성합니다.
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
-      - name: Start Session Manager session
-        run: aws ssm start-session --target i-0d918917facba9df1
+
       - name: Deploy to Server
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ap-northeast-2
         run: |
+          # 환경변수 export
+          export JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
+          export AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}"
+          export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          export AWS_BUCKET_NAME="${{ secrets.AWS_BUCKET_NAME }}"
+          export MAIL_USERNAME="${{ secrets.MAIL_USERNAME }}"
+          export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
+
           aws ssm send-command \
             --instance-ids i-0d918917facba9df1 \
             --document-name "AWS-RunShellScript" \
@@ -61,6 +68,13 @@ jobs:
               'fi',
               'sudo docker pull taeckhyun/spring-cicd:${GITHUB_SHA::7}',
               'sudo docker tag taeckhyun/spring-cicd:${GITHUB_SHA::7} spring-cicd',
-              'sudo docker run -d --name server -p 8080:8080 -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} spring-cicd'
+              'sudo docker run -d --name server -p 8080:8080 \
+                -e JWT_SECRET_KEY=$JWT_SECRET_KEY \
+                -e AWS_ACCESS_KEY=$AWS_ACCESS_KEY \
+                -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+                -e AWS_BUCKET_NAME=$AWS_BUCKET_NAME \
+                -e MAIL_USERNAME=$MAIL_USERNAME \
+                -e MAIL_PASSWORD=$MAIL_PASSWORD \
+                spring-cicd'
             ]" \
             --output text
