@@ -9,40 +9,41 @@ INSERT INTO camera_color (camera_color_id, camera_color_name) VALUES
 
 -- CameraImage
 INSERT INTO camera_image (camera_image_id, image_url, camera_color_id) VALUES
-(1, '/fileImage/camera/1-blue.png', 1),
-(2, '/fileImage/camera/1-yellow.png', 6),
-(3, '/fileImage/camera/1-purple.png', 4),
-(4, '/fileImage/camera/1-green.png', 2),
-(5, '/fileImage/camera/1-red.png', 5),
-(6, '/fileImage/camera/1-pink.png', 3),
+(1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/1-blue.png', 1),
+(2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/1-yellow.png', 6),
+(3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/1-purple.png', 4),
+(4, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/1-green.png', 2),
+(5, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/1-red.png', 5),
+(6, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/1-pink.png', 3),
 
-(7, '/fileImage/camera/2-blue.png', 1),
-(8, '/fileImage/camera/2-yellow.png', 6),
-(9, '/fileImage/camera/2-purple.png', 4),
-(10, '/fileImage/camera/2-green.png', 2),
-(11, '/fileImage/camera/2-red.png', 5),
-(12, '/fileImage/camera/2-pink.png', 3),
+(7, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/2-blue.png', 1),
+(8, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/2-yellow.png', 6),
+(9, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/2-purple.png', 4),
+(10, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/2-green.png', 2),
+(11, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/2-red.png', 5),
+(12, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/2-pink.png', 3),
 
-(13, '/fileImage/camera/3-blue.png', 1),
-(14, '/fileImage/camera/3-yellow.png', 6),
-(15, '/fileImage/camera/3-purple.png', 4),
-(16, '/fileImage/camera/3-green.png', 2),
-(17, '/fileImage/camera/3-red.png', 5),
-(18, '/fileImage/camera/3-pink.png', 3),
+(13, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/3-blue.png', 1),
+(14, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/3-yellow.png', 6),
+(15, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/3-purple.png', 4),
+(16, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/3-green.png', 2),
+(17, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/3-red.png', 5),
+(18, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/3-pink.png', 3),
 
-(19, '/fileImage/camera/4-blue.png', 1),
-(20, '/fileImage/camera/4-yellow.png', 6),
-(21, '/fileImage/camera/4-purple.png', 4),
-(22, '/fileImage/camera/4-green.png', 2),
-(23, '/fileImage/camera/4-red.png', 5),
-(24, '/fileImage/camera/4-pink.png', 3),
+(19, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/4-blue.png', 1),
+(20, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/4-yellow.png', 6),
+(21, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/4-purple.png', 4),
+(22, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/4-green.png', 2),
+(23, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/4-red.png', 5),
+(24, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/4-pink.png', 3),
 
-(25, '/fileImage/camera/5-blue.png', 1),
-(26, '/fileImage/camera/5-yellow.png', 6),
-(27, '/fileImage/camera/5-purple.png', 4),
-(28, '/fileImage/camera/5-green.png', 2),
-(29, '/fileImage/camera/5-red.png', 5),
-(30, '/fileImage/camera/5-pink.png', 3);
+(25, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/5-blue.png', 1),
+(26, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/5-yellow.png', 6),
+(27, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/5-purple.png', 4),
+(28, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/5-green.png', 2),
+(29, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/5-red.png', 5),
+(30, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/cameraImage/5-pink.png', 3);
+
 
 -- ChallengeCategory (도전과제 카테고리) 더미 데이터
 INSERT INTO challenge_category (challenge_category_name, created_at, modified_at) VALUES
