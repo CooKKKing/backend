@@ -22,7 +22,7 @@ spring:
       mode: always
   data:
     redis:
-      host: localhost
+      host: 54.180.8.125
       port: 6379
 springdoc:
   default-flat-param-object: true
