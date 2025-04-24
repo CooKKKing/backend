@@ -68,13 +68,13 @@ jobs:
               'fi',
               'sudo docker pull taeckhyun/spring-cicd:${GITHUB_SHA::7}',
               'sudo docker tag taeckhyun/spring-cicd:${GITHUB_SHA::7} spring-cicd',
-              'sudo docker run -d --name server -p 8080:8080 \
-                -e JWT_SECRET_KEY=$JWT_SECRET_KEY \
-                -e AWS_ACCESS_KEY=$AWS_ACCESS_KEY \
-                -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-                -e AWS_BUCKET_NAME=$AWS_BUCKET_NAME \
-                -e MAIL_USERNAME=$MAIL_USERNAME \
-                -e MAIL_PASSWORD=$MAIL_PASSWORD \
+              'sudo docker run -d --name server -p 8080:8080 \\
+                -e JWT_SECRET_KEY=$JWT_SECRET_KEY \\ 
+                -e AWS_ACCESS_KEY=$AWS_ACCESS_KEY \\ 
+                -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\ 
+                -e AWS_BUCKET_NAME=$AWS_BUCKET_NAME \\ 
+                -e MAIL_USERNAME=$MAIL_USERNAME \\ 
+                -e MAIL_PASSWORD=$MAIL_PASSWORD \\ 
                 spring-cicd'
             ]" \
             --output text
