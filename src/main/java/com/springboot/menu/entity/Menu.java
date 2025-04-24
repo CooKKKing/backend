@@ -1,7 +1,7 @@
 package com.springboot.menu.entity;
 
 import com.springboot.audit.BaseEntity;
-import com.springboot.category.entity.MenuCategory;
+import com.springboot.menucategory.entity.MenuCategory;
 import com.springboot.recipeboard.entity.RecipeBoard;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,12 +22,6 @@ public class Menu extends BaseEntity {
 
     @Column(nullable = false)
     private String menuName;
-
-    @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private String image;
 
     @ManyToOne
     @JoinColumn(name = "menuCategory_id")
