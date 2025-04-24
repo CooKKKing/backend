@@ -1,9 +1,12 @@
 package com.springboot.collectioncamera.service;
 
+import com.springboot.collectioncamera.dto.CollectionCameraDto;
+import com.springboot.collectioncamera.entity.CameraImage;
 import com.springboot.collectioncamera.entity.CollectionCamera;
 import com.springboot.collectioncamera.entity.CollectionItem;
+import com.springboot.collectioncamera.repository.CameraImageRepository;
+import com.springboot.collectioncamera.repository.CollectionCameraRepository;
 import com.springboot.collectioncamera.repository.CollectionItemRepository;
-import com.springboot.collectioncamera.repository.CollectionRepository;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.file.service.StorageService;
@@ -11,75 +14,113 @@ import com.springboot.member.entity.Member;
 import com.springboot.member.repository.MemberRepository;
 import com.springboot.member.service.MemberService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
-public class CollectionService {
+public class CollectionCameraService {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
-    private final CollectionRepository collectionRepository;
+    private final CollectionCameraRepository collectionCameraRepository;
     private final CollectionItemRepository collectionItemRepository;
+    private final CameraImageRepository cameraImageRepository;
     private final StorageService storageService;
 
-    public CollectionService(MemberService memberService, MemberRepository memberRepository, CollectionRepository collectionRepository, CollectionItemRepository collectionItemRepository, StorageService storageService) {
+    public CollectionCameraService(MemberService memberService, MemberRepository memberRepository, CollectionCameraRepository collectionCameraRepository, CollectionItemRepository collectionItemRepository, CameraImageRepository cameraImageRepository, StorageService storageService) {
         this.memberService = memberService;
         this.memberRepository = memberRepository;
-        this.collectionRepository = collectionRepository;
+        this.collectionCameraRepository = collectionCameraRepository;
         this.collectionItemRepository = collectionItemRepository;
+        this.cameraImageRepository = cameraImageRepository;
         this.storageService = storageService;
     }
 
 
     // 도감 카테고리 생성
-    public CollectionCamera createCollection(CollectionCamera collectionCamera, long memberId) {
+    @Transactional
+    public CollectionCamera createCollectionCamera(CollectionCamera collectionCamera, long cameraImageId, long memberId, Boolean isPrivate) {
+        // (1) 멤버 검증
         Member member = memberService.findMember(memberId);
 
-        // 도감 카테고리명 중복 검증
-        if (collectionRepository.existsByMemberAndCustomCategoryName(member, collectionCamera.getCustomCategoryName())) {
+        // (2) 도감 카테고리명 중복 검증
+        if (collectionCameraRepository.existsByMemberAndCustomCategoryName(member, collectionCamera.getCustomCategoryName())) {
             throw new BusinessLogicException(ExceptionCode.DUPLICATE_COLLECTION_CATEGORY);
         }
 
+        // (3) CameraImage 조회
+        CameraImage cameraImage = cameraImageRepository.findById(cameraImageId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CAMERA_IMAGE_NOT_FOUND));
+
+        // (4) 연관관계 설정
         collectionCamera.setMember(member);
-        return collectionRepository.save(collectionCamera);
+        collectionCamera.setCameraImage(cameraImage);  // 양방향 메서드로 연결
+
+        // 🔥 (5) 공개/비공개 설정
+        if (isPrivate != null) {
+            collectionCamera.setCollectionStatus(isPrivate ? CollectionCamera.CollectionStatus.PRIVATE : CollectionCamera.CollectionStatus.PUBLIC);
+        }
+
+        // (5) 저장
+        return collectionCameraRepository.save(collectionCamera);
     }
 
-    // 도감 카테고리 수정
-    public CollectionCamera updateCollection(CollectionCamera collectionCamera, long memberId) {
-        CollectionCamera existing = verifyOwnedCollection(collectionCamera.getCollectionId(), memberId);
+    public void updateCollectionInfo(long collectionCameraId, CollectionCameraDto.PatchInfo patchInfoDto, long memberId) {
+        CollectionCamera existing = collectionCameraRepository.findById(collectionCameraId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.COLLECTION_NOT_FOUND));
 
-        boolean isDuplicate = collectionRepository.existsByCustomCategoryNameAndMember_MemberId(
-                collectionCamera.getCustomCategoryName(), memberId);
-
-        if (isDuplicate && !existing.getCustomCategoryName().equals(collectionCamera.getCustomCategoryName())) {
-            throw new BusinessLogicException(ExceptionCode.DUPLICATE_COLLECTION_CATEGORY);
+        if (existing.getMember().getMemberId() != memberId) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_ACCESS_DENIED);
         }
 
-        existing.setCustomCategoryName(collectionCamera.getCustomCategoryName());
-        return collectionRepository.save(existing);
+        // 🔍 중복 카테고리 이름 검증
+        verifyDuplicateCategoryName(memberId, collectionCameraId, patchInfoDto.getCustomCategoryName());
+
+        // ✏️ 수정
+        existing.setCustomCategoryName(patchInfoDto.getCustomCategoryName());
+        if (patchInfoDto.getIsPrivate() != null) {
+            existing.setCollectionStatus(patchInfoDto.getIsPrivate() ? CollectionCamera.CollectionStatus.PRIVATE : CollectionCamera.CollectionStatus.PUBLIC);
+        }
+
+        collectionCameraRepository.save(existing);
+    }
+
+    public void updateCollectionCamera(long collectionCameraId, Long cameraImageId, long memberId) {
+        CollectionCamera existing = collectionCameraRepository.findById(collectionCameraId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.COLLECTION_NOT_FOUND));
+
+        if (existing.getMember().getMemberId() != memberId) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_ACCESS_DENIED);
+        }
+
+        CameraImage newCameraImage = cameraImageRepository.findById(cameraImageId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CAMERA_IMAGE_NOT_FOUND));
+        existing.setCameraImage(newCameraImage);
+
+        collectionCameraRepository.save(existing);
     }
 
     // 도감 카테고리 전체 조회
     public List<CollectionCamera> findCollections(long memberId) {
         Member member = verifyMemberExists(memberId);
-        return collectionRepository.findByMember(member);
+        return collectionCameraRepository.findByMember(member);
     }
 
     // 도감 카테고리 삭제
     public void deleteCollection(long collectionId, long memberId) {
         CollectionCamera collectionCamera = verifyOwnedCollection(collectionId, memberId); // 존재 + 소유자 검증
-        collectionRepository.delete(collectionCamera);
+        collectionCameraRepository.delete(collectionCamera);
     }
 
     // 도감 카테고리 내 메뉴 목록 조회
     public List<CollectionItem> findCollectionItems(long collectionId, long memberId) {
         CollectionCamera collectionCamera = verifyOwnedCollection(collectionId, memberId); // 소유자 확인까지 포함
-        return collectionItemRepository.findByCollection(collectionCamera);
+        return collectionItemRepository.findByCollectionCamera(collectionCamera);
     }
 
     // 도감 카테고리 메뉴 추가
-    public CollectionItem addCollectionItem(long collectionId, CollectionItem collectionItem, MultipartFile image, long memberId) {
+    public CollectionItem addCollectionItem(long collectionId, CollectionItem collectionItem, String imageUrl, long memberId) {
         CollectionCamera collectionCamera = verifyOwnedCollection(collectionId, memberId); // 도감 소유자 검증
 
         // 중복 메뉴 이름 검증
@@ -89,15 +130,14 @@ public class CollectionService {
             throw new BusinessLogicException(ExceptionCode.DUPLICATE_COLLECTION_MENU);
         }
 
-        if (image == null || image.isEmpty()) {
+        // 이미지 URL 검증
+        if (imageUrl == null || imageUrl.isEmpty()) {
             throw new BusinessLogicException(ExceptionCode.IMAGE_REQUIRED);
         }
 
-        String pathWithoutExt = "collections/" + collectionCamera.getCollectionId() + "/item_" + System.currentTimeMillis();
-        String imageUrl = storageService.store(image, pathWithoutExt);
-        collectionItem.setImage(imageUrl);
-
+        collectionItem.setImageUrl(imageUrl);
         collectionItem.setCollectionCamera(collectionCamera); // 소속 설정
+
         return collectionItemRepository.save(collectionItem);
     }
 
@@ -108,6 +148,10 @@ public class CollectionService {
         collectionItemRepository.delete(item);
     }
 
+    public List<CameraImage> findCameraImagesByColor(Long cameraColorId) {
+        return cameraImageRepository.findAllByCameraColor_CameraColorId(cameraColorId);
+    }
+
     // 회원 존재 확인
     public Member verifyMemberExists(long memberId) {
         return memberRepository.findById(memberId)
@@ -116,7 +160,7 @@ public class CollectionService {
 
     // 도감 존재 확인
     public CollectionCamera verifyCollectionExists(long collectionId) {
-        return collectionRepository.findById(collectionId)
+        return collectionCameraRepository.findById(collectionId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.COLLECTION_NOT_FOUND));
     }
 
@@ -144,6 +188,15 @@ public class CollectionService {
     public void verifyCollectionItemOwner(CollectionCamera collectionCamera, long memberId) {
         if (collectionCamera.getMember().getMemberId() != memberId) {
             throw new BusinessLogicException(ExceptionCode.UNAUTHORIZED_ACCESS);
+        }
+    }
+
+    // MemberId와 CustomCategoryName으로 중복 체크 (단, 본인 도감 제외)
+    public void verifyDuplicateCategoryName(long memberId, long collectionCameraId, String customCategoryName) {
+        boolean exists = collectionCameraRepository.existsByMember_MemberIdAndCustomCategoryNameAndCollectionCameraIdNot(
+                memberId, customCategoryName, collectionCameraId);
+        if (exists) {
+            throw new BusinessLogicException(ExceptionCode.COLLECTION_CATEGORY_NAME_EXISTS);
         }
     }
 }
