@@ -32,7 +32,18 @@ public enum ExceptionCode {
     RECIPE_STEP_EXISTS(409, "레시피 스텝이 이미 존재합니다."),
     DUPLICATE_COLLECTION_CATEGORY(409, "도감 카테고리가 이미 존재합니다"),
     IMAGE_REQUIRED(400, "아직 이미지를 업로드 하지 않았습니다"),
-    DUPLICATE_LOGIN_ID(409, "해당 아이디는 이미 존재합니다.");
+    DUPLICATE_LOGIN_ID(409, "해당 아이디는 이미 존재합니다."),
+    CAMERA_IMAGE_NOT_FOUND(404, "카메라 이미지를 찾을 수 없습니다."),
+    MEMBER_ACCESS_DENIED(403, "접근이 거부되었습니다."),
+    COLLECTION_CATEGORY_NAME_EXISTS(409, "도감 카테고리 이름이 중복됩니다."),
+    INGREDIENT_NOT_FOUND(404, "재료가 존재하지 않습니다."),
+    INGREDIENT_EXISTS(409, "재료가 이미 존재합니다."),
+    INGREDIENT_TYPE_NOT_FOUND(404, "재료 타입이 존재하지 않습니다."),
+    INGREDIENT_TYPE_NOT_MATCH(409, "재료 타입이 일치하지 않습니다."),
+    INSUFFICIENT_MAIN_INGREDIENTS(400, "주 재료는 2개 이상이어야 합니다."),
+    MENU_CATEGORY_EXISTS(409, "메뉴 카테고리가 이미 존재합니다."),
+    MENU_CATEGORY_NOT_FOUND(404, "메뉴 카테고리가 존재하지 않습니다."),
+    DUPLICATE_MENU(409, "메뉴가 이미 존재합니다.");
 
 
     @Getter
