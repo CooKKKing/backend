@@ -1,5 +1,6 @@
 package com.springboot.category.entity;
 
+import com.springboot.audit.BaseEntity;
 import com.springboot.challenge.entity.Challenge;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-public class ChallengeCategory {
+public class ChallengeCategory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long challengeCategoryId;
