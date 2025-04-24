@@ -1,4 +1,4 @@
-package com.springboot.collection.entity;
+package com.springboot.collectioncamera.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,16 +19,16 @@ public class CollectionItem {
     private String menuName; // 음식 이름
 
     @Column(nullable = false)
-    private String image; // 음식 사진 URL
+    private String imageUrl; // 음식 사진 URL
 
     @ManyToOne
-    @JoinColumn(name = "collection_id")
-    private Collection collection;
+    @JoinColumn(name = "collection_camera_id")
+    private CollectionCamera collectionCamera;
 
-    public void setCollection(Collection collection) {
-        this.collection = collection;
-        if (!collection.getCollectionItems().contains(this)) {
-            collection.setCollectionItem(this);
+    public void setCollectionCamera(CollectionCamera collectionCamera) {
+        this.collectionCamera = collectionCamera;
+        if (!collectionCamera.getCollectionItems().contains(this)) {
+            collectionCamera.setCollectionItem(this);
         }
     }
 }
