@@ -14,10 +14,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Collection extends BaseEntity {
+public class CollectionCamera extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long collectionId;
+    private long collectionCameraId;
 
     @Column(nullable = false)
     private String customCategoryName;
@@ -26,8 +26,12 @@ public class Collection extends BaseEntity {
     @Column(nullable = false)
     private CollectionStatus collectionStatus = CollectionStatus.PUBLIC;
 
-    @OneToMany(mappedBy = "collection", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "collectionCamera", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<CollectionItem> collectionItems = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "camera_image_id")
+    private CameraImage cameraImage;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -35,15 +39,15 @@ public class Collection extends BaseEntity {
 
     public void setMember(Member member) {
         this.member = member;
-        if (!member.getCollections().contains(this)) {
-            member.setCollection(this);
+        if (!member.getCollectionCameras().contains(this)) {
+            member.setCollectionCamera(this);
         }
     }
 
     public void setCollectionItem(CollectionItem collectionItem) {
         collectionItems.add(collectionItem);
-        if (collectionItem.getCollection() != this) {
-            collectionItem.setCollection(this);
+        if (collectionItem.getCollectionCamera() != this) {
+            collectionItem.setCollectionCamera(this);
         }
     }
 
