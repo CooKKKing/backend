@@ -1,11 +1,10 @@
 package com.springboot.recipeboard.dto;
 
+import com.springboot.ingredient.dto.IngredientDto;
 import com.springboot.recipeboard.entity.RecipeBoard;
 import com.springboot.recipestepdetail.dto.RecipeStepDetailDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -25,30 +24,34 @@ public class RecipeBoardDto {
         )
         private String title;
 
-        @Schema(description = "메뉴 이름", example = "공기밥")
-        @NotBlank(message = "메뉴 이름은 공백이 아니어야 합니다.")
-        @Size(min = 1, max = 20, message = "메뉴 이름은 1자 이상 20자 이내여야 합니다.")
-        @Pattern(
-                regexp = "^(?!\\s)(?!.*\\s{2,}).*$",
-                message = "메뉴이름은 공백으로 시작하거나 연속된 공백이 포함될 수 없습니다."
-        )
-        private String menuName;
-
         @Schema(description = "레시피 게시글 사진", example = "imageURL")
         @NotBlank(message = "대표 사진은 필수입니다.")
         private String image;
 
-        @Schema(description = "레시피 상태", example = "RECIPE_PUBLIC")
-        private RecipeBoard.RecipeStatus recipeStatus = RecipeBoard.RecipeStatus.RECIPE_PUBLIC;
+        @Schema(description = "레시피 공개 상태", example = "RECIPE_PUBLIC")
+        private RecipeBoard.RecipeStatus recipeStatus;
 
-        @Schema(description = "레시피 단계 본문 리스트")
-        @Size(min = 1, message = "레시피 본문은 최소 1단계 이상 작성해야 합니다.")
-        private List<RecipeStepDetailDto> recipeSteps;
+        @Schema(description = "레시피 단계 리스트")
+        private List<RecipeBoardStepDto.Post> recipeBoardSteps;
+
+        @Schema(description = "메뉴 이름 (기존 메뉴가 없을 경우 등록)", example = "김치찌개")
+        private String menuName;
+
+        @Schema(description = "메뉴 카테고리 ID", example = "3")
+        private long menuCategoryId;
+
+        @Schema(description = "메뉴 서브 카테고리", example = "찌개")
+        private String menuSubCategory;
+
+        @Schema(description = "레시피에 들어가는 재료 리스트")
+        private List<IngredientDto.IdRequest> ingredients;
     }
 
     @Getter
     @Setter
     public static class Patch {
+        private long recipeBoardId;
+
         @Schema(description = "레시피 게시글 제목", example = "존나 맛있는 공기밥 레시피")
         @Size(min = 1, max = 20, message = "제목은 1자 이상 20자 이내여야 합니다.")
         @Pattern(
@@ -63,39 +66,45 @@ public class RecipeBoardDto {
         @Schema(description = "레시피 상태", example = "RECIPE_PRIVATE")
         private RecipeBoard.RecipeStatus recipeStatus;
 
-        @Schema(description = "레시피 단계 본문 리스트")
-        private List<RecipeStepDetailDto> recipeSteps;
+        @Schema(description = "레시피 단계 리스트 (본문 포함)")
+        private List<RecipeBoardStepDto.Post> recipeBoardSteps;
+
+        @Schema(description = "레시피에 사용된 재료 리스트")
+        private List<IngredientDto.IdRequest> ingredients;
     }
 
     @Getter
-    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
     public static class Response {
-
-        @Schema(description = "레시피 게시글 ID", example = "1")
         private Long recipeBoardId;
+        private String title;
+        private String image;
+        private long menuId;
+        private RecipeBoard.RecipeStatus recipeStatus;
+        private RecipeBoard.RecipeBoardStatus recipeBoardStatus;
+        private String nickName; // member.getNickName()이랑 매핑 필요
+        private LocalDateTime createdAt;
+        private List<RecipeStep> recipeStep;
+        private List<IngredientDto.Response> mainIngredients;
+        private List<IngredientDto.Response> seasoningIngredients;
+    }
 
-        @Schema(description = "게시글 제목", example = "공기밥 짱맛 레시피")
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    public static class RecipeStep {
+        @Schema(description = "레시피 단계 ID", example = "1")
+        private long recipeStepId;
+
+        @Schema(description = "레시피 단계 순서", example = "1")
+        private int stepOrder;
+
+        @Schema(description = "레시피 단계 제목", example = "재료 준비")
         private String title;
 
-        @Schema(description = "메뉴 이름", example = "공기밥")
-        private String menuName;
-
-        @Schema(description = "대표 이미지", example = "https://image.url")
-        private String image;
-
-        @Schema(description = "게시글 공개 상태", example = "RECIPE_PUBLIC")
-        private RecipeBoard.RecipeStatus recipeStatus;
-
-        @Schema(description = "게시글 상태", example = "RECIPE_BOARD_POST")
-        private RecipeBoard.RecipeBoardStatus recipeBoardStatus;
-
-        @Schema(description = "작성자 닉네임", example = "요리왕김요리")
-        private String nickName;
-
-        @Schema(description = "작성 일시", example = "2024-04-08T12:34:56")
-        private LocalDateTime createdAt;
-
         @Schema(description = "레시피 단계 리스트")
-        private List<RecipeStepDetailDto.Response> recipeSteps;
+        private List<RecipeStepDetailDto.Response> recipeBoardSteps;
     }
 }

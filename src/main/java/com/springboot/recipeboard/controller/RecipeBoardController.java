@@ -1,5 +1,7 @@
 package com.springboot.recipeboard.controller;
 
+import com.springboot.dto.MultiResponseDto;
+import com.springboot.dto.SingleResponseDto;
 import com.springboot.member.entity.Member;
 import com.springboot.recipeboard.dto.RecipeBoardDto;
 import com.springboot.recipeboard.entity.RecipeBoard;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.net.URI;
+import java.util.List;
 
 @Tag(name = "레시피 게시판 컨트롤러", description = "레시피 게시글 관련 컨트롤러")
 @RestController
@@ -26,6 +31,7 @@ import javax.validation.constraints.Positive;
 public class RecipeBoardController {
     private final RecipeBoardService recipeBoardService;
     private final RecipeBoardMapper mapper;
+    private static final String RECIPE_BOARD_URI = "recipes/";
 
     public RecipeBoardController(RecipeBoardService recipeBoardService, RecipeBoardMapper mapper) {
         this.recipeBoardService = recipeBoardService;
@@ -41,11 +47,13 @@ public class RecipeBoardController {
     public ResponseEntity postRecipeBoard(@Valid @RequestBody RecipeBoardDto.Post recipeBoardPostDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // Post Controller 로직 작성 해야함
-        RecipeBoard recipeBoard = mapper.recipeBoardPostDtoToRecipeBoard(recipeBoardPostDto);
+        RecipeBoard recipeBoard = mapper.recipeBoardPostDtoToRecipeBoard(recipeBoardPostDto, member.getMemberId());
 
-        recipeBoardService.createRecipeBoard(recipeBoard, member.getMemberId());
+        RecipeBoard createdRecipeBoard = recipeBoardService.createRecipeBoard(recipeBoard);
+        // RecipeBoard 생성 후, 생성된 RecipeBoard ID를 응답으로 반환
+        URI location = URI.create(RECIPE_BOARD_URI + createdRecipeBoard.getRecipeBoardId());
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.created(location).build();
     }
 
     @Operation(summary = "레시피 게시글 수정", description = "레시피 게시글을 수정합니다.")
@@ -58,8 +66,17 @@ public class RecipeBoardController {
                                            @Valid @RequestBody RecipeBoardDto.Patch recipeBoardPatchDto,
                                            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // Patch Controller 로직 작성 해야함
+        member = new Member(); // 임시로 Member 객체 생성
+        member.setMemberId(1L); // 임시로 memberId 설정
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        long memberId = member.getMemberId();
+
+        recipeBoardPatchDto.setRecipeBoardId(recipeId);
+
+        RecipeBoard recipeBoard = mapper.recipeBoardPatchDtoToRecipeBoard(recipeBoardPatchDto);
+        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, memberId);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(mapper.recipeBoardToRecipeBoardResponseDto(updatedRecipeBoard)), HttpStatus.OK);
     }
 
     @Operation(summary = "레시피 게시글 단일 조회", description = "레시피 게시글을 단일 조회합니다.")
@@ -71,8 +88,10 @@ public class RecipeBoardController {
     public ResponseEntity getRecipeBoard(@PathVariable("recipe-id") @Positive long recipeId,
                                          @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // Get Controller 로직 작성 해야함
+        RecipeBoard recipeBoard = recipeBoardService.findRecipeBoard(recipeId);
+        RecipeBoardDto.Response response = mapper.recipeBoardToRecipeBoardResponseDto(recipeBoard);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 
     @Operation(summary = "레시피 게시글 삭제", description = "레시피 게시글을 삭제합니다.")
@@ -84,8 +103,9 @@ public class RecipeBoardController {
     public ResponseEntity deleteRecipeBoard(@PathVariable("recipe-id") @Positive long recipeId,
                                             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // Delete Controller 로직 작성 해야함
+        recipeBoardService.deleteRecipeBoard(recipeId);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "카테고리별 레시피 게시글 전체 조회", description = "카테고리별 레시피 게시글을 전체 조회합니다.")
@@ -93,14 +113,17 @@ public class RecipeBoardController {
             @ApiResponse(responseCode = "200", description = "카테고리별 레시피 게시글 전체 조회 완료"),
             @ApiResponse(responseCode = "400", description = "RecipeBoard Validation failed")
     })
-    @GetMapping("/{category-id}")
+    @GetMapping("/categories/{category-id}")
     public ResponseEntity categoryGetRecipeBoards(@PathVariable("category-id") @Positive long categoryId,
-                                                 @Positive @RequestParam int page,
-                                                 @Positive @RequestParam int size,
-                                                 @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+                                                  @Positive @RequestParam int page,
+                                                  @Positive @RequestParam int size,
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // 카테고리별 레시피 게시글 전체 조회 Controller 로직 작성 해야함
+        Page<RecipeBoard> pageBoards = recipeBoardService.findCategoryRecipeBoards(page - 1, size, categoryId);
+        List<RecipeBoard> recipeBoards = pageBoards.getContent();
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards),
+                pageBoards), HttpStatus.OK);
     }
 
     @Operation(summary = "메뉴별 레시피 게시글 전체 조회", description = "메뉴별 레시피 게시글을 전체 조회합니다.")
@@ -108,14 +131,18 @@ public class RecipeBoardController {
             @ApiResponse(responseCode = "200", description = "메뉴별 레시피 게시글 전체 조회 완료"),
             @ApiResponse(responseCode = "400", description = "RecipeBoard Validation failed")
     })
-    @GetMapping("/{menu-id}")
+    @GetMapping("/menus/{menu-id}")
     public ResponseEntity menuGetRecipeBoards(@PathVariable("menu-id") @Positive long menuId,
-                                                  @Positive @RequestParam int page,
-                                                  @Positive @RequestParam int size,
-                                                  @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+                                              @Positive @RequestParam int page,
+                                              @Positive @RequestParam int size,
+                                              @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // 메뉴별 레시피 게시글 전체 조회 Controller 로직 작성 해야함
 
-        return new ResponseEntity(HttpStatus.OK);
+        Page<RecipeBoard> pageBoards = recipeBoardService.findMenuRecipeBoards(page - 1, size, menuId);
+        List<RecipeBoard> recipeBoards = pageBoards.getContent();
+
+        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards),
+                pageBoards), HttpStatus.OK);
     }
 
     @Operation(summary = "레시피 게시글 북마크 추가/해제", description = "레시피 게시글 북마크를 추가/해제 합니다.")

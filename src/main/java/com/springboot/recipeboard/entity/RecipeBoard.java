@@ -25,23 +25,11 @@ public class RecipeBoard extends BaseEntity {
     private String title; // 레시피 게시글 제목
 
     @Column(nullable = false)
-    private String menuName; // 음식 이름
-
-    @Column(nullable = false)
-    private String content; // 설명
-
-    @Column(nullable = false)
-    private int likeCount = 0;
-
-    @Column(nullable = false)
     private String image;
-
-    @Column(nullable = false)
-    private String recipeTime;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RecipeStatus recipeStatus = RecipeStatus.RECIPE_PUBLIC;
+    private RecipeStatus recipeStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -58,12 +46,10 @@ public class RecipeBoard extends BaseEntity {
     @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Bookmark> bookmarks = new ArrayList<>();
 
-    //    @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-//    private List<RecipeStepDetail> recipeStepDetails = new ArrayList<>();
     @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<RecipeBoardStep> recipeBoardSteps = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recipeBoard", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "recipeBoard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeBoardIngredient> recipeBoardIngredients = new ArrayList<>();
 
     public void setRecipeBoardStep(RecipeBoardStep recipeBoardStep) {
@@ -93,13 +79,6 @@ public class RecipeBoard extends BaseEntity {
             menu.setRecipeBoard(this);
         }
     }
-
-//    public void setRecipeStep(RecipeStepDetail recipeStepDetail) {
-//        recipeStepDetails.add(recipeStepDetail);
-//        if (recipeStepDetail.getRecipeBoard() != this) {
-//            recipeStepDetail.setRecipeBoard(this);
-//        }
-//    }
 
     public void setRecipeBoardIngredient(RecipeBoardIngredient recipeBoardIngredient) {
         recipeBoardIngredients.add(recipeBoardIngredient);
