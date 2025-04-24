@@ -2,14 +2,13 @@ package com.springboot.member.controller;
 
 import com.springboot.dto.MultiResponseDto;
 import com.springboot.dto.SingleResponseDto;
-import com.springboot.member.dto.MemberDto;
+import com.springboot.member.dto.MemberChallengeDto;
 import com.springboot.member.dto.MyPageResponseDto;
 import com.springboot.member.dto.MyRecipeBoardResponse;
 import com.springboot.member.entity.Member;
-import com.springboot.member.entity.MemberTheme;
+import com.springboot.member.entity.MemberChallenge;
 import com.springboot.member.entity.MemberTitle;
 import com.springboot.member.mapper.MemberMapper;
-import com.springboot.member.service.MemberService;
 import com.springboot.member.service.MyPageService;
 import com.springboot.recipeboard.dto.RecipeBoardDto;
 import com.springboot.recipeboard.entity.RecipeBoard;
@@ -50,8 +49,7 @@ public class MyPageController {
             @ApiResponse(responseCode = "200", description = "내 정보 조회 완료")
     })
     @GetMapping
-    public ResponseEntity getMyInfo(
-            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+    public ResponseEntity getMyInfo(@Parameter(hidden = true) @AuthenticationPrincipal Member member) {
 
         Member findMember = myPageService.findMyInfo(member.getMemberId());
 
@@ -113,26 +111,8 @@ public class MyPageController {
             @Positive @RequestParam int page,
             @Positive @RequestParam int size,
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        Page<RecipeBoard> recipeBoards = myPageService.findMyRecipeBoards(member.getMemberId(), page, size);
 
-        List<MyRecipeBoardResponse> content = recipeBoards.getContent().stream()
-                .map(recipeBoardMapper::recipeBoardToMyRecipeBoardResponse)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new MultiResponseDto<>(content, recipeBoards));
-    }
-
-    @Operation(summary = "내 테마 리스트 조회", description = "내가 보유한 테마 전체 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "내 테마 조회 완료")
-    })
-    @GetMapping("/themes")
-    public ResponseEntity getMyThemes(
-            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-
-        List<MemberTheme> themes = myPageService.findMyThemes(member.getMemberId());
-
-        return new ResponseEntity<>(new SingleResponseDto<>(themes), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @Operation(summary = "내 레시피 게시글 검색", description = "내가 작성한 레시피 게시글에서 검색하는 기능")
@@ -144,11 +124,25 @@ public class MyPageController {
                                                  @RequestParam(value = "keyword", required = false) String keyword,
                                                  @RequestParam @Positive int page,
                                                  @RequestParam @Positive int size) {
-        Page<RecipeBoard> recipeBoards = myPageService.findSearchMyRecipeBoards(member.getMemberId(), keyword, page, size);
-        List<MyRecipeBoardResponse> content = recipeBoards.getContent().stream()
-                .map(recipeBoardMapper::recipeBoardToMyRecipeBoardResponse)
-                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new MultiResponseDto<>(content, recipeBoards));
+        return new ResponseEntity(HttpStatus.OK);
     }
+
+//    @Operation(summary = "내 도전과제 전체 조회", description = "모든 도전과제의 진행도 및 달성 여부를 조회합니다.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "내 도전과제 전체 조회 완료")
+//    })
+//    @GetMapping("/challenges")
+//    public ResponseEntity getMyChallenges(@Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+//        List<MemberChallenge> memberChallenges = myPageService.getMyChallenges(member.getMemberId());
+//
+//        List<MemberChallengeDto> response = memberChallenges.stream()
+//                .map(mc -> {
+//                    int currentCount = myPageService.calculateCurrentProgress(member, mc.getChallenge().getChallengeCategory().getChallengeCategoryName());
+//                    return memberMapper.memberChallengeToMemberChallengeResponse(mc, currentCount);
+//                })
+//                .collect(Collectors.toList());
+//
+//        return ResponseEntity.ok(new SingleResponseDto<>(response));
+//    }
 }
