@@ -1,11 +1,14 @@
 package com.springboot.collectioncamera.controller;
 
-import com.springboot.collectioncamera.dto.CollectionDto;
+import com.springboot.collectioncamera.dto.CollectionCameraDto;
 import com.springboot.collectioncamera.dto.CollectionItemDto;
+import com.springboot.collectioncamera.entity.CameraImage;
 import com.springboot.collectioncamera.entity.CollectionCamera;
 import com.springboot.collectioncamera.entity.CollectionItem;
-import com.springboot.collectioncamera.mapper.CollectionMapper;
-import com.springboot.collectioncamera.service.CollectionService;
+import com.springboot.collectioncamera.mapper.CollectionCameraMapper;
+import com.springboot.collectioncamera.service.CollectionCameraService;
+import com.springboot.dto.MultiResponseDto;
+import com.springboot.dto.SingleResponseDto;
 import com.springboot.member.entity.Member;
 import com.springboot.utils.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,13 +34,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/collections")
 @Validated
-public class CollectionController {
+public class CollectionCameraController {
     private static final String COLLECTION_DEFAULT_URL = "/collections";
-    private final CollectionService collectionService;
-    private final CollectionMapper mapper;
+    private final CollectionCameraService collectionCameraService;
+    private final CollectionCameraMapper mapper;
 
-    public CollectionController(CollectionService collectionService, CollectionMapper mapper) {
-        this.collectionService = collectionService;
+    public CollectionCameraController(CollectionCameraService collectionCameraService, CollectionCameraMapper mapper) {
+        this.collectionCameraService = collectionCameraService;
         this.mapper = mapper;
     }
 
@@ -47,31 +50,46 @@ public class CollectionController {
             @ApiResponse(responseCode = "400", description = "Collection Validation failed")
     })
     @PostMapping
-    public ResponseEntity postCollection(@Valid @RequestBody CollectionDto.Post collectionPostDto,
-                                         @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        CollectionCamera collectionCamera = mapper.collectionPostDtoToCollection(collectionPostDto);
+    public ResponseEntity postCollectionCamera(@Valid @RequestBody CollectionCameraDto.Post collectionPostDto,
+                                               @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        CollectionCamera collectionCamera = mapper.collectionCameraPostDtoToCollectionCamera(collectionPostDto);
 
-        CollectionCamera customCollectionCamera = collectionService.createCollection(collectionCamera, member.getMemberId());
+        // 서비스에서 CameraImageId를 기반으로 CameraImage 세팅
+        CollectionCamera savedCollection = collectionCameraService.createCollectionCamera(
+                collectionCamera,
+                collectionPostDto.getCameraImageId(),
+                member.getMemberId(),
+                collectionPostDto.getIsPrivate()
+        );
+        CollectionCameraDto.Response responseDto = mapper.collectionCameraToCollectionCameraResponseDto(savedCollection);
 
-        URI location = UriCreator.createUri(COLLECTION_DEFAULT_URL, customCollectionCamera.getCollectionId());
-
-        return ResponseEntity.created(location).build();
+        URI location = UriCreator.createUri("/collections", savedCollection.getCollectionCameraId());
+        return ResponseEntity.created(location).body(new SingleResponseDto<>(responseDto));
     }
 
-    @Operation(summary = "도감 카테고리 수정", description = "도감 카테고리를 수정합니다.")
+    @Operation(summary = "도감 카테고리 이름, 공개여부 수정", description = "도감 카테고리 이름과 공개여부를 수정합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "도감 카테고리 수정 완료"),
+            @ApiResponse(responseCode = "200", description = "도감 카테고리 이름 수정 완료"),
             @ApiResponse(responseCode = "400", description = "Collection Validation failed")
     })
-    @PatchMapping("/{collection-id}")
-    public ResponseEntity patchCollection(@PathVariable("collection-id") @Positive long collectionId,
-                                          @Valid @RequestBody CollectionDto.Patch collectionPatchDto,
-                                          @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+    @PatchMapping("/{collection-id}/info")
+    public ResponseEntity patchCollectionInfo(@PathVariable("collection-id") @Positive long collectionId,
+                                              @Valid @RequestBody CollectionCameraDto.PatchInfo patchInfoDto,
+                                              @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        collectionCameraService.updateCollectionInfo(collectionId, patchInfoDto, member.getMemberId());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-        CollectionCamera collectionCamera = mapper.collectionPatchDtoToCollection(collectionId, collectionPatchDto);
-
-        collectionService.updateCollection(collectionCamera, member.getMemberId());
-
+    @Operation(summary = "도감 카메라 이미지 수정", description = "도감 카메라 이미지를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "도감 카메라 이미지 수정 완료"),
+            @ApiResponse(responseCode = "400", description = "Collection Validation failed")
+    })
+    @PatchMapping("/{collection-id}/camera")
+    public ResponseEntity patchCollectionCamera(@PathVariable("collection-id") @Positive long collectionId,
+                                                @Valid @RequestBody CollectionCameraDto.PatchCamera patchCameraDto,
+                                                @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        collectionCameraService.updateCollectionCamera(collectionId, patchCameraDto.getCameraImageId(), member.getMemberId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -84,9 +102,9 @@ public class CollectionController {
     public ResponseEntity getCollection(@Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // 도감 카테고리 전체 조회 로직 작성 해야함
 
-        List<CollectionCamera> collectionCameras = collectionService.findCollections(member.getMemberId());
-        List<CollectionDto.Response> response = collectionCameras.stream()
-                .map(mapper::collectionToCollectionResponseDto)
+        List<CollectionCamera> collectionCameras = collectionCameraService.findCollections(member.getMemberId());
+        List<CollectionCameraDto.Response> response = collectionCameras.stream()
+                .map(mapper::collectionCameraToCollectionCameraResponseDto)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -100,7 +118,7 @@ public class CollectionController {
     @DeleteMapping("/{collection-id}")
     public ResponseEntity deleteCollection(@PathVariable("collection-id") @Positive long collectionId,
                                            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        collectionService.deleteCollection(collectionId, member.getMemberId());
+        collectionCameraService.deleteCollection(collectionId, member.getMemberId());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -113,7 +131,7 @@ public class CollectionController {
     @GetMapping("/{collection-id}/collectionitem")
     public ResponseEntity getCollectionItem(@PathVariable("collection-id") @Positive long collectionId,
                                             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        List<CollectionItem> collectionItems = collectionService.findCollectionItems(collectionId, member.getMemberId());
+        List<CollectionItem> collectionItems = collectionCameraService.findCollectionItems(collectionId, member.getMemberId());
         List<CollectionItemDto.Response> response = collectionItems.stream()
                 .map(mapper::collectionItemToCollectionItemResponseDto)
                 .collect(Collectors.toList());
@@ -123,22 +141,21 @@ public class CollectionController {
 
     @Operation(summary = "도감 카테고리 메뉴 추가", description = "도감 카테고리 메뉴를 추가합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "도감 카테고리 메뉴 추가 완료"),
+            @ApiResponse(responseCode = "201", description = "도감 카테고리 메뉴 추가 완료"),
             @ApiResponse(responseCode = "400", description = "Collection Validation failed")
     })
-    @PostMapping(value = "/{collection-id}/collectionitem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("/{collection-id}/collectionitem")
     public ResponseEntity postCollectionItem(
             @PathVariable("collection-id") @Positive long collectionId,
-            @RequestPart @Valid CollectionItemDto.Post collectionItemPostDto,
-            @RequestPart(required = false) MultipartFile collectionItemImage,
+            @RequestBody @Valid CollectionItemDto.Post collectionItemPostDto,
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
 
         CollectionItem collectionItem = mapper.collectionItemPostDtoToCollectionItem(collectionItemPostDto);
 
-        CollectionItem postItem = collectionService.addCollectionItem(
+        CollectionItem postItem = collectionCameraService.addCollectionItem(
                 collectionId,
                 collectionItem,
-                collectionItemImage,
+                collectionItemPostDto.getImageUrl(),  // 이미지 URL 넘김
                 member.getMemberId()
         );
 
@@ -156,8 +173,23 @@ public class CollectionController {
     @DeleteMapping("/collectionitems/{collectionitem-id}")
     public ResponseEntity deleteCollectionItem(@PathVariable("collectionitem-id") @Positive long collectionItemId,
                                                @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        collectionService.deleteCollectionItem(collectionItemId, member.getMemberId());
+        collectionCameraService.deleteCollectionItem(collectionItemId, member.getMemberId());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Operation(summary = "도감 카메라 색상 별 조회", description = "도감 카메라를 색상 별로 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "도감 카메라 색상 별 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "Collection Validation failed")
+    })
+    @GetMapping("/camera-image")
+    public ResponseEntity getCameraImagesByColor(@RequestParam("cameraColorId") @Positive Long cameraColorId) {
+        List<CameraImage> cameraImages = collectionCameraService.findCameraImagesByColor(cameraColorId);
+
+        // 🔥 Mapper로 DTO 변환
+        List<CollectionCameraDto.ResponseImage> responseDtos = mapper.cameraImagesToCameraImageResponseDtos(cameraImages);
+
+        return ResponseEntity.ok(responseDtos);
     }
 }
