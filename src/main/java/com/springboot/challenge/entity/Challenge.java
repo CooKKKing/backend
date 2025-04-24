@@ -19,20 +19,14 @@ public class Challenge extends BaseEntity {
     private long challengeId;
 
     @Column(nullable = false)
-    private String challengeName;
-
-    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
     private int goalCount;
 
     @Column(nullable = false)
-    private int difficultyLevel;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ChallengeStatus challengeStatus = ChallengeStatus.INCOMPLETE;
+    private int challengeLevel; // 각 도전과제 마다 일정 횟수 달성 시 레벨을 부여함
+    // 예를 들면 한식 5가지 요리로 한식 초보를 따면 한식 도전과제 레벨이 2로 올라감 (처음에는 1)
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "title_id")
@@ -49,15 +43,4 @@ public class Challenge extends BaseEntity {
         }
     }
 
-    public enum ChallengeStatus {
-        COMPLETE("도전과제 달성"),
-        INCOMPLETE("도전과제 미달성");
-
-        @Getter
-        private String status;
-
-        ChallengeStatus(String status) {
-            this.status = status;
-        }
-    }
 }
