@@ -1,8 +1,10 @@
 package com.springboot.member.mapper;
 
+import com.springboot.member.dto.MemberChallengeDto;
 import com.springboot.member.dto.MemberDto;
 import com.springboot.member.dto.MyPageResponseDto;
 import com.springboot.member.entity.Member;
+import com.springboot.member.entity.MemberChallenge;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -17,4 +19,6 @@ public interface MemberMapper {
     MemberDto.Response memberToMemberResponse(Member member);
     List<MemberDto.Response> membersToMemberResponses(List<Member> members);
     MyPageResponseDto memberToMyPageResponseDto(Member member);
+    MemberChallengeDto memberChallengeToMemberChallengeResponse(MemberChallenge memberChallenge, int currentCount);
+    List<MemberChallengeDto> memberChallengesToMemberChallengeResponses(List<MemberChallenge> memberChallenges);
 }
