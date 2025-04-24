@@ -1,5 +1,6 @@
 package com.springboot.recipestepdetail.entity;
 
+import com.springboot.audit.BaseEntity;
 import com.springboot.recipeboard.entity.RecipeBoard;
 import com.springboot.recipeboard.entity.RecipeBoardStep;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity
-public class RecipeStepDetail {
+public class RecipeStepDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long recipeStepDetailId;
@@ -36,15 +37,4 @@ public class RecipeStepDetail {
             recipeBoardStep.getRecipeStepDetails().add(this);
         }
     }
-
-//    @ManyToOne
-//    @JoinColumn(name = "recipeBoard_id")
-//    private RecipeBoard recipeBoard;
-
-//    public void setRecipeBoard(RecipeBoard recipeBoard) {
-//        this.recipeBoard = recipeBoard;
-//        if (recipeBoard.getRecipeStepDetails().contains(this)) {
-//            recipeBoard.setRecipeStep(this);
-//        }
-//    }
 }
