@@ -25,6 +25,13 @@ public class MemberTitle extends BaseEntity {
     @JoinColumn(name = "title_id")
     private Title title;
 
+    public void setTitle(Title title) {
+        this.title = title;
+        if (!title.getMemberTitles().contains(this)) {
+            title.setMemberTitle(this);
+        }
+    }
+
     public void setMember(Member member) {
         this.member = member;
         if (!member.getMemberTitles().contains(this)) {
