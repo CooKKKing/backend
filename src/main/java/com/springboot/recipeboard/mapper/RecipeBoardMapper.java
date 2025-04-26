@@ -145,7 +145,7 @@ public interface RecipeBoardMapper {
     }
 
     // 아래는 수정해야 하는 메서드
-    default RecipeBoardDto.Response recipeBoardToRecipeBoardResponseDto(RecipeBoard recipeBoard) {
+    default RecipeBoardDto.Response recipeBoardToRecipeBoardResponseDto(RecipeBoard recipeBoard, long memberId) {
         if (recipeBoard == null) return null;
 
         RecipeBoardDto.Response response = new RecipeBoardDto.Response();
@@ -198,6 +198,15 @@ public interface RecipeBoardMapper {
                 }).collect(Collectors.toList());
 
         response.setSeasoningIngredients(seasoningIngredients);
+
+        // 좋아요 수
+        response.setLikeCount(recipeBoard.getLike().size());
+        // 좋아요 여부
+        response.setLiked(recipeBoard.getLike().stream()
+                .anyMatch(like -> like.getMember().getMemberId() == memberId));
+        // 북마크 여부
+        response.setBookmarked(recipeBoard.getBookmarks().stream()
+                .anyMatch(bookmark -> bookmark.getMember().getMemberId() == memberId));
 
         return response;
     }

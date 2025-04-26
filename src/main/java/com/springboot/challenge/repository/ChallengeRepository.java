@@ -1,7 +1,7 @@
 package com.springboot.challenge.repository;
 
-import com.springboot.challenge.entity.Challenge;
+import com.springboot.challenge.entity.ChallengeCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
+public interface ChallengeRepository extends JpaRepository<ChallengeCategory, Long> {
 }

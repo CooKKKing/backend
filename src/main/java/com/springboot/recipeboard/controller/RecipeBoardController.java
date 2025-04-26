@@ -65,12 +65,18 @@ public class RecipeBoardController {
     public ResponseEntity patchRecipeBoard(@PathVariable("recipe-id") @Positive long recipeId,
                                            @Valid @RequestBody RecipeBoardDto.Patch recipeBoardPatchDto,
                                            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        // Patch Controller 로직 작성 해야함
+        member = new Member(); // 임시로 Member 객체 생성
+        member.setMemberId(1L); // 임시로 memberId 설정
+
+        long memberId = member.getMemberId();
+
         recipeBoardPatchDto.setRecipeBoardId(recipeId);
 
         RecipeBoard recipeBoard = mapper.recipeBoardPatchDtoToRecipeBoard(recipeBoardPatchDto);
-        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, member.getMemberId());
+        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, memberId);
 
-        return new ResponseEntity<>(new SingleResponseDto<>(mapper.recipeBoardToRecipeBoardResponseDto(updatedRecipeBoard)), HttpStatus.OK);
+        return new ResponseEntity<>(new SingleResponseDto<>(mapper.recipeBoardToRecipeBoardResponseDto(updatedRecipeBoard,memberId)), HttpStatus.OK);
     }
 
     @Operation(summary = "레시피 게시글 단일 조회", description = "레시피 게시글을 단일 조회합니다.")
@@ -83,7 +89,7 @@ public class RecipeBoardController {
                                          @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // Get Controller 로직 작성 해야함
         RecipeBoard recipeBoard = recipeBoardService.findRecipeBoard(recipeId);
-        RecipeBoardDto.Response response = mapper.recipeBoardToRecipeBoardResponseDto(recipeBoard);
+        RecipeBoardDto.Response response = mapper.recipeBoardToRecipeBoardResponseDto(recipeBoard, member.getMemberId());
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
@@ -149,6 +155,20 @@ public class RecipeBoardController {
                                               @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // Bookmark Controller 로직 작성 해야함
         recipeBoardService.toggleBookmark(recipeId, member.getMemberId());
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Operation(summary = "레시피 게시글 좋아요 추가/해제", description = "레시피 게시글 좋아요를 추가/해제 합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "좋아요 추가/해제 완료"),
+            @ApiResponse(responseCode = "400", description = "RecipeBoard Not Found")
+    })
+    @PostMapping("/{recipe-id}/like")
+    public ResponseEntity likeRecipeBoard(@PathVariable("recipe-id") @Positive long recipeId,
+                                          @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        // Like Controller 로직 작성 해야함
+        recipeBoardService.toggleLike(recipeId, member.getMemberId());
 
         return new ResponseEntity(HttpStatus.OK);
     }

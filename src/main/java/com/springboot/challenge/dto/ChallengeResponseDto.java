@@ -1,25 +1,19 @@
 package com.springboot.challenge.dto;
 
-import com.springboot.challenge.entity.Challenge;
-import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@Builder
+@NoArgsConstructor
+@Setter
 public class ChallengeResponseDto {
     private Long challengeId;
-
     private String name;
-
+    private String category;
+    private String imagePath;
+    private int currentLevel;
+    private int currentCount;
+    private int goalCount;
     private String description;
-
-    private int progress; // 0~100 (%)
-
-    private String rewardTitle; // 칭호 이름
-
-    private int difficultyLevel; // 쉬움 : 1, 보통 : 2, 어려움 : 3
-
-    private LocalDateTime completedAt; // null이면 미완료
 }

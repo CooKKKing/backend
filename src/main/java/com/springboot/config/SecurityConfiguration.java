@@ -87,31 +87,43 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, "/collections").hasRole("USER")
                         .antMatchers(HttpMethod.GET, "/collections/**").hasRole("USER")
                         .antMatchers(HttpMethod.DELETE, "/collections/**").hasRole("USER")
-                        //Comment
-                        .antMatchers(HttpMethod.POST, "/comments").hasRole("USER")
-                        .antMatchers(HttpMethod.GET, "/comments").hasRole("USER")
-                        .antMatchers(HttpMethod.GET,"/comments/**").hasAnyRole("USER", "ADMIN")
-                        .antMatchers(HttpMethod.PATCH, "/comments/**").hasRole("USER")
-                        .antMatchers(HttpMethod.DELETE, "/comments/**").hasAnyRole("USER", "ADMIN")
-                        //My
-                        .antMatchers("/chatrooms").hasRole("USER")
-                        .antMatchers("/chatrooms/**").hasRole("USER")
-                        //categoriy
-                        .antMatchers("/catogories").hasRole("USER")
-                        //chatroom
-                        .antMatchers("/mypage").hasRole("USER")
-                        .antMatchers("/mypage/**").hasRole("USER")
-                        //Schedules
-                        .antMatchers(HttpMethod.POST, "/schedules").hasRole("USER")
-                        .antMatchers(HttpMethod.POST, "/schedules/**").hasRole("USER")
-                        .antMatchers(HttpMethod.POST, "/schedules/**").hasRole("USER")
-                        .antMatchers(HttpMethod.GET, "/schedules").hasRole("USER")
-                        .antMatchers(HttpMethod.GET, "/schedules/**").hasRole("USER")
-                        .antMatchers(HttpMethod.DELETE, "/schedules/**").hasRole("USER")
-                        //모임일정 참여내역부분
-                        .antMatchers(HttpMethod.POST, "/schedules/**/participation").hasRole("USER")
-                        .antMatchers(HttpMethod.GET, "/schedules/**/participation").hasRole("USER")
-                        .antMatchers(HttpMethod.DELETE, "/schedules/**/participation").hasRole("USER")
+                        // Image Upload
+                        .antMatchers(HttpMethod.POST, "/images").hasRole("USER")
+                        // Email
+                        .antMatchers(HttpMethod.POST, "/auth/email/**").permitAll()
+                        // Ingredient
+                        .antMatchers(HttpMethod.POST, "/ingredients").hasRole("ADMIN")
+                        .antMatchers(HttpMethod.PATCH, "/ingredients/**").hasRole("ADMIN")    // 재료 수정
+                        .antMatchers(HttpMethod.DELETE, "/ingredients/**").hasRole("ADMIN")   // 재료 삭제
+                        .antMatchers(HttpMethod.GET, "/ingredients/**").permitAll()           // 재료 단일 조회 (모두 허용)
+                        .antMatchers(HttpMethod.GET, "/ingredients").permitAll()              // 재료 전체 조회 (모두 허용)
+                        // Menu
+                        .antMatchers(HttpMethod.POST, "/menus/recommendations/**").hasRole("USER")
+                        .antMatchers(HttpMethod.POST, "/menus").hasAnyRole("USER", "ADMIN")
+                        .antMatchers(HttpMethod.PATCH, "/menus").hasAnyRole("USER", "ADMIN")
+                        .antMatchers(HttpMethod.GET, "/menus/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/menus").permitAll()
+                        // MenuCategories
+                        .antMatchers(HttpMethod.POST, "/categories/menus").hasRole("ADMIN")
+                        .antMatchers(HttpMethod.PATCH, "/categories/menus/**").hasRole("ADMIN")
+                        .antMatchers(HttpMethod.DELETE, "/categories/menus").hasRole("ADMIN")
+                        .antMatchers(HttpMethod.GET, "/categories/menus/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/categories/menus").permitAll()
+                        // RecipeBoard
+                        .antMatchers(HttpMethod.POST, "/recipes").hasRole("USER")
+                        .antMatchers(HttpMethod.PATCH, "/recipes/**").hasRole("USER")
+                        .antMatchers(HttpMethod.DELETE, "/recipes/**").hasRole("USER")
+                        .antMatchers(HttpMethod.POST, "/recipes/**/bookmark").hasRole("USER")
+                        .antMatchers(HttpMethod.GET, "/recipes/**").permitAll()
+                        // RecipeStep
+                        .antMatchers(HttpMethod.POST, "/recipe-steps").hasAnyRole("USER", "ADMIN")
+                        .antMatchers(HttpMethod.PATCH, "/recipe-steps/**").hasAnyRole("USER", "ADMIN")
+                        .antMatchers(HttpMethod.DELETE, "/recipe-steps/**").hasAnyRole("USER", "ADMIN")
+                        .antMatchers(HttpMethod.GET, "/recipe-steps/**").permitAll()
+                        // Challenge
+                        .antMatchers(HttpMethod.GET, "/challenges/**").hasRole("USER")
+                        // Ranking
+                        .antMatchers(HttpMethod.GET, "/rankings/**").hasRole("USER")
                         .anyRequest().permitAll()
                 );
         return http.build();

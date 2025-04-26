@@ -1,7 +1,7 @@
 package com.springboot.member.entity;
 
 import com.springboot.audit.BaseEntity;
-import com.springboot.challenge.entity.Challenge;
+import com.springboot.challenge.entity.ChallengeCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,12 +22,14 @@ public class MemberChallenge extends BaseEntity {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "challenge_id")
-    private Challenge challenge;
+    @JoinColumn(name = "challenge_category_id")
+    private ChallengeCategory challengeCategory;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ChallengeStatus challengeStatus = ChallengeStatus.INCOMPLETE;
+    @JoinColumn(nullable = false)
+    private int currentLevel = 1; // 현재 레벨
+
+    @JoinColumn(nullable = false)
+    private int currentCount = 0; // 현재 카운트
 
     public void setMember(Member member) {
         this.member = member;
@@ -35,16 +37,10 @@ public class MemberChallenge extends BaseEntity {
             member.setMemberChallenge(this);
         }
     }
-
-    public enum ChallengeStatus {
-        COMPLETE("도전과제 달성"),
-        INCOMPLETE("도전과제 미달성");
-
-        @Getter
-        private String status;
-
-        ChallengeStatus(String status) {
-            this.status = status;
+    public void setChallengeCategory(ChallengeCategory challengeCategory) {
+        this.challengeCategory = challengeCategory;
+        if (!challengeCategory.getMemberChallenges().contains(this)) {
+            challengeCategory.setMemberChallenges(this);
         }
     }
 }

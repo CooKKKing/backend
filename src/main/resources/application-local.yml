@@ -35,8 +35,8 @@ springdoc:
     try-it-out-enabled: true
 jwt:
   key: your-secret-keyasdasdadqwdqdqdasdasdasdadwawd
-  access-token-expiration-minutes: 30
-  refresh-token-expiration-minutes: 60
+  access-token-expiration-minutes: 1000
+  refresh-token-expiration-minutes: 2400
 mail:
   smtp:
     host: smtp.gmail.com
@@ -76,3 +76,7 @@ server:
   servlet:
     encoding:
       force-response: true
+payment:
+  secret-key: test_sk_yZqmkKeP8gaKW7Wpagd4VbQRxB9l
+  base-url: https://api.tosspayments.com/v1/payments
+  confirm-endpoint: /confirm

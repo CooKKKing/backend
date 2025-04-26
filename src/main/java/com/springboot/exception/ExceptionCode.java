@@ -43,7 +43,9 @@ public enum ExceptionCode {
     INSUFFICIENT_MAIN_INGREDIENTS(400, "주 재료는 2개 이상이어야 합니다."),
     MENU_CATEGORY_EXISTS(409, "메뉴 카테고리가 이미 존재합니다."),
     MENU_CATEGORY_NOT_FOUND(404, "메뉴 카테고리가 존재하지 않습니다."),
-    DUPLICATE_MENU(409, "메뉴가 이미 존재합니다.");
+    DUPLICATE_MENU(409, "메뉴가 이미 존재합니다."),
+    PROFILE_IMAGE_NOT_FOUND(404, "프로필 이미지가 존재하지 않습니다."),
+    TITLE_NOT_FOUND(404, "타이틀이 존재하지 않습니다.");
 
 
     @Getter

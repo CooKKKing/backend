@@ -44,6 +44,9 @@ public class RecipeBoard extends BaseEntity {
     private Menu menu;
 
     @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Like> like;
+
+    @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "recipeBoard", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
@@ -51,6 +54,13 @@ public class RecipeBoard extends BaseEntity {
 
     @OneToMany(mappedBy = "recipeBoard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeBoardIngredient> recipeBoardIngredients = new ArrayList<>();
+
+    public void setLike(Like like) {
+        this.like.add(like);
+        if (like.getRecipeBoard() != this) {
+            like.setRecipeBoard(this);
+        }
+    }
 
     public void setRecipeBoardStep(RecipeBoardStep recipeBoardStep) {
         recipeBoardSteps.add(recipeBoardStep);
