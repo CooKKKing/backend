@@ -34,8 +34,14 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime completedAt; // 승인/거절처리시간
 
-    @Column(nullable = false)
+    @Column
     private String refundReason; // 환불 사유
+
+    @Column(nullable = false)
+    private String paymentKey;
+
+    @Column(nullable = false)
+    private String orderId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
