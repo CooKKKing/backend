@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     Page<RecipeBoard> findRecipeBoardsByMember(Member member, Pageable pageable);
     Optional<Bookmark> findByMemberAndRecipeBoard_RecipeBoardId(Member member, Long recipeBoardId);
-
+    Optional<Bookmark> findByMember_MemberIdAndRecipeBoard_RecipeBoardId(long memberId, Long id);
 }

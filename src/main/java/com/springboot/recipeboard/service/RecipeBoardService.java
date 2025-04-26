@@ -1,5 +1,7 @@
 package com.springboot.recipeboard.service;
 
+import com.springboot.bookmark.entitiy.Bookmark;
+import com.springboot.bookmark.repository.BookmarkRepository;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.ingredient.entity.Ingredient;
@@ -24,12 +26,14 @@ public class RecipeBoardService {
     private final MenuRepository menuRepository;
     private final IngredientRepository ingredientRepository;
     private final RecipeBoardRepository recipeBoardRepository;
+    private final BookmarkRepository bookmarkRepository;
 
-    public RecipeBoardService(MemberRepository memberRepository, MenuRepository menuRepository, IngredientRepository ingredientRepository, RecipeBoardRepository recipeBoardRepository) {
+    public RecipeBoardService(MemberRepository memberRepository, MenuRepository menuRepository, IngredientRepository ingredientRepository, RecipeBoardRepository recipeBoardRepository, BookmarkRepository bookmarkRepository) {
         this.memberRepository = memberRepository;
         this.menuRepository = menuRepository;
         this.ingredientRepository = ingredientRepository;
         this.recipeBoardRepository = recipeBoardRepository;
+        this.bookmarkRepository = bookmarkRepository;
     }
 
     // 게시글 등록
@@ -126,8 +130,27 @@ public class RecipeBoardService {
     }
 
     // 레시피 게시글 북마크 추가/해제
-    public void toggleBookmark(long recipeBoardId) {
+    public void toggleBookmark(long recipeBoardId, long memberId) {
+        // 게시글 존재 여부 검증
+        RecipeBoard recipeBoard = verifyRecipeBoardExists(recipeBoardId);
+        // 회원 존재 여부 검증
+        verifyMemberExists(memberId);
 
+        Optional<Bookmark> findBookmark = bookmarkRepository.findByMember_MemberIdAndRecipeBoard_RecipeBoardId(memberId, recipeBoardId);
+
+        if (findBookmark.isPresent()) {
+            // 북마크가 존재하면 삭제
+            bookmarkRepository.delete(findBookmark.get());
+        } else {
+            // 북마크가 존재하지 않으면 추가
+            Bookmark bookmark = new Bookmark();
+            Member member = new Member();
+            member.setMemberId(memberId);
+            bookmark.setMember(member);
+            bookmark.setRecipeBoard(recipeBoard);
+
+            bookmarkRepository.save(bookmark);
+        }
     }
 
     // 레시피 게시글 검색

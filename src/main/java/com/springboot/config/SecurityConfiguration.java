@@ -136,7 +136,8 @@ public class SecurityConfiguration {
         //클라이언트에서 해당 헤더를 사용할 수 있도록 설정한다. ( 설정하지 않으면 아래 헤더만 받음 )
         //Cache-Control, Content-Language ,Content-Type, Expires, Last-Modified, Pragma
         configuration.setAllowedHeaders(Arrays.asList("RefreshToken", "Authorization", "Cache-Control", "Content-Type"));
-        configuration.setExposedHeaders(Arrays.asList("Authorization", "RefreshToken"));
+        // 헤더 memberId 읽기 허용
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "RefreshToken", "memberId"));
         configuration.setAllowCredentials(true);
         //모든 URL에 지금까지 구성한 CORS 정책을 적용.
         source.registerCorsConfiguration("/**", configuration);

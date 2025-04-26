@@ -69,8 +69,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         //AccessToken은 클라이언트 측에서 백엔드 측에 요청을 보낼때마다 request header에 추가해서 클라이언트 측의 자격을 증명하는 데 사용된다.
         response.setHeader("Authorization", "Bearer " + accessToken);
         //RefreshToken를 추가한다. 액세스토큰을 재발급하기 위해 사용
-        response.setHeader("Refresh", refreshToken);
-        response.setHeader("MemberId", String.valueOf(member.getMemberId()));
+        response.setHeader("RefreshToken", refreshToken);
+        response.setHeader("memberId", String.valueOf(member.getMemberId()));
 
         String message = "로그인에 성공하셨습니다.";
         Gson gson = new Gson();

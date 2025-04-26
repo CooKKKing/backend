@@ -65,16 +65,10 @@ public class RecipeBoardController {
     public ResponseEntity patchRecipeBoard(@PathVariable("recipe-id") @Positive long recipeId,
                                            @Valid @RequestBody RecipeBoardDto.Patch recipeBoardPatchDto,
                                            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        // Patch Controller 로직 작성 해야함
-        member = new Member(); // 임시로 Member 객체 생성
-        member.setMemberId(1L); // 임시로 memberId 설정
-
-        long memberId = member.getMemberId();
-
         recipeBoardPatchDto.setRecipeBoardId(recipeId);
 
         RecipeBoard recipeBoard = mapper.recipeBoardPatchDtoToRecipeBoard(recipeBoardPatchDto);
-        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, memberId);
+        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, member.getMemberId());
 
         return new ResponseEntity<>(new SingleResponseDto<>(mapper.recipeBoardToRecipeBoardResponseDto(updatedRecipeBoard)), HttpStatus.OK);
     }
@@ -154,6 +148,7 @@ public class RecipeBoardController {
     public ResponseEntity bookmarkRecipeBoard(@PathVariable("recipe-id") @Positive long recipeId,
                                               @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // Bookmark Controller 로직 작성 해야함
+        recipeBoardService.toggleBookmark(recipeId, member.getMemberId());
 
         return new ResponseEntity(HttpStatus.OK);
     }
