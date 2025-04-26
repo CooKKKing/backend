@@ -76,7 +76,7 @@ public class MemberController {
     public ResponseEntity postMember(@RequestBody @Valid MemberDto.Post memberPostDto) {
         // Mapper를 통해 받은 Dto 데이터 Member로 변환
         Member member = mapper.memberPostToMember(memberPostDto);
-        Member createdMember = memberService.createMember(member);
+        Member createdMember = memberService.createMember(member, memberPostDto.getProfileImageId());
         URI location = UriCreator.createUri(MEMBER_DEFAULT_URL, createdMember.getMemberId());
 
         return ResponseEntity.created(location).build();

@@ -29,7 +29,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name = "마이페이지 컨트롤러", description = "마이페이지 관련 API")
+@Tag(name = "마이페이지 컨트롤러", description = "마이페이지 관련 컨트롤러")
 @RestController
 @RequestMapping("/mypage")
 @Validated
@@ -69,7 +69,7 @@ public class MyPageController {
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         Page<RecipeBoard> bookmarks = myPageService.findMyBookmarkList(member.getMemberId(), page, size);
         List<RecipeBoardDto.Response> content = bookmarks.getContent().stream()
-                .map(recipeBoardMapper::recipeBoardToRecipeBoardResponseDto)
+                .map(recipeBoard -> recipeBoardMapper.recipeBoardToRecipeBoardResponseDto(recipeBoard, member.getMemberId()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new MultiResponseDto<>(content, bookmarks));
@@ -127,22 +127,4 @@ public class MyPageController {
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
-//    @Operation(summary = "내 도전과제 전체 조회", description = "모든 도전과제의 진행도 및 달성 여부를 조회합니다.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "내 도전과제 전체 조회 완료")
-//    })
-//    @GetMapping("/challenges")
-//    public ResponseEntity getMyChallenges(@Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-//        List<MemberChallenge> memberChallenges = myPageService.getMyChallenges(member.getMemberId());
-//
-//        List<MemberChallengeDto> response = memberChallenges.stream()
-//                .map(mc -> {
-//                    int currentCount = myPageService.calculateCurrentProgress(member, mc.getChallenge().getChallengeCategory().getChallengeCategoryName());
-//                    return memberMapper.memberChallengeToMemberChallengeResponse(mc, currentCount);
-//                })
-//                .collect(Collectors.toList());
-//
-//        return ResponseEntity.ok(new SingleResponseDto<>(response));
-//    }
 }
