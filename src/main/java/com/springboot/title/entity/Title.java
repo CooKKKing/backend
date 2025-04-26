@@ -1,12 +1,15 @@
 package com.springboot.title.entity;
 
 import com.springboot.audit.BaseEntity;
-import com.springboot.challenge.entity.Challenge;
+import com.springboot.challenge.entity.ChallengeCategory;
+import com.springboot.member.entity.MemberTitle;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,14 +21,35 @@ public class Title extends BaseEntity {
     private long titleId;
 
     @Column(nullable = false)
-    private String titleName;
+    private String name;
 
     @Column(nullable = false)
-    private String description;
+    private int level;
 
     @Column(nullable = false)
-    private String colorCode;
+    private String imagePath;
 
-    @OneToOne(mappedBy = "title")
-    private Challenge challenge;
+    @Column(nullable = false)
+    private String type;
+
+    @ManyToOne
+    @JoinColumn(name = "challenge_category_id")
+    private ChallengeCategory challengeCategory;
+
+    @OneToMany(mappedBy = "title", cascade = CascadeType.PERSIST)
+    private List<MemberTitle> memberTitles = new ArrayList<>();
+
+    public void setMemberTitle(MemberTitle memberTitle) {
+        memberTitles.add(memberTitle);
+        if (memberTitle.getTitle() != this) {
+            memberTitle.setTitle(this);
+        }
+    }
+
+    public void setChallengeCategory(ChallengeCategory challengeCategory) {
+        this.challengeCategory = challengeCategory;
+        if (!challengeCategory.getTitles().contains(this)) {
+            challengeCategory.setTitles(this);
+        }
+    }
 }
