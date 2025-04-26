@@ -1,14 +1,18 @@
 package com.springboot.member.dto;
 
 import com.springboot.member.entity.Member;
+import com.springboot.title.dto.TitleDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import java.util.List;
 
 public class MemberDto {
     @Getter
@@ -62,6 +66,10 @@ public class MemberDto {
                 message = "휴대폰 번호는 010으로 시작하는 11자리 숫자와 '-'로 구성되어야 합니다.")
         @Schema(description = "사용자 전화번호", example = "010-1111-2222")
         private String phoneNumber;
+
+        @Positive
+        @Schema(description = "프로필 이미지 ID", example = "1")
+        private long profileImageId;
     }
 
     @Getter
@@ -74,6 +82,16 @@ public class MemberDto {
                 message = "닉네임은 공백 없이 8자 이내, 특수문자를 포함하지 않아야 합니다.")
         @Schema(description = "사용자 닉네임", example = "어쩌고저쩌고")
         private String nickName;
+
+        @Schema(description = "사용자 이미지 ID", example = "1")
+        private long profileImageId;
+
+        @Schema(description = "사용자 전화번호", example = "010-1111-2222")
+        private long phoneNumber;
+
+        @Schema(description = "사용자 착용 칭호 ID", example = "1")
+        private long activeTitleId;
+
     }
 
     @Getter
@@ -121,7 +139,8 @@ public class MemberDto {
     }
 
 
-    @AllArgsConstructor
+    @NoArgsConstructor
+    @Setter
     @Getter
     public static class Response {
         private long memberId;
@@ -129,10 +148,10 @@ public class MemberDto {
         private String email;
         private String nickName;
         private String phoneNumber;
+        private int ricePoint;
         private Member.MemberStatus memberStatus;
-
-        public String getMemberStatus() {
-            return memberStatus.getStatus();
-        }
+        private String profileImagePath;
+        private List<TitleDto.Response> titles;
+        private long activeTitleId;
     }
 }
