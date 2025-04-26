@@ -11,7 +11,9 @@ import com.springboot.member.entity.Member;
 import com.springboot.member.repository.MemberRepository;
 import com.springboot.menu.entity.Menu;
 import com.springboot.menu.repository.MenuRepository;
+import com.springboot.recipeboard.entity.Like;
 import com.springboot.recipeboard.entity.RecipeBoard;
+import com.springboot.recipeboard.repository.LikeRepository;
 import com.springboot.recipeboard.repository.RecipeBoardRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,13 +29,15 @@ public class RecipeBoardService {
     private final IngredientRepository ingredientRepository;
     private final RecipeBoardRepository recipeBoardRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final LikeRepository likeRepository;
 
-    public RecipeBoardService(MemberRepository memberRepository, MenuRepository menuRepository, IngredientRepository ingredientRepository, RecipeBoardRepository recipeBoardRepository, BookmarkRepository bookmarkRepository) {
+    public RecipeBoardService(MemberRepository memberRepository, MenuRepository menuRepository, IngredientRepository ingredientRepository, RecipeBoardRepository recipeBoardRepository, BookmarkRepository bookmarkRepository, LikeRepository likeRepository) {
         this.memberRepository = memberRepository;
         this.menuRepository = menuRepository;
         this.ingredientRepository = ingredientRepository;
         this.recipeBoardRepository = recipeBoardRepository;
         this.bookmarkRepository = bookmarkRepository;
+        this.likeRepository = likeRepository;
     }
 
     // 게시글 등록
@@ -153,11 +157,34 @@ public class RecipeBoardService {
         }
     }
 
+    // 레시피 게시글 좋아요 추가/해제
+    public void toggleLike(long recipeBoardId, long memberId) {
+        // 게시글 존재 여부 검증
+        RecipeBoard recipeBoard = verifyRecipeBoardExists(recipeBoardId);
+        // 회원 존재 여부 검증
+        verifyMemberExists(memberId);
+
+        Optional<Like> findLike = likeRepository.findByMember_MemberIdAndRecipeBoard_RecipeBoardId(memberId, recipeBoardId);
+
+        if (findLike.isPresent()) {
+            // 좋아요가 존재하면 삭제
+            likeRepository.delete(findLike.get());
+        } else {
+            // 좋아요가 존재하지 않으면 추가
+            Like like = new Like();
+            Member member = new Member();
+            member.setMemberId(memberId);
+            like.setMember(member);
+            like.setRecipeBoard(recipeBoard);
+
+            likeRepository.save(like);
+        }
+    }
+
     // 레시피 게시글 검색
     public Page<RecipeBoard> recipeBoardSearch(long recipeBoardId, long memberId, String keyword) {
         return null;
     }
-
 
     // 회원 존재 여부 검증
     private Member verifyMemberExists(long memberId) {

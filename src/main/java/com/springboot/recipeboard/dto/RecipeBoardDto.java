@@ -89,6 +89,9 @@ public class RecipeBoardDto {
         private List<RecipeStep> recipeStep;
         private List<IngredientDto.Response> mainIngredients;
         private List<IngredientDto.Response> seasoningIngredients;
+        private long likeCount; // 좋아요 수
+        private boolean liked; // 좋아요 여부
+        private boolean bookmarked;
     }
 
     @NoArgsConstructor
