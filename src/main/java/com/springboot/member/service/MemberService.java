@@ -1,10 +1,19 @@
 package com.springboot.member.service;
 
 import com.springboot.auth.utils.AuthorityUtils;
+import com.springboot.challenge.entity.ChallengeCategory;
+import com.springboot.challenge.repository.ChallengeRepository;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.entity.Member;
+import com.springboot.member.entity.MemberChallenge;
+import com.springboot.member.entity.MemberProfileImage;
+import com.springboot.member.entity.MemberTitle;
 import com.springboot.member.repository.MemberRepository;
+import com.springboot.profile.entity.ProfileImage;
+import com.springboot.profile.repository.ProfileImageRepository;
+import com.springboot.title.entity.Title;
+import com.springboot.title.repository.TitleRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,15 +29,23 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AuthorityUtils authorityUtils;
     private final RedisTemplate<String, String> redisTemplate;
+    private final ChallengeRepository challengeRepository;
+    private final ProfileImageRepository profileImageRepository;
+    private final TitleRepository titleRepository;
+    private final ProfileImageRepository imageRepository;
 
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthorityUtils authorityUtils, RedisTemplate<String, String> redisTemplate) {
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthorityUtils authorityUtils, RedisTemplate<String, String> redisTemplate, ChallengeRepository challengeRepository, ProfileImageRepository profileImageRepository, TitleRepository titleRepository, ProfileImageRepository imageRepository) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityUtils = authorityUtils;
         this.redisTemplate = redisTemplate;
+        this.challengeRepository = challengeRepository;
+        this.profileImageRepository = profileImageRepository;
+        this.titleRepository = titleRepository;
+        this.imageRepository = imageRepository;
     }
 
-    public Member createMember(Member member){
+    public Member createMember(Member member, long profileImageId) {
         // 중복 아이디 여부 확인
         verifyExistsLoginId(member.getLoginId());
 
@@ -46,9 +63,50 @@ public class MemberService {
 
         member.setPassword(passwordEncoder.encode(member.getPassword()));
 
+        // 회원 기본 셋팅(이미지)
+        MemberProfileImage memberProfileImage = new MemberProfileImage();
+        ProfileImage profileImage = new ProfileImage();
+        profileImage.setProfileImageId(1L);
+        memberProfileImage.setProfileImage(profileImage);
+
+        ProfileImage profileImageTwo = new ProfileImage();
+        profileImageTwo.setProfileImageId(2L);
+        memberProfileImage.setProfileImage(profileImageTwo);
+
+        member.setMemberProfileImage(memberProfileImage);
+
+        // 회원 기본 도전과제 셋팅
+        long challengeSize = challengeRepository.count();
+
+        for(int i = 1; i <= challengeSize; i++) {
+            MemberChallenge memberChallenge = new MemberChallenge();
+            ChallengeCategory challengeCategory = new ChallengeCategory();
+            challengeCategory.setChallengeCategoryid(i);
+            memberChallenge.setChallengeCategory(challengeCategory);
+            memberChallenge.setMember(member);
+            member.getMemberChallenges().add(memberChallenge);
+        }
+
+
         List<String> roles = authorityUtils.createAuthorities(member.getEmail());
 
         member.setRoles(roles);
+
+        Optional<ProfileImage> findProfileImage = profileImageRepository.findById(profileImageId);
+        if (findProfileImage.isPresent()) {
+            member.setProfile(findProfileImage.get().getImagePath());
+        } else {
+            throw new BusinessLogicException(ExceptionCode.PROFILE_IMAGE_NOT_FOUND);
+        }
+
+        MemberTitle memberTitle = new MemberTitle();
+        Title title = new Title();
+        title.setTitleId(9L);
+        memberTitle.setTitle(title);
+
+        member.setMemberTitle(memberTitle);
+        member.setActiveTitleId(9L);
+
 
         return memberRepository.save(member);
     }
@@ -66,6 +124,26 @@ public class MemberService {
             // 2-2. 닉네임 유효성 검사 (길이, 공백 등은 Controller 단 @Valid로 하는 게 일반적이긴 함)
             findMember.setNickName(member.getNickName());
         }
+
+        Optional.ofNullable(member.getActiveImageId())
+                .ifPresent(findMember::setActiveImageId);
+        // 엔티티의 이미지 주소도 변경 매핑, 메서드 분리 필요
+        String proFileImagePath = member.getMemberProfileImages()
+                .stream()
+                .filter(memberProfileImage -> memberProfileImage.getProfileImage().getProfileImageId() == member.getActiveImageId())
+                .map(profileImage -> profileImage.getProfileImage().getImagePath())
+                .findFirst().orElse(null);
+        member.setProfile(proFileImagePath);
+
+        Optional.ofNullable(member.getActiveTitleId())
+                .ifPresent(findMember::setActiveTitleId);
+        // 타이틀을 보유하지 않는다면 예외 발생, 분리 필요
+        member.getMemberTitles()
+                .stream()
+                .filter(memberTitle -> memberTitle.getTitle().getTitleId() == member.getActiveTitleId())
+                .findFirst().orElseThrow(() -> new BusinessLogicException(ExceptionCode.TITLE_NOT_FOUND));
+        Optional.ofNullable(member.getPhoneNumber())
+                .ifPresent(findMember::setPhoneNumber);
         // 3. 저장
         return memberRepository.save(findMember);
     }
@@ -166,5 +244,9 @@ public class MemberService {
         if (!"true".equals(verified)) {
             throw new BusinessLogicException(ExceptionCode.EMAIL_NOT_VERIFIED);
         }
+    }
+
+    private void setChallenge(Member member) {
+
     }
 }
