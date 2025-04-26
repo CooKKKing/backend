@@ -118,16 +118,16 @@ INSERT INTO title (name, level, image_path, type, challenge_category_id, created
 ('늅늅하고 우는 뉴비', 0, '/images/title_chinese_1.png', '밥풀', 7, NOW(), NOW());
 
 INSERT INTO member (login_id, email, nick_name, password, phone_number, profile, active_title_id, rice_point, member_status, created_at, modified_at, active_image_id) VALUES
-('tjsk2222', 'tjsk2222@gmail.com', '택택', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '010-1111-2222', 'https://example.com/profile1.png', '9', 300, 'MEMBER_ACTIVE',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
-( 'user2', 'user1@example.com', '정희', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '052-115-7815', 'https://example.com/profiles/user1.jpg', 9, 49, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user3', 'user3@example.com', '현우', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '052-232-0947', 'https://example.com/profiles/user3.jpg', 9, 53, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user4', 'user4@example.com', '민재', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '063-515-9179', 'https://example.com/profiles/user4.jpg', 9, 5, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user5', 'user5@example.com', '숙자', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '033-399-1615', 'https://example.com/profiles/user5.jpg', 9, 33, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user6', 'user6@example.com', '정순', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '061-208-7091', 'https://example.com/profiles/user6.jpg', 9, 65, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user7', 'user7@example.com', '영희', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '062-207-6984', 'https://example.com/profiles/user7.jpg', 9, 62, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user8', 'user8@example.com', '순자', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '070-6109-3523', 'https://example.com/profiles/user8.jpg', 9, 51, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user9', 'user9@example.com', '영수', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '031-754-7063', 'https://example.com/profiles/user9.jpg', 9, 100, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user10', 'user10@example.com', '민지', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '051-217-6104', 'https://example.com/profiles/user10.jpg', 9, 38, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00',1);
+('tjsk2222', 'tjsk2222@gmail.com', '택택', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '010-1111-2222', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', '9', 300, 'MEMBER_ACTIVE',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
+( 'user2', 'user1@example.com', '정희', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '052-115-7815', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 9, 49, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
+( 'user3', 'user3@example.com', '현우', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '052-232-0947', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 9, 53, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
+( 'user4', 'user4@example.com', '민재', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '063-515-9179', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 9, 5, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
+( 'user5', 'user5@example.com', '숙자', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '033-399-1615', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 9, 33, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
+( 'user6', 'user6@example.com', '정순', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '061-208-7091', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 9, 65, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
+( 'user7', 'user7@example.com', '영희', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '062-207-6984', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 9, 62, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
+( 'user8', 'user8@example.com', '순자', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '070-6109-3523', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 9, 51, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
+( 'user9', 'user9@example.com', '영수', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '031-754-7063', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 9, 100, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
+( 'user10', 'user10@example.com', '민지', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '051-217-6104', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 9, 38, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00',2);
 
 -- 5. 회원별 도전과제 진행 상태
 INSERT INTO member_challenge (member_id, challenge_category_id, current_level, current_count, created_at, modified_at) VALUES
@@ -144,7 +144,18 @@ INSERT INTO member_challenge (member_id, challenge_category_id, current_level, c
 -- 6. 회원별 칭호 보유 내역
 INSERT INTO member_title (member_id, title_id, created_at, modified_at) VALUES
 (1, 1, NOW(), NOW()),
-(1, 4, NOW(), NOW());
+(1, 4, NOW(), NOW()),
+(2, 1, NOW(), NOW()),
+(2, 3, NOW(), NOW()),
+(2, 9, NOW(), NOW()),
+(4, 1, NOW(), NOW()),
+(6, 1, NOW(), NOW()),
+(6, 7, NOW(), NOW()),
+(6, 10, NOW(), NOW()),
+(6, 11, NOW(), NOW()),
+(7, 1, NOW(), NOW()),
+(7, 2, NOW(), NOW()),
+(7, 3, NOW(), NOW());
 
 
 INSERT INTO member_roles (member_member_id, roles) VALUES
