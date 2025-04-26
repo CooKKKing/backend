@@ -290,8 +290,8 @@ INSERT INTO recipe_step_detail (detail_order_number, description, image, recipe_
 
 -- ProfileImage 더미 데이터
 INSERT INTO profile_image (image_path) VALUES
-('https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png');
-('https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png');
+('https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png'),
+('https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png'),
 ('https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/1.png'),
 ('https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/2.png'),
 ('https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/3.png'),
