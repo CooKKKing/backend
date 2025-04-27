@@ -3,6 +3,7 @@ package com.springboot.member.service;
 import com.springboot.auth.utils.AuthorityUtils;
 import com.springboot.challenge.entity.ChallengeCategory;
 import com.springboot.challenge.repository.ChallengeRepository;
+import com.springboot.collectioncamera.service.CollectionCameraService;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.entity.Member;
@@ -31,16 +32,18 @@ public class MemberService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ChallengeRepository challengeRepository;
     private final ProfileImageRepository profileImageRepository;
+    private final CollectionCameraService collectionCameraService;
     private final TitleRepository titleRepository;
     private final ProfileImageRepository imageRepository;
 
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthorityUtils authorityUtils, RedisTemplate<String, String> redisTemplate, ChallengeRepository challengeRepository, ProfileImageRepository profileImageRepository, TitleRepository titleRepository, ProfileImageRepository imageRepository) {
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthorityUtils authorityUtils, RedisTemplate<String, String> redisTemplate, ChallengeRepository challengeRepository, ProfileImageRepository profileImageRepository, CollectionCameraService collectionCameraService, TitleRepository titleRepository, ProfileImageRepository imageRepository) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityUtils = authorityUtils;
         this.redisTemplate = redisTemplate;
         this.challengeRepository = challengeRepository;
         this.profileImageRepository = profileImageRepository;
+        this.collectionCameraService = collectionCameraService;
         this.titleRepository = titleRepository;
         this.imageRepository = imageRepository;
     }
@@ -87,7 +90,6 @@ public class MemberService {
             member.getMemberChallenges().add(memberChallenge);
         }
 
-
         List<String> roles = authorityUtils.createAuthorities(member.getEmail());
 
         member.setRoles(roles);
@@ -99,16 +101,26 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.PROFILE_IMAGE_NOT_FOUND);
         }
 
-        MemberTitle memberTitle = new MemberTitle();
-        Title title = new Title();
-        title.setTitleId(9L);
-        memberTitle.setTitle(title);
+        List<Title> titles = titleRepository.findAll();
 
-        member.setMemberTitle(memberTitle);
-        member.setActiveTitleId(9L);
+        // 기본 타이틀 셋팅
+        titles.stream().filter(title -> title.getName().equals("늅늅하고 우는 뉴비"))
+                .findFirst()
+                .ifPresent(title -> {
+                    MemberTitle memberTitle = new MemberTitle();
+                    memberTitle.setTitle(title);
+                    memberTitle.setMember(member);
+                    member.getMemberTitles().add(memberTitle);
+                    member.setMemberTitle(memberTitle);
+                    member.setActiveTitleId(memberTitle.getTitle().getTitleId());
+                });
 
+        Member savedMember = memberRepository.save(member);
 
-        return memberRepository.save(member);
+        // 기본 도감 카메라 세팅
+        collectionCameraService.createDefaultCollection(savedMember);
+
+        return savedMember;
     }
 
     public Member updateMember(Member member, long memberId) {
