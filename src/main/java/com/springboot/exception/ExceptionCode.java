@@ -45,8 +45,8 @@ public enum ExceptionCode {
     MENU_CATEGORY_NOT_FOUND(404, "메뉴 카테고리가 존재하지 않습니다."),
     DUPLICATE_MENU(409, "메뉴가 이미 존재합니다."),
     PROFILE_IMAGE_NOT_FOUND(404, "프로필 이미지가 존재하지 않습니다."),
-    TITLE_NOT_FOUND(404, "타이틀이 존재하지 않습니다.");
-
+    TITLE_NOT_FOUND(404, "타이틀이 존재하지 않습니다."),
+    INVALID_PAYMENT_AMOUNT(400, "유효하지 않은 결제 금액입니다.");
 
     @Getter
     private int status;

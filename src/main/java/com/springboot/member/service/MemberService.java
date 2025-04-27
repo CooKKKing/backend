@@ -3,6 +3,11 @@ package com.springboot.member.service;
 import com.springboot.auth.utils.AuthorityUtils;
 import com.springboot.challenge.entity.ChallengeCategory;
 import com.springboot.challenge.repository.ChallengeRepository;
+import com.springboot.collectioncamera.entity.CameraImage;
+import com.springboot.collectioncamera.entity.CollectionCamera;
+import com.springboot.collectioncamera.repository.CameraImageRepository;
+import com.springboot.collectioncamera.repository.CollectionCameraRepository;
+import com.springboot.collectioncamera.service.CollectionCameraService;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.entity.Member;
@@ -32,9 +37,11 @@ public class MemberService {
     private final ChallengeRepository challengeRepository;
     private final ProfileImageRepository profileImageRepository;
     private final TitleRepository titleRepository;
+    private final CameraImageRepository cameraImageRepository;
+    private final CollectionCameraRepository collectionCameraRepository;
     private final ProfileImageRepository imageRepository;
 
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthorityUtils authorityUtils, RedisTemplate<String, String> redisTemplate, ChallengeRepository challengeRepository, ProfileImageRepository profileImageRepository, TitleRepository titleRepository, ProfileImageRepository imageRepository) {
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthorityUtils authorityUtils, RedisTemplate<String, String> redisTemplate, ChallengeRepository challengeRepository, ProfileImageRepository profileImageRepository, TitleRepository titleRepository, CameraImageRepository cameraImageRepository, CollectionCameraRepository collectionCameraRepository, ProfileImageRepository imageRepository) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityUtils = authorityUtils;
@@ -42,6 +49,8 @@ public class MemberService {
         this.challengeRepository = challengeRepository;
         this.profileImageRepository = profileImageRepository;
         this.titleRepository = titleRepository;
+        this.cameraImageRepository = cameraImageRepository;
+        this.collectionCameraRepository = collectionCameraRepository;
         this.imageRepository = imageRepository;
     }
 
@@ -87,7 +96,6 @@ public class MemberService {
             member.getMemberChallenges().add(memberChallenge);
         }
 
-
         List<String> roles = authorityUtils.createAuthorities(member.getEmail());
 
         member.setRoles(roles);
@@ -99,16 +107,36 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.PROFILE_IMAGE_NOT_FOUND);
         }
 
-        MemberTitle memberTitle = new MemberTitle();
-        Title title = new Title();
-        title.setTitleId(9L);
-        memberTitle.setTitle(title);
+        List<Title> titles = titleRepository.findAll();
 
-        member.setMemberTitle(memberTitle);
-        member.setActiveTitleId(9L);
+        // 기본 타이틀 셋팅
+        titles.stream().filter(title -> title.getName().equals("늅늅하고 우는 뉴비"))
+                .findFirst()
+                .ifPresent(title -> {
+                    MemberTitle memberTitle = new MemberTitle();
+                    memberTitle.setTitle(title);
+                    memberTitle.setMember(member);
+                    member.getMemberTitles().add(memberTitle);
+                    member.setMemberTitle(memberTitle);
+                    member.setActiveTitleId(memberTitle.getTitle().getTitleId());
+                });
 
+        // Member 저장
+        Member savedMember = memberRepository.save(member);
 
-        return memberRepository.save(member);
+        // 기본 도감 카메라 세팅 (직접)
+        CameraImage defaultCameraImage = cameraImageRepository.findById(1L)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CAMERA_IMAGE_NOT_FOUND));
+
+        CollectionCamera defaultCollection = new CollectionCamera();
+        defaultCollection.setCustomCategoryName("도감 예시");
+        defaultCollection.setCameraImage(defaultCameraImage);
+        defaultCollection.setMember(savedMember); // 연관관계 설정
+        defaultCollection.setCollectionStatus(CollectionCamera.CollectionStatus.PUBLIC);
+
+        collectionCameraRepository.save(defaultCollection);
+
+        return savedMember;
     }
 
     public Member updateMember(Member member, long memberId) {

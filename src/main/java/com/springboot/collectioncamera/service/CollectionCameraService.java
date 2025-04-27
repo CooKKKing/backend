@@ -199,5 +199,25 @@ public class CollectionCameraService {
             throw new BusinessLogicException(ExceptionCode.COLLECTION_CATEGORY_NAME_EXISTS);
         }
     }
+
+    @Transactional
+    public void createDefaultCollection(Member member) {
+        // 이미 기본 도감이 있는지 확인 (안 겹치게)
+        boolean exists = collectionCameraRepository.existsByMemberAndCustomCategoryName(member, "도감 예시");
+        if (exists) return;  // 이미 있으면 생략
+
+        // CameraImage 1번 (파란색 첫번째)
+        CameraImage cameraImage = cameraImageRepository.findById(1L)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CAMERA_IMAGE_NOT_FOUND));
+
+        // 도감 생성
+        CollectionCamera defaultCollection = new CollectionCamera();
+        defaultCollection.setCustomCategoryName("도감 예시");
+        defaultCollection.setCameraImage(cameraImage);
+        defaultCollection.setCollectionStatus(CollectionCamera.CollectionStatus.PUBLIC);
+        defaultCollection.setMember(member);  // 양방향 세팅
+
+        collectionCameraRepository.save(defaultCollection);
+    }
 }
 
