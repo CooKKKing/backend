@@ -1,6 +1,9 @@
 package com.springboot.helper.email;
 
+import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.EmailVerificationException;
+import com.springboot.exception.ExceptionCode;
+import com.springboot.member.repository.MemberRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -21,10 +24,12 @@ import java.util.concurrent.TimeUnit;
 public class EmailAuthController {
     private final RedisTemplate<String, String> redisTemplate;
     private final EmailSender emailSender;
+    private final MemberRepository memberRepository;
 
-    public EmailAuthController(RedisTemplate<String, String> redisTemplate, EmailSender emailSender) {
+    public EmailAuthController(RedisTemplate<String, String> redisTemplate, EmailSender emailSender, MemberRepository memberRepository) {
         this.redisTemplate = redisTemplate;
         this.emailSender = emailSender;
+        this.memberRepository = memberRepository;
     }
 
     @Operation(summary = "이메일 인증 코드 발송", description = "입력한 이메일로 인증 코드를 전송합니다.")
@@ -35,8 +40,13 @@ public class EmailAuthController {
     })
     @PostMapping("/verify")
     public ResponseEntity sendVerificationCode(@RequestBody EmailDto.Request dto) throws InterruptedException {
+        if (memberRepository.findByEmail(dto.getEmail()).isPresent()) {
+            // 이메일 이미 존재 → 409 Conflict 반환
+            throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
+        }
+
         String code = generateCode(); // ex: 6자리
-        redisTemplate.opsForValue().set(dto.getEmail(), code, 5, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(dto.getEmail(), code, 3, TimeUnit.MINUTES);
         emailSender.sendEmail(
                 new String[]{dto.getEmail()},
                 "쿡킹 🍳 회원가입을 위한 인증번호 안내드립니다",
