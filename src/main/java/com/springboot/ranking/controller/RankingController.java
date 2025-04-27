@@ -1,15 +1,13 @@
 package com.springboot.ranking.controller;
 
+import com.springboot.ranking.dto.MemberRankingResponseDto;
 import com.springboot.ranking.dto.RankingResponseDto;
 import com.springboot.ranking.service.RankingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -64,5 +62,17 @@ public class RankingController {
     @GetMapping("/titles")
     public List<RankingResponseDto> getTitleRanking() {
         return rankingService.getTopTitleCollectors();
+    }
+
+    @Operation(summary = "한명의 회원의 모든 랭킹 조회", description = "회원의 모든 랭킹(게시글, 좋아요, 북마크, 칭호)을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원의 모든 랭킹 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "회원의 모든 랭킹을 찾을 수 없습니다.")
+    })
+    @GetMapping("/members/{member-id}")
+    public MemberRankingResponseDto getMemberRanking(
+            @PathVariable("member-id") long memberId) {
+
+        return rankingService.getMemberAllRanks(memberId);
     }
 }

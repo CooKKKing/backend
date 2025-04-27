@@ -1,5 +1,6 @@
 package com.springboot.ranking.service;
 
+import com.springboot.ranking.dto.MemberRankingResponseDto;
 import com.springboot.ranking.dto.RankingResponseDto;
 import com.springboot.ranking.repository.RankingRepository;
 import org.springframework.stereotype.Service;
@@ -71,5 +72,14 @@ public class RankingService {
                         (obj[4] != null) ? ((Timestamp) obj[4]).toLocalDateTime() : null // lastTitleAcquiredAt
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public MemberRankingResponseDto getMemberAllRanks(long memberId) {
+        Integer recipeBoardRank = rankingRepository.findRecipeBoardRankByMemberId(memberId);
+        Integer likeRank = rankingRepository.findLikeRankByMemberId(memberId);
+        Integer bookmarkRank = rankingRepository.findBookmarkRankByMemberId(memberId);
+        Integer titleRank = rankingRepository.findTitleRankByMemberId(memberId);
+
+        return new MemberRankingResponseDto(recipeBoardRank, likeRank, bookmarkRank, titleRank);
     }
 }
