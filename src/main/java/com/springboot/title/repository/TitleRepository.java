@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TitleRepository extends JpaRepository<Title, Long> {
     Page<Title> findByMemberTitles_Member_MemberId(Long memberId, Pageable pageable);
@@ -16,4 +17,8 @@ public interface TitleRepository extends JpaRepository<Title, Long> {
             "SELECT 1 FROM MemberTitle mt WHERE mt.member.memberId = :memberId AND mt.title = t)")
     Page<Title> findTitlesNotOwnedByMember(@Param("memberId") Long memberId, Pageable pageable);
     List<Title> findAll();
+
+    Optional<Title> findByChallengeCategory_ChallengeCategoryid(long challengeCategoryId);
+    Optional<Title> findByChallengeCategory_ChallengeCategoryidAndLevel(long challengeCategoryId, int level);
+
 }
