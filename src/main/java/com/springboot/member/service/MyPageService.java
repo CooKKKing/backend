@@ -9,6 +9,7 @@ import com.springboot.member.entity.MemberChallenge;
 import com.springboot.member.entity.MemberTitle;
 import com.springboot.member.repository.MemberRepository;
 import com.springboot.recipeboard.entity.RecipeBoard;
+import com.springboot.recipeboard.repository.LikeRepository;
 import com.springboot.recipeboard.repository.RecipeBoardRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,12 +38,24 @@ public class MyPageService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
+    // 내 게시글 조회
+    public Page<RecipeBoard> findMyRecipeBoards(long memberId, int page, int size) {
+        return recipeBoardRepository.findByMember_MemberId(memberId, PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
+    }
+
+    // 내 게시글 && 키워드 조회
+    public Page<RecipeBoard> findMyRecipeAndKeywordBoards(long memberId, String keyword, int page, int size) {
+        return recipeBoardRepository.findByMember_MemberIdAndTitleContaining(memberId, keyword, PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
+    }
+
     // 내 북마크 리스트 조회
     public Page<RecipeBoard> findMyBookmarkList(long memberId, int page, int size) {
-        Member member = memberService.findMember(memberId);
+        return recipeBoardRepository.findByBookmarks_Member_MemberId(memberId, PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
+    }
 
-        return bookmarkRepository.findRecipeBoardsByMember(member,
-                PageRequest.of(page, size, Sort.by("recipeBoard.recipeBoardId").descending()));
+    // 내 좋아요 리스트 조회
+    public Page<RecipeBoard> findLikeList(long memberId, int page, int size) {
+        return recipeBoardRepository.findByLike_Member_MemberId(memberId, PageRequest.of(page, size));
     }
 
     // 내 북마크 해제
@@ -55,11 +68,11 @@ public class MyPageService {
         bookmarkRepository.delete(bookmark);
     }
 
-    // 내 보유 칭호 전체 조회
-    public List<MemberTitle> findMyTitles(long memberId) {
-        Member member = memberService.findMember(memberId);
-        return member.getMemberTitles();
-    }
+//    // 내 보유 칭호 전체 조회
+//    public List<MemberTitle> findMyTitles(long memberId) {
+//        Member member = memberService.findMember(memberId);
+//        return member.getMemberTitles();
+//    }
 
     // 내 레시피 게시글 조회
 //    public Page<RecipeBoard> findMyRecipeBoards(long memberId, int page, int size) {

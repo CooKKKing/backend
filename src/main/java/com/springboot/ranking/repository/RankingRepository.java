@@ -5,6 +5,7 @@ import com.springboot.ranking.dto.RankingResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -73,4 +74,44 @@ public interface RankingRepository extends JpaRepository<Member, Long> {
             "LIMIT 30",
             nativeQuery = true)
     List<Object[]> findTopMembersByTitleCount();
+
+    // Member ID로 랭킹 조회
+    @Query(value = "SELECT ranking FROM ( " +
+            "SELECT m.member_id, RANK() OVER (ORDER BY COUNT(r.recipe_board_id) DESC, MIN(r.created_at) ASC) AS ranking " +
+            "FROM member m " +
+            "JOIN recipe_board r ON m.member_id = r.member_id " +
+            "GROUP BY m.member_id " +
+            ") ranked " +
+            "WHERE ranked.member_id = :memberId", nativeQuery = true)
+    Integer findRecipeBoardRankByMemberId(@Param("memberId") long memberId);
+
+    @Query(value = "SELECT ranking FROM ( " +
+            "SELECT m.member_id, RANK() OVER (ORDER BY COUNT(l.like_id) DESC, MIN(l.created_at) ASC) AS ranking " +
+            "FROM member m " +
+            "JOIN recipe_board r ON m.member_id = r.member_id " +
+            "JOIN likes l ON l.recipe_board_id = r.recipe_board_id " +
+            "GROUP BY m.member_id " +
+            ") ranked " +
+            "WHERE ranked.member_id = :memberId", nativeQuery = true)
+    Integer findLikeRankByMemberId(@Param("memberId") long memberId);
+
+    @Query(value = "SELECT ranking FROM ( " +
+            "SELECT m.member_id, RANK() OVER (ORDER BY COUNT(b.bookmark_id) DESC, MIN(b.created_at) ASC) AS ranking " +
+            "FROM member m " +
+            "JOIN recipe_board r ON m.member_id = r.member_id " +
+            "JOIN bookmark b ON b.recipe_board_id = r.recipe_board_id " +
+            "GROUP BY m.member_id " +
+            ") ranked " +
+            "WHERE ranked.member_id = :memberId", nativeQuery = true)
+    Integer findBookmarkRankByMemberId(@Param("memberId") long memberId);
+
+    @Query(value = "SELECT ranking FROM ( " +
+            "SELECT m.member_id, RANK() OVER (ORDER BY COUNT(mt.title_id) DESC, MAX(mt.created_at) ASC) AS ranking " +
+            "FROM member m " +
+            "JOIN member_title mt ON m.member_id = mt.member_id " +
+            "GROUP BY m.member_id " +
+            ") ranked " +
+            "WHERE ranked.member_id = :memberId", nativeQuery = true)
+    Integer findTitleRankByMemberId(@Param("memberId") long memberId);
+
 }

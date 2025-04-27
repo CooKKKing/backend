@@ -2,19 +2,27 @@ package com.springboot.recipeboard.service;
 
 import com.springboot.bookmark.entitiy.Bookmark;
 import com.springboot.bookmark.repository.BookmarkRepository;
+import com.springboot.challenge.entity.ChallengeCategory;
+import com.springboot.challenge.repository.ChallengeCategoryRepository;
+import com.springboot.challenge.repository.ChallengeRepository;
+import com.springboot.challenge.repository.MemberChallengeRepository;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.ingredient.entity.Ingredient;
 import com.springboot.ingredient.entity.MainIngredient;
 import com.springboot.ingredient.repository.IngredientRepository;
 import com.springboot.member.entity.Member;
+import com.springboot.member.entity.MemberChallenge;
 import com.springboot.member.repository.MemberRepository;
 import com.springboot.menu.entity.Menu;
 import com.springboot.menu.repository.MenuRepository;
+import com.springboot.menucategory.entity.MenuCategory;
+import com.springboot.menucategory.repository.MenuCategoryRepository;
 import com.springboot.recipeboard.entity.Like;
 import com.springboot.recipeboard.entity.RecipeBoard;
 import com.springboot.recipeboard.repository.LikeRepository;
 import com.springboot.recipeboard.repository.RecipeBoardRepository;
+import com.springboot.title.service.TitleService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,14 +38,22 @@ public class RecipeBoardService {
     private final RecipeBoardRepository recipeBoardRepository;
     private final BookmarkRepository bookmarkRepository;
     private final LikeRepository likeRepository;
+    private final MemberChallengeRepository memberChallengeRepository;
+    private final ChallengeCategoryRepository challengeCategoryRepository;
+    private final TitleService titleService;
+    private final MenuCategoryRepository menuCategoryRepository;
 
-    public RecipeBoardService(MemberRepository memberRepository, MenuRepository menuRepository, IngredientRepository ingredientRepository, RecipeBoardRepository recipeBoardRepository, BookmarkRepository bookmarkRepository, LikeRepository likeRepository) {
+    public RecipeBoardService(MemberRepository memberRepository, MenuRepository menuRepository, IngredientRepository ingredientRepository, RecipeBoardRepository recipeBoardRepository, BookmarkRepository bookmarkRepository, LikeRepository likeRepository, TitleService titleService, MemberChallengeRepository memberChallengeRepository, ChallengeCategoryRepository challengeCategoryRepository, MenuCategoryRepository menuCategoryRepository) {
         this.memberRepository = memberRepository;
         this.menuRepository = menuRepository;
         this.ingredientRepository = ingredientRepository;
         this.recipeBoardRepository = recipeBoardRepository;
         this.bookmarkRepository = bookmarkRepository;
         this.likeRepository = likeRepository;
+        this.memberChallengeRepository = memberChallengeRepository;
+        this.challengeCategoryRepository = challengeCategoryRepository;
+        this.titleService = titleService;
+        this.menuCategoryRepository = menuCategoryRepository;
     }
 
     // 게시글 등록
@@ -46,14 +62,30 @@ public class RecipeBoardService {
         verifyMainIngredientCount(recipeBoard);
         // 메뉴 존재 여부 검증
         // 있다면 영속화, 없다면 새로 생성 후 영속화
-        Menu menu = menuExists(recipeBoard.getMenu().getMenuName());
+        Menu menu = menuExists(recipeBoard.getMenu().getMenuName(), recipeBoard.getMenu().getMenuCategory().getMenuSubCategory(), recipeBoard.getMenu().getMenuCategory().getMenuCategoryId());
+
+        // (추가) menuCategoryId로 menuCategory를 조회해서 menu에 연결
+        MenuCategory menuCategory = menuCategoryRepository.findById(recipeBoard.getMenu().getMenuCategory().getMenuCategoryId())
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MENU_CATEGORY_NOT_FOUND));
+        menu.setMenuCategory(menuCategory);
+
         recipeBoard.setMenu(menu);
+
         // 회원 존재 여부 검증
         verifyMemberExists(recipeBoard.getMember().getMemberId());
 
+        RecipeBoard savedRecipeBoard = recipeBoardRepository.save(recipeBoard);
         // TODO: 칭호를 위한 기능 아래 추가 필요합니다.
+        RecipeBoard findRecipeBoard = recipeBoardRepository.findById(savedRecipeBoard.getRecipeBoardId())
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.RECIPEBOARD_NOT_FOUND));
+        String menuCategoryName = findRecipeBoard.getMenu().getMenuCategory().getMenuCategoryName();
+        ChallengeCategory challengeCategory = challengeCategoryRepository.findByCategory(menuCategoryName)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHALLENGE_CATEGORY_NOT_FOUND));
+        MemberChallenge memberChallenge = memberChallengeRepository.findByMember_MemberIdAndChallengeCategory_ChallengeCategoryid(recipeBoard.getMember().getMemberId(), challengeCategory.getChallengeCategoryid())
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_CHALLENGE_NOT_FOUND));
+        titleService.incrementChallengeCount(memberChallenge.getMemberChallengeId(), recipeBoard.getMember().getMemberId());
 
-        return recipeBoardRepository.save(recipeBoard);
+        return savedRecipeBoard;
     }
 
     // 게시글 수정
@@ -121,6 +153,11 @@ public class RecipeBoardService {
         verifyCanAccessPrivate(recipeBoard, recipeBoard.getMember().getMemberId());
 
         recipeBoardRepository.delete(recipeBoard);
+        titleService.decrementChallengeCount(recipeBoardId, recipeBoard.getMember().getMemberId());
+    }
+
+    public Page<RecipeBoard> findAllRecipeBoards(int page, int size) {
+        return recipeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
     }
 
     // 카테고리별 레시피 게시글 전체 조회
@@ -145,6 +182,7 @@ public class RecipeBoardService {
         if (findBookmark.isPresent()) {
             // 북마크가 존재하면 삭제
             bookmarkRepository.delete(findBookmark.get());
+            setChallengeDecrement(recipeBoardId, recipeBoard.getMember().getMemberId(), "북마크");
         } else {
             // 북마크가 존재하지 않으면 추가
             Bookmark bookmark = new Bookmark();
@@ -154,8 +192,11 @@ public class RecipeBoardService {
             bookmark.setRecipeBoard(recipeBoard);
 
             bookmarkRepository.save(bookmark);
+
+            setChallengeIncrement(recipeBoardId, recipeBoard.getMember().getMemberId(), "북마크");
         }
     }
+
 
     // 레시피 게시글 좋아요 추가/해제
     public void toggleLike(long recipeBoardId, long memberId) {
@@ -169,6 +210,7 @@ public class RecipeBoardService {
         if (findLike.isPresent()) {
             // 좋아요가 존재하면 삭제
             likeRepository.delete(findLike.get());
+            setChallengeDecrement(recipeBoardId, recipeBoard.getMember().getMemberId(), "좋아요");
         } else {
             // 좋아요가 존재하지 않으면 추가
             Like like = new Like();
@@ -178,6 +220,7 @@ public class RecipeBoardService {
             like.setRecipeBoard(recipeBoard);
 
             likeRepository.save(like);
+            setChallengeIncrement(recipeBoardId, recipeBoard.getMember().getMemberId(), "좋아요");
         }
     }
 
@@ -186,14 +229,32 @@ public class RecipeBoardService {
         return null;
     }
 
+    // 도전과제 증가 함수
+    private void setChallengeIncrement(long recipeBoardId,long memberId, String category) {
+        RecipeBoard findRecipeBoard = recipeBoardRepository.findById(recipeBoardId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.RECIPEBOARD_NOT_FOUND));
+        ChallengeCategory challengeCategory = challengeCategoryRepository.findByCategory(category)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHALLENGE_CATEGORY_NOT_FOUND));
+        MemberChallenge memberChallenge = memberChallengeRepository.findByMember_MemberIdAndChallengeCategory_ChallengeCategoryid(memberId, challengeCategory.getChallengeCategoryid())
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_CHALLENGE_NOT_FOUND));
+        titleService.incrementChallengeCount(memberChallenge.getMemberChallengeId(), memberId);
+    }
+
+    // 도전과제 감소 함수
+    private void setChallengeDecrement(long recipeBoardId,long memberId, String category) {
+        RecipeBoard findRecipeBoard = recipeBoardRepository.findById(recipeBoardId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.RECIPEBOARD_NOT_FOUND));
+        ChallengeCategory challengeCategory = challengeCategoryRepository.findByCategory(category)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHALLENGE_CATEGORY_NOT_FOUND));
+        MemberChallenge memberChallenge = memberChallengeRepository.findByMember_MemberIdAndChallengeCategory_ChallengeCategoryid(memberId, challengeCategory.getChallengeCategoryid())
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_CHALLENGE_NOT_FOUND));
+        titleService.decrementChallengeCount(memberChallenge.getMemberChallengeId(), memberId);
+    }
+
     // 회원 존재 여부 검증
     private Member verifyMemberExists(long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-    }
-
-    public Page<RecipeBoard> findAllRecipeBoards(int page, int size) {
-        return recipeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
     }
 
     // 메뉴 존재 여부 검증
@@ -205,12 +266,26 @@ public class RecipeBoardService {
 //                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MENU_NOT_FOUND));
 //    }
 
-    private Menu menuExists(String menuName) {
+    private Menu menuExists(String menuName, String menuSubCategory, long menuCategoryId) {
         return menuRepository.findByMenuName(menuName)
                 .orElseGet(() -> {
                     Menu newMenu = new Menu();
                     newMenu.setMenuName(menuName);
-                    return menuRepository.save(newMenu); // 영속 상태로 만들어서 반환
+
+                    // 🔥 MenuCategory 존재 여부 확인
+                    MenuCategory menuCategory = menuCategoryRepository.findById(menuCategoryId)
+                            .orElseGet(() -> {
+                                // 없으면 새로 생성
+                                MenuCategory newCategory = new MenuCategory();
+                                newCategory.setMenuCategoryName(menuName); // 이름은 menuName 기반으로 세팅
+                                newCategory.setMenuSubCategory(menuSubCategory);
+
+                                return menuCategoryRepository.save(newCategory);
+                            });
+
+                    newMenu.setMenuCategory(menuCategory);
+
+                    return menuRepository.save(newMenu); // 메뉴 저장
                 });
     }
 

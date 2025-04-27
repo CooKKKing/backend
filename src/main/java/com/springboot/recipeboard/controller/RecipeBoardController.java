@@ -117,7 +117,7 @@ public class RecipeBoardController {
         List<RecipeBoard> recipeBoards = pageBoards.getContent();
         // RecipeBoard 전체 조회 후, RecipeBoardResponseDto로 변환
 
-        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards),
+        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards, member.getMemberId()),
                 pageBoards), HttpStatus.OK);
     }
 
@@ -135,7 +135,7 @@ public class RecipeBoardController {
         Page<RecipeBoard> pageBoards = recipeBoardService.findCategoryRecipeBoards(page - 1, size, categoryId);
         List<RecipeBoard> recipeBoards = pageBoards.getContent();
 
-        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards),
+        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards, member.getMemberId()),
                 pageBoards), HttpStatus.OK);
     }
 
@@ -154,7 +154,7 @@ public class RecipeBoardController {
         Page<RecipeBoard> pageBoards = recipeBoardService.findMenuRecipeBoards(page - 1, size, menuId);
         List<RecipeBoard> recipeBoards = pageBoards.getContent();
 
-        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards),
+        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards, member.getMemberId()),
                 pageBoards), HttpStatus.OK);
     }
 

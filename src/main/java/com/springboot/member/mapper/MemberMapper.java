@@ -26,7 +26,19 @@ public interface MemberMapper {
     Member memberPatchToMember(MemberDto.Patch memberPatchDto);
     Member memberDeleteToMember(MemberDto.Delete memberDeleteDto);
     List<MemberDto.Response> membersToMemberResponses(List<Member> members);
-    MyPageResponseDto memberToMyPageResponseDto(Member member);
+    default MyPageResponseDto memberToMyPageResponseDto(Member member) {
+        MyPageResponseDto response = new MyPageResponseDto();
+        response.setNickName(member.getNickName());
+        response.setProfile(member.getProfile());
+        response.setRicePoint(member.getRicePoint());
+        Title title = member.getMemberTitles().stream()
+                .filter(memberTitle -> memberTitle.getTitle().getTitleId() == member.getActiveTitleId())
+                .map(MemberTitle::getTitle)
+                .findFirst().orElse(null);
+
+        response.setTitle(title.getName());
+        return response;
+    }
     MemberChallengeDto memberChallengeToMemberChallengeResponse(MemberChallenge memberChallenge, int currentCount);
     List<MemberChallengeDto> memberChallengesToMemberChallengeResponses(List<MemberChallenge> memberChallenges);
     default MemberDto.Response memberToMemberResponse(Member member) {

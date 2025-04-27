@@ -1,5 +1,6 @@
 package com.springboot.recipeboard.repository;
 
+import com.springboot.bookmark.entitiy.Bookmark;
 import com.springboot.member.entity.Member;
 import com.springboot.recipeboard.entity.RecipeBoard;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -7,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface RecipeBoardRepository extends JpaRepository<RecipeBoard, Long> {
     Page<RecipeBoard> findByMemberAndRecipeBoardStatusNot(Member member, RecipeBoard.RecipeBoardStatus status, Pageable pageable);
@@ -27,5 +30,8 @@ public interface RecipeBoardRepository extends JpaRepository<RecipeBoard, Long> 
     Page<RecipeBoard> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
     Page<RecipeBoard> findByMenu_MenuCategory_MenuCategoryId(long menuMenuCategoryMenuCategoryId, Pageable pageable);
     Page<RecipeBoard> findByMenu_MenuId(long menuMenuId, Pageable pageable);
-    int countByMemberAndMenu_MenuCategory_MenuCategoryName(Member member, String categoryName);
+    Page<RecipeBoard> findByBookmarks_Member_MemberId(long memberId, Pageable pageable);
+    Page<RecipeBoard> findByLike_Member_MemberId(long memberId, Pageable pageable);
+    Page<RecipeBoard> findByMember_MemberId(long memberId, Pageable pageable);
+    Page<RecipeBoard> findByMember_MemberIdAndTitleContaining(long memberId, String title, Pageable pageable);
 }
