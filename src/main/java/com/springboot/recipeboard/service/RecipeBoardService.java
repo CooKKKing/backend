@@ -192,6 +192,10 @@ public class RecipeBoardService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
+    public Page<RecipeBoard> findAllRecipeBoards(int page, int size) {
+        return recipeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
+    }
+
     // 메뉴 존재 여부 검증
 //    private void verifyMenuExists(Menu menu) {
 //        if(menu == null) {
