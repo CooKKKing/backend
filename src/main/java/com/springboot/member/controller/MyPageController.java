@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,15 +65,32 @@ public class MyPageController {
     })
     @GetMapping("/bookmarks")
     public ResponseEntity getBookmarks(
-            @Positive @RequestParam int page,
-            @Positive @RequestParam int size,
+            @DefaultValue(value = "1") @Positive @RequestParam int page,
+            @DefaultValue(value = "30") @Positive @RequestParam int size,
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        Page<RecipeBoard> bookmarks = myPageService.findMyBookmarkList(member.getMemberId(), page, size);
+        Page<RecipeBoard> bookmarks = myPageService.findMyBookmarkList(member.getMemberId(), page - 1, size);
         List<RecipeBoardDto.Response> content = bookmarks.getContent().stream()
                 .map(recipeBoard -> recipeBoardMapper.recipeBoardToRecipeBoardResponseDto(recipeBoard, member.getMemberId()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new MultiResponseDto<>(content, bookmarks));
+    }
+
+    @Operation(summary = "내 좋아요 리스트 조회", description = "내가 좋아요한 게시글 리스트를 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "내 좋아요 조회 완료")
+    })
+    @GetMapping("/likes")
+    public ResponseEntity getLikes(
+            @DefaultValue(value = "1") @Positive @RequestParam int page,
+            @DefaultValue(value = "30") @Positive @RequestParam int size,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        Page<RecipeBoard> likes = myPageService.findLikeList(member.getMemberId(), page - 1, size);
+        List<RecipeBoardDto.Response> content = likes.getContent().stream()
+                .map(recipeBoard -> recipeBoardMapper.recipeBoardToRecipeBoardResponseDto(recipeBoard, member.getMemberId()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new MultiResponseDto<>(content, likes));
     }
 
     @Operation(summary = "내 북마크 해제", description = "북마크를 해제합니다.")
@@ -89,18 +107,18 @@ public class MyPageController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Operation(summary = "내 보유 칭호 전체 조회", description = "내가 보유한 칭호 전체 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "내 칭호 전체 조회 완료")
-    })
-    @GetMapping("/titles")
-    public ResponseEntity getMyTitles(
-            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-
-        List<MemberTitle> titles = myPageService.findMyTitles(member.getMemberId());
-
-        return new ResponseEntity<>(new SingleResponseDto<>(titles), HttpStatus.OK);
-    }
+//    @Operation(summary = "내 보유 칭호 전체 조회", description = "내가 보유한 칭호 전체 조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "내 칭호 전체 조회 완료")
+//    })
+//    @GetMapping("/titles")
+//    public ResponseEntity getMyTitles(
+//            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+//
+//        List<MemberTitle> titles = myPageService.findMyTitles(member.getMemberId());
+//
+//        return new ResponseEntity<>(new SingleResponseDto<>(titles), HttpStatus.OK);
+//    }
 
     @Operation(summary = "내 레시피 게시글 조회", description = "내가 작성한 레시피 게시글들을 조회")
     @ApiResponses(value = {
@@ -108,11 +126,16 @@ public class MyPageController {
     })
     @GetMapping("/recipeboards")
     public ResponseEntity getMyRecipeBoards(
-            @Positive @RequestParam int page,
-            @Positive @RequestParam int size,
+            @DefaultValue(value = "1") @Positive @RequestParam int page,
+            @DefaultValue(value = "30") @Positive @RequestParam int size,
             @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
 
-        return new ResponseEntity(HttpStatus.OK);
+        Page<RecipeBoard> recipeBoardPage = myPageService.findMyRecipeBoards(member.getMemberId(), page - 1, size);
+        List<RecipeBoardDto.Response> content = recipeBoardPage.getContent().stream()
+                .map(recipeBoard -> recipeBoardMapper.recipeBoardToRecipeBoardResponseDto(recipeBoard, member.getMemberId()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new MultiResponseDto<>(content, recipeBoardPage));
     }
 
     @Operation(summary = "내 레시피 게시글 검색", description = "내가 작성한 레시피 게시글에서 검색하는 기능")
@@ -125,6 +148,11 @@ public class MyPageController {
                                                  @RequestParam @Positive int page,
                                                  @RequestParam @Positive int size) {
 
-        return new ResponseEntity(HttpStatus.OK);
+        Page<RecipeBoard> recipeBoardPage = myPageService.findMyRecipeAndKeywordBoards(member.getMemberId(), keyword, page - 1, size);
+        List<RecipeBoardDto.Response> content = recipeBoardPage.getContent().stream()
+                .map(recipeBoard -> recipeBoardMapper.recipeBoardToRecipeBoardResponseDto(recipeBoard, member.getMemberId()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new MultiResponseDto<>(content, recipeBoardPage));
     }
 }

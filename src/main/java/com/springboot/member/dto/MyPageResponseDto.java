@@ -2,11 +2,14 @@ package com.springboot.member.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Builder
+@Setter
+@NoArgsConstructor
 public class MyPageResponseDto {
     private String profile;
     private String nickName;
