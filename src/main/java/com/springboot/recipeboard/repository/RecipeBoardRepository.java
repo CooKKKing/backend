@@ -28,4 +28,6 @@ public interface RecipeBoardRepository extends JpaRepository<RecipeBoard, Long> 
     Page<RecipeBoard> findByMenu_MenuCategory_MenuCategoryId(long menuMenuCategoryMenuCategoryId, Pageable pageable);
     Page<RecipeBoard> findByMenu_MenuId(long menuMenuId, Pageable pageable);
     int countByMemberAndMenu_MenuCategory_MenuCategoryName(Member member, String categoryName);
+    @Query("SELECT b.recipeBoard FROM Bookmark b WHERE b.member.memberId = :memberId ORDER BY b.recipeBoard.recipeBoardId DESC")
+    Page<RecipeBoard> findBookmarkedRecipeBoards(@Param("memberId") long memberId, Pageable pageable);
 }

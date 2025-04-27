@@ -192,6 +192,7 @@ public class RecipeBoardService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
+    // 레시피 게시글 전체 조회
     public Page<RecipeBoard> findAllRecipeBoards(int page, int size) {
         return recipeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
     }

@@ -72,6 +72,8 @@ public interface RecipeBoardMapper {
         MenuCategory menuCategory = new MenuCategory();
         menuCategory.setMenuCategoryId(postDto.getMenuCategoryId());
         menuCategory.setMenuSubCategory(postDto.getMenuSubCategory());
+        menu.setMenuCategory(menuCategory);
+        menuCategory.setMenu(menu);
         recipeBoard.setMenu(menu);
 
         // 작성자 설정
@@ -223,5 +225,14 @@ public interface RecipeBoardMapper {
         return response;
     }
 
-    List<RecipeBoardDto.Response> recipeBoardsToRecipeBoardResponseDtos(List<RecipeBoard> recipeBoards);
+    default List<RecipeBoardDto.Response> recipeBoardsToRecipeBoardResponseDtos(List<RecipeBoard> recipeBoards, long memberId) {
+        if (recipeBoards == null) return null;
+
+        List<RecipeBoardDto.Response> list = new ArrayList<>(recipeBoards.size());
+        for (RecipeBoard recipeBoard : recipeBoards) {
+            list.add(recipeBoardToRecipeBoardResponseDto(recipeBoard, memberId));
+        }
+
+        return list;
+    }
 }
