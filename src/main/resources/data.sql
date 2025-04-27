@@ -47,15 +47,15 @@ INSERT INTO camera_image (camera_image_id, image_url, camera_color_id) VALUES
 
 -- 1. 도전과제 카테고리
 INSERT INTO challenge_category (name, description, category, image_path, created_at, modified_at) VALUES
-('한식', '한식 요리 관련 도전과제', '한식', 'imageURI', NOW(), NOW()),
-('일식', '일식 요리 관련 도전과제', '일식', 'imageURI', NOW(), NOW()),
-('중식', '중식 요리 관련 도전과제', '중식', 'imageURI', NOW(), NOW()),
-('양식', '양식 요리 관련 도전과제', '양식', 'imageURI', NOW(), NOW()),
-('좋아요', '좋아요 요리 관련 도전과제', '좋아요', 'imageURI', NOW(), NOW()),
-('북마크', '북마크 요리 관련 도전과제', '북마크', 'imageURI', NOW(), NOW()),
-('밥풀', '밥풀 요리 관련 도전과제', '밥풀', 'imageURI', NOW(), NOW()),
-('도감', '도감 요리 관련 도전과제', '도감', 'imageURI', NOW(), NOW()),
-('웰컴', '회원가입 도전과제', '뉴비', 'imageURI', NOW(), NOW());
+('한식', '한식 요리 관련 도전과제', '한식', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/korean/1.png', NOW(), NOW()),
+('일식', '일식 요리 관련 도전과제', '일식', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/japanese/1.png', NOW(), NOW()),
+('중식', '중식 요리 관련 도전과제', '중식', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/chinese/1.png', NOW(), NOW()),
+('양식', '양식 요리 관련 도전과제', '양식', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/western/1.png', NOW(), NOW()),
+('좋아요', '좋아요 요리 관련 도전과제', '좋아요', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/like/1.png', NOW(), NOW()),
+('북마크', '북마크 요리 관련 도전과제', '북마크', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/bookmark/1.png', NOW(), NOW()),
+('밥풀', '밥풀 요리 관련 도전과제', '밥풀', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/rice/1.png', NOW(), NOW()),
+('도감', '도감 요리 관련 도전과제', '도감', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/1.png', NOW(), NOW()),
+('웰컴', '회원가입 도전과제', '뉴비', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png', NOW(), NOW());
 
 -- 2. 도전과제 레벨 (각 카테고리당 레벨별 목표 수치)
 INSERT INTO challenge_level (level, goal_count, challenge_category_id, description) VALUES
@@ -89,33 +89,33 @@ INSERT INTO challenge_level (level, goal_count, challenge_category_id, descripti
 
 -- 3. 칭호 (도전과제별 레벨 달성 시 부여)
 INSERT INTO title (name, level, image_path, type, challenge_category_id, created_at, modified_at) VALUES
-('한식 초보', 1, '/images/title_korean_1.png', '한식', 1, NOW(), NOW()),
-('한식 중수', 2, '/images/title_korean_2.png', '한식', 1, NOW(), NOW()),
-('한식 고수', 3, '/images/title_korean_3.png', '한식', 1, NOW(), NOW()),
-('일식 초보', 1, '/images/title_chinese_1.png', '일식', 2, NOW(), NOW()),
-('일식 중수', 2, '/images/title_chinese_1.png', '일식', 2, NOW(), NOW()),
-('일식 고수', 3, '/images/title_chinese_1.png', '일식', 2, NOW(), NOW()),
-('중식 초보', 1, '/images/title_chinese_1.png', '중식', 3, NOW(), NOW()),
-('중식 초보', 2, '/images/title_chinese_1.png', '중식', 3, NOW(), NOW()),
-('중식 초보', 3, '/images/title_chinese_1.png', '중식', 3, NOW(), NOW()),
-('양식 초보', 1, '/images/title_chinese_1.png', '양식', 4, NOW(), NOW()),
-('양식 중수', 2, '/images/title_chinese_1.png', '양식', 4, NOW(), NOW()),
-('양식 고수', 3, '/images/title_chinese_1.png', '양식', 4, NOW(), NOW()),
-('좋아요 초보', 1, '/images/title_chinese_1.png', '좋아요', 5, NOW(), NOW()),
-('좋아요 중수', 2, '/images/title_chinese_1.png', '좋아요', 5, NOW(), NOW()),
-('좋아요 고수', 3, '/images/title_chinese_1.png', '좋아요', 5, NOW(), NOW()),
-('북마크 초보', 1, '/images/title_chinese_1.png', '북마크', 6, NOW(), NOW()),
-('북마크 중수', 2, '/images/title_chinese_1.png', '북마크', 6, NOW(), NOW()),
-('북마크 고수', 3, '/images/title_chinese_1.png', '북마크', 6, NOW(), NOW()),
-('도감 초보', 1, '/images/title_chinese_1.png', '도감', 8, NOW(), NOW()),
-('도감 중수', 2, '/images/title_chinese_1.png', '도감', 8, NOW(), NOW()),
-('도감 고수', 3, '/images/title_chinese_1.png', '도감', 8, NOW(), NOW()),
-('밥풀 초보', 1, '/images/title_chinese_1.png', '밥풀', 7, NOW(), NOW()),
-('밥풀 중수', 2, '/images/title_chinese_1.png', '밥풀', 7, NOW(), NOW()),
-('밥풀 고수', 3, '/images/title_chinese_1.png', '밥풀', 7, NOW(), NOW()),
-('밥풀 초고수', 4, '/images/title_chinese_1.png', '밥풀', 7, NOW(), NOW()),
-('밥풀 초초고수', 5, '/images/title_chinese_1.png', '밥풀', 7, NOW(), NOW()),
-('늅늅하고 우는 뉴비', 0, '/images/title_chinese_1.png', '밥풀', 7, NOW(), NOW());
+('한식 초보', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/korean/1.png', '한식', 1, NOW(), NOW()),
+('한식 중수', 2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/korean/2.png', '한식', 1, NOW(), NOW()),
+('한식 고수', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/korean/3.png', '한식', 1, NOW(), NOW()),
+('일식 초보', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/japanese/1.png', '일식', 2, NOW(), NOW()),
+('일식 중수', 2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/japanese/2.png', '일식', 2, NOW(), NOW()),
+('일식 고수', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/japanese/3.png', '일식', 2, NOW(), NOW()),
+('중식 초보', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/chinese/1.png', '중식', 3, NOW(), NOW()),
+('중식 초보', 2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/chinese/2.png', '중식', 3, NOW(), NOW()),
+('중식 초보', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/chinese/3.png', '중식', 3, NOW(), NOW()),
+('양식 초보', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/western/1.png', '양식', 4, NOW(), NOW()),
+('양식 중수', 2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/western/2.png', '양식', 4, NOW(), NOW()),
+('양식 고수', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/western/3.png', '양식', 4, NOW(), NOW()),
+('좋아요 초보', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/like/1.png', '좋아요', 5, NOW(), NOW()),
+('좋아요 중수', 2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/like/2.png', '좋아요', 5, NOW(), NOW()),
+('좋아요 고수', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/like/3.png', '좋아요', 5, NOW(), NOW()),
+('북마크 초보', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/bookmark/1.png', '북마크', 6, NOW(), NOW()),
+('북마크 중수', 2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/bookmark/2.png', '북마크', 6, NOW(), NOW()),
+('북마크 고수', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/bookmark/3.png', '북마크', 6, NOW(), NOW()),
+('도감 초보', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/1.png', '도감', 8, NOW(), NOW()),
+('도감 중수', 2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/2.png', '도감', 8, NOW(), NOW()),
+('도감 고수', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/3.png', '도감', 8, NOW(), NOW()),
+('밥풀 초보', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/rice/1.png', '밥풀', 7, NOW(), NOW()),
+('밥풀 중수', 2, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/rice/2.png', '밥풀', 7, NOW(), NOW()),
+('밥풀 고수', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/rice/3.png', '밥풀', 7, NOW(), NOW()),
+('밥풀 초고수', 4, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/rice/4.png', '밥풀', 7, NOW(), NOW()),
+('밥풀 초초고수', 5, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/rice/5.png', '밥풀', 7, NOW(), NOW()),
+('늅늅하고 우는 뉴비', 0, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png', '밥풀', 7, NOW(), NOW());
 
 INSERT INTO member (login_id, email, nick_name, password, phone_number, profile, active_title_id, rice_point, member_status, created_at, modified_at, active_image_id) VALUES
 ('tjsk2222', 'tjsk2222@gmail.com', '택택', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '010-1111-2222', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', '9', 300, 'MEMBER_ACTIVE',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
