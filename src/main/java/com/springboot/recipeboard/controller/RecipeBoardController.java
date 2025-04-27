@@ -65,18 +65,13 @@ public class RecipeBoardController {
     public ResponseEntity patchRecipeBoard(@PathVariable("recipe-id") @Positive long recipeId,
                                            @Valid @RequestBody RecipeBoardDto.Patch recipeBoardPatchDto,
                                            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        // Patch Controller 로직 작성 해야함
-        member = new Member(); // 임시로 Member 객체 생성
-        member.setMemberId(1L); // 임시로 memberId 설정
-
-        long memberId = member.getMemberId();
 
         recipeBoardPatchDto.setRecipeBoardId(recipeId);
 
         RecipeBoard recipeBoard = mapper.recipeBoardPatchDtoToRecipeBoard(recipeBoardPatchDto);
-        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, memberId);
+        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, member.getMemberId());
 
-        return new ResponseEntity<>(new SingleResponseDto<>(mapper.recipeBoardToRecipeBoardResponseDto(updatedRecipeBoard,memberId)), HttpStatus.OK);
+        return new ResponseEntity<>(new SingleResponseDto<>(mapper.recipeBoardToRecipeBoardResponseDto(updatedRecipeBoard,member.getMemberId())), HttpStatus.OK);
     }
 
     @Operation(summary = "레시피 게시글 단일 조회", description = "레시피 게시글을 단일 조회합니다.")
@@ -106,6 +101,24 @@ public class RecipeBoardController {
         recipeBoardService.deleteRecipeBoard(recipeId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "레시피 게시글 전체 조회", description = "레시피 게시글을 전체 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "레시피 게시글 전체 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "RecipeBoard Validation failed")
+    })
+    @GetMapping
+    public ResponseEntity getRecipeBoards(@Parameter(hidden = true)@AuthenticationPrincipal Member member,
+                                          @Positive @RequestParam(defaultValue = "1") int page,
+                                          @Positive @RequestParam(defaultValue = "50") int size) {
+        // 레시피 게시글 전체 조회 Controller 로직 작성 해야함
+        Page<RecipeBoard> pageBoards = recipeBoardService.findAllRecipeBoards(page - 1, size);
+        List<RecipeBoard> recipeBoards = pageBoards.getContent();
+        // RecipeBoard 전체 조회 후, RecipeBoardResponseDto로 변환
+
+        return new ResponseEntity(new MultiResponseDto<>(mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards),
+                pageBoards), HttpStatus.OK);
     }
 
     @Operation(summary = "카테고리별 레시피 게시글 전체 조회", description = "카테고리별 레시피 게시글을 전체 조회합니다.")
