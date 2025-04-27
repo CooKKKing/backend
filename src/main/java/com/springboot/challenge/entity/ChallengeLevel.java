@@ -25,6 +25,9 @@ public class ChallengeLevel {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private String imagePath;
+
     @ManyToOne
     @JoinColumn(name = "challenge_category_id")
     private ChallengeCategory challengeCategory; // 도전과제와의 관계 설정

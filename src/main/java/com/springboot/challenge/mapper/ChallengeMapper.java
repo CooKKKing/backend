@@ -15,7 +15,7 @@ public interface ChallengeMapper {
         challengeResponseDto.setChallengeId(challengeCategory.getChallengeCategory().getChallengeCategoryid());
         challengeResponseDto.setName(challengeCategory.getChallengeCategory().getName());
         challengeResponseDto.setCategory(challengeCategory.getChallengeCategory().getCategory());
-        challengeResponseDto.setImagePath(challengeCategory.getChallengeCategory().getImagePath());
+//        challengeResponseDto.setImagePath(challengeCategory.getChallengeCategory().getImagePath());
         challengeResponseDto.setCurrentLevel(challengeCategory.getCurrentLevel());
         challengeResponseDto.setCurrentCount(challengeCategory.getCurrentCount());
         challengeCategory.getChallengeCategory()
@@ -25,6 +25,7 @@ public interface ChallengeMapper {
                 .ifPresent(level -> {
                     challengeResponseDto.setGoalCount(level.getGoalCount());
                     challengeResponseDto.setDescription(level.getDescription());
+                    challengeResponseDto.setImagePath(level.getImagePath());
                 });
 
         return challengeResponseDto;

@@ -9,6 +9,7 @@ import com.springboot.member.dto.MemberChallengeDto;
 import com.springboot.member.entity.Member;
 import com.springboot.member.entity.MemberChallenge;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,7 +44,7 @@ public class ChallengeController {
             @ApiResponse(responseCode = "400", description = "Challenge Validation failed")
     })
     @GetMapping("my-challenges")
-    public ResponseEntity getMyChallenges(@AuthenticationPrincipal Member member,
+    public ResponseEntity getMyChallenges(@Parameter(hidden = true) @AuthenticationPrincipal Member member,
                                           @RequestParam(defaultValue = "50")@Positive int size,
                                           @RequestParam(defaultValue = "1") @Positive int page) {
 
@@ -60,7 +61,7 @@ public class ChallengeController {
             @ApiResponse(responseCode = "400", description = "Challenge Validation failed")
     })
     @GetMapping
-    public ResponseEntity getChallenges(@AuthenticationPrincipal Member member,
+    public ResponseEntity getChallenges(@Parameter(hidden = true) @AuthenticationPrincipal Member member,
                                         @RequestParam(defaultValue = "50")@Positive int size,
                                         @RequestParam(defaultValue = "1") @Positive int page) {
         Page<MemberChallenge> pageChallengeCategories = challengeService.findAllChallenges(page - 1, size, member.getMemberId());
