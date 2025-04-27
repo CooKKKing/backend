@@ -170,6 +170,19 @@ INSERT INTO member_roles (member_member_id, roles) VALUES
 (9, 'USER'),
 (10, 'USER');
 
+INSERT INTO collection_camera (created_at, modified_at, collection_status, custom_category_name, camera_image_id, member_id)
+VALUES
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 1),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 2),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 3),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 4),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 5),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 6),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 7),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 8),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 9),
+(NOW(), NOW(), 'PUBLIC', '도감 예시', 1, 10);
+
 INSERT INTO payment
 (amount, rice_amount, refund_reason, payment_status, member_id, payment_key, order_id, requested_at, completed_at, created_at, modified_at)
 VALUES
