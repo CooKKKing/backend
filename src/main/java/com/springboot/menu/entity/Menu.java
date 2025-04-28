@@ -33,6 +33,16 @@ public class Menu extends BaseEntity {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuIngredient> menuIngredients = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "sub_menu_category_id")
+    private SubMenuCategory subMenuCategory = null;
+
+    public void setSubMenuCategory(SubMenuCategory subMenuCategory) {
+        this.subMenuCategory = subMenuCategory;
+        if (subMenuCategory.getMenu() != this) {
+            subMenuCategory.setMenu(this);
+        }
+    }
     public void setRecipeBoard(RecipeBoard recipeBoard) {
         recipeBoards.add(recipeBoard);
         if (recipeBoard.getMenu() != this) {

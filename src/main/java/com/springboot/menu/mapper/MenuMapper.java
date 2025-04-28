@@ -7,6 +7,7 @@ import com.springboot.menu.dto.MenuDto;
 import com.springboot.menu.dto.MenuIngredientDto;
 import com.springboot.menu.entity.Menu;
 import com.springboot.menu.entity.MenuIngredient;
+import com.springboot.menu.entity.SubMenuCategory;
 import com.springboot.menucategory.entity.MenuCategory;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,10 +17,30 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface MenuMapper {
-    @Mapping(source = "menuCategory.menuCategoryId", target = "category.menuCategoryId")
-    @Mapping(source = "menuCategory.menuCategoryName", target = "category.menuCategoryName")
-    @Mapping(source = "menuCategory.menuSubCategory", target = "category.menuSubCategory")
-    MenuDto.Response menuToMenuResponseDto(Menu menu);
+//    @Mapping(source = "menuCategory.menuCategoryId", target = "category.menuCategoryId")
+//    @Mapping(source = "menuCategory.menuCategoryName", target = "category.menuCategoryName")
+//    @Mapping(source = "menuCategory.menuSubCategory", target = "category.menuSubCategory")
+//    MenuDto.Response menuToMenuResponseDto(Menu menu);
+
+    default MenuDto.Response menuToMenuResponseDto(Menu menu) {
+        if (menu == null) {
+            return null;
+        }
+
+        MenuDto.Response response = new MenuDto.Response();
+        response.setMenuId(menu.getMenuId());
+        response.setMenuName(menu.getMenuName());
+
+        List<MenuIngredientDto.Response> menuIngredientDtos = menu.getMenuIngredients().stream()
+                .map(this::menuIngredientToMenuIngredientResponseDto)
+                .collect(Collectors.toList());
+        response.setMenuIngredients(menuIngredientDtos);
+
+        MenuCategory menuCategory = menu.getMenuCategory();
+        response.setCategory(subMenuCategoriesToMenuCategoryResponseDto(menuCategory, menu));
+
+        return response;
+    }
 
     @Mapping(source = "menuCategoryId", target = "menuCategory.menuCategoryId")
     default Menu menuPostDtoToMenu(MenuDto.Post menuPostDto) {
@@ -83,4 +104,22 @@ public interface MenuMapper {
 
         return response;
     };
+
+    default MenuDto.MenuCategory subMenuCategoriesToMenuCategoryResponseDto(MenuCategory menuCategory, Menu menu) {
+
+        List<SubMenuCategory> subMenuCategories = menuCategory.getSubMenuCategories();
+        MenuDto.MenuCategory response = new MenuDto.MenuCategory();
+        SubMenuCategory findSubMenuCategory = subMenuCategories.stream()
+                .filter(subMenuCategory ->
+                        subMenuCategory.getMenu().stream()
+                                .anyMatch(m -> m.getMenuId() == menu.getMenuId())
+                )
+                .findFirst()
+                .orElse(null);
+        response.setMenuCategoryId(menuCategory.getMenuCategoryId());
+        response.setMenuCategoryName(menuCategory.getMenuCategoryName());
+        String subCategoryName = findSubMenuCategory != null ? findSubMenuCategory.getSubMenuCategoryName() : null; // ✅ NPE 방지
+        response.setMenuSubCategory(subCategoryName);
+        return response;
+    }
 }

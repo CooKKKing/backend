@@ -15,7 +15,9 @@ import com.springboot.member.entity.Member;
 import com.springboot.member.entity.MemberChallenge;
 import com.springboot.member.repository.MemberRepository;
 import com.springboot.menu.entity.Menu;
+import com.springboot.menu.entity.SubMenuCategory;
 import com.springboot.menu.repository.MenuRepository;
+import com.springboot.menu.repository.SubMenuCategoryRepository;
 import com.springboot.menucategory.entity.MenuCategory;
 import com.springboot.menucategory.repository.MenuCategoryRepository;
 import com.springboot.recipeboard.entity.Like;
@@ -42,8 +44,9 @@ public class RecipeBoardService {
     private final ChallengeCategoryRepository challengeCategoryRepository;
     private final TitleService titleService;
     private final MenuCategoryRepository menuCategoryRepository;
+    private final SubMenuCategoryRepository subMenuCategoryRepository;
 
-    public RecipeBoardService(MemberRepository memberRepository, MenuRepository menuRepository, IngredientRepository ingredientRepository, RecipeBoardRepository recipeBoardRepository, BookmarkRepository bookmarkRepository, LikeRepository likeRepository, TitleService titleService, MemberChallengeRepository memberChallengeRepository, ChallengeCategoryRepository challengeCategoryRepository, MenuCategoryRepository menuCategoryRepository) {
+    public RecipeBoardService(MemberRepository memberRepository, MenuRepository menuRepository, IngredientRepository ingredientRepository, RecipeBoardRepository recipeBoardRepository, BookmarkRepository bookmarkRepository, LikeRepository likeRepository, TitleService titleService, MemberChallengeRepository memberChallengeRepository, ChallengeCategoryRepository challengeCategoryRepository, MenuCategoryRepository menuCategoryRepository, SubMenuCategoryRepository subMenuCategoryRepository) {
         this.memberRepository = memberRepository;
         this.menuRepository = menuRepository;
         this.ingredientRepository = ingredientRepository;
@@ -54,6 +57,7 @@ public class RecipeBoardService {
         this.challengeCategoryRepository = challengeCategoryRepository;
         this.titleService = titleService;
         this.menuCategoryRepository = menuCategoryRepository;
+        this.subMenuCategoryRepository = subMenuCategoryRepository;
     }
 
     // 게시글 등록
@@ -62,7 +66,7 @@ public class RecipeBoardService {
         verifyMainIngredientCount(recipeBoard);
         // 메뉴 존재 여부 검증
         // 있다면 영속화, 없다면 새로 생성 후 영속화
-        Menu menu = menuExists(recipeBoard.getMenu().getMenuName(), recipeBoard.getMenu().getMenuCategory().getMenuSubCategory(), recipeBoard.getMenu().getMenuCategory().getMenuCategoryId());
+        Menu menu = menuExists(recipeBoard.getMenu().getMenuName(), recipeBoard.getMenu().getMenuCategory().getMenuSubCategory(), recipeBoard.getMenu().getMenuCategory().getMenuCategoryId(), recipeBoard.getMenu().getMenuId());
 
         // (추가) menuCategoryId로 menuCategory를 조회해서 menu에 연결
         MenuCategory menuCategory = menuCategoryRepository.findById(recipeBoard.getMenu().getMenuCategory().getMenuCategoryId())
@@ -79,9 +83,14 @@ public class RecipeBoardService {
         RecipeBoard findRecipeBoard = recipeBoardRepository.findById(savedRecipeBoard.getRecipeBoardId())
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.RECIPEBOARD_NOT_FOUND));
         String menuCategoryName = findRecipeBoard.getMenu().getMenuCategory().getMenuCategoryName();
-        ChallengeCategory challengeCategory = challengeCategoryRepository.findByCategory(menuCategoryName)
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHALLENGE_CATEGORY_NOT_FOUND));
-        MemberChallenge memberChallenge = memberChallengeRepository.findByMember_MemberIdAndChallengeCategory_ChallengeCategoryid(recipeBoard.getMember().getMemberId(), challengeCategory.getChallengeCategoryid())
+        Optional<ChallengeCategory> challengeCategory = challengeCategoryRepository.findByCategory(menuCategoryName);
+        ChallengeCategory findChallengeCategory;
+        if (challengeCategory.isEmpty() || challengeCategory.get().getCategory().equals("기타")) {
+            return savedRecipeBoard;
+        } else {
+            findChallengeCategory = challengeCategory.get();
+        }
+        MemberChallenge memberChallenge = memberChallengeRepository.findByMember_MemberIdAndChallengeCategory_ChallengeCategoryid(recipeBoard.getMember().getMemberId(), findChallengeCategory.getChallengeCategoryid())
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_CHALLENGE_NOT_FOUND));
         titleService.incrementChallengeCount(memberChallenge.getMemberChallengeId(), recipeBoard.getMember().getMemberId());
 
@@ -153,7 +162,9 @@ public class RecipeBoardService {
         verifyCanAccessPrivate(recipeBoard, recipeBoard.getMember().getMemberId());
 
         recipeBoardRepository.delete(recipeBoard);
-        titleService.decrementChallengeCount(recipeBoardId, recipeBoard.getMember().getMemberId());
+        if(!recipeBoard.getMenu().getMenuCategory().equals("기타")) {
+            titleService.decrementChallengeCount(recipeBoardId, recipeBoard.getMember().getMemberId());
+        }
     }
 
     public Page<RecipeBoard> findAllRecipeBoards(int page, int size) {
@@ -266,28 +277,42 @@ public class RecipeBoardService {
 //                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MENU_NOT_FOUND));
 //    }
 
-    private Menu menuExists(String menuName, String menuSubCategory, long menuCategoryId) {
-        return menuRepository.findByMenuName(menuName)
-                .orElseGet(() -> {
-                    Menu newMenu = new Menu();
-                    newMenu.setMenuName(menuName);
+    private Menu menuExists(String menuName, String menuSubCategory, long menuCategoryId, long menuId) {
+        MenuCategory menuCategory = menuCategoryRepository.findById(menuCategoryId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MENU_CATEGORY_NOT_FOUND));
+        SubMenuCategory subMenuCategory = null;
 
-                    // 🔥 MenuCategory 존재 여부 확인
-                    MenuCategory menuCategory = menuCategoryRepository.findById(menuCategoryId)
-                            .orElseGet(() -> {
-                                // 없으면 새로 생성
-                                MenuCategory newCategory = new MenuCategory();
-                                newCategory.setMenuCategoryName(menuName); // 이름은 menuName 기반으로 세팅
-                                newCategory.setMenuSubCategory(menuSubCategory);
+        if (menuCategory.getMenuCategoryId() == 5) {
+            // "기타" 카테고리인 경우
+            Optional<SubMenuCategory> subMenuCategoryOptional = subMenuCategoryRepository.findBySubMenuCategoryName(menuSubCategory);
+            if (subMenuCategoryOptional.isPresent()) {
+                subMenuCategory = subMenuCategoryOptional.get();
+            } else {
+                subMenuCategory = new SubMenuCategory();
+                subMenuCategory.setSubMenuCategoryName(menuSubCategory);
+                subMenuCategory.setMenuCategory(menuCategory);
+                subMenuCategory = subMenuCategoryRepository.save(subMenuCategory);
+            }
+        }
 
-                                return menuCategoryRepository.save(newCategory);
-                            });
+        Optional<Menu> findMenu = menuRepository.findByMenuNameAndMenuCategory_MenuCategoryIdAndMenuCategory_MenuSubCategory(menuName, menuCategoryId, menuSubCategory);
+        if (findMenu.isPresent()) {
+            return findMenu.get();
+        }
 
-                    newMenu.setMenuCategory(menuCategory);
+        // ❗ 메뉴를 새로 생성
+        Menu menu = new Menu();
+        menu.setMenuName(menuName);
+        menu.setMenuCategory(menuCategory);
 
-                    return menuRepository.save(newMenu); // 메뉴 저장
-                });
+        if (menuCategory.getMenuCategoryId() == 5) {
+            menu.setSubMenuCategory(subMenuCategory);
+        }
+
+        return menuRepository.save(menu); // ✅ 여기서 최종 1번만 저장
     }
+
+
 
     // 게시글 존재 여부 검증
     private RecipeBoard verifyRecipeBoardExists(long recipeBoardId) {

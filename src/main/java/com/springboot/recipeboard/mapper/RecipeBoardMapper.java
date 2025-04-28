@@ -4,7 +4,9 @@ import com.springboot.ingredient.dto.IngredientDto;
 import com.springboot.ingredient.entity.Ingredient;
 import com.springboot.ingredient.entity.MainIngredient;
 import com.springboot.ingredient.entity.SeasoningIngredient;
+import com.springboot.menu.dto.MenuDto;
 import com.springboot.menu.entity.Menu;
+import com.springboot.menu.entity.SubMenuCategory;
 import com.springboot.menucategory.entity.MenuCategory;
 import com.springboot.recipeboard.dto.RecipeBoardDto;
 import com.springboot.recipeboard.dto.RecipeBoardStepDto;
@@ -213,6 +215,70 @@ public interface RecipeBoardMapper {
         return response;
     }
 
+    default RecipeBoardDto.Response recipeBoardToRecipeBoardResponseDto(RecipeBoard recipeBoard) {
+        if (recipeBoard == null) return null;
+
+        RecipeBoardDto.Response response = new RecipeBoardDto.Response();
+        response.setRecipeBoardId(recipeBoard.getRecipeBoardId());
+        response.setTitle(recipeBoard.getTitle());
+        response.setImage(recipeBoard.getImage());
+        response.setMenuId(recipeBoard.getMenu().getMenuId());
+        response.setRecipeStatus(recipeBoard.getRecipeStatus());
+        response.setRecipeBoardStatus(recipeBoard.getRecipeBoardStatus());
+        response.setNickName(recipeBoard.getMember().getNickName());
+        response.setCreatedAt(recipeBoard.getCreatedAt());
+
+        List<RecipeBoardDto.RecipeStep> step = recipeBoard.getRecipeBoardSteps().stream()
+                .map(recipeBoardStep -> {
+                    RecipeBoardDto.RecipeStep recipeStep = new RecipeBoardDto.RecipeStep();
+                    recipeStep.setRecipeStepId(recipeBoardStep.getRecipeStep().getRecipeStepId());
+                    recipeStep.setStepOrder(recipeBoardStep.getStepOrder());
+                    recipeStep.setTitle(recipeBoardStep.getRecipeStep().getTitle());
+                    recipeStep.setStepOrder(recipeBoardStep.getStepOrder());
+                    List<RecipeStepDetailDto.Response> stepDetails = recipeBoardStep.getRecipeStepDetails().stream()
+                            .map(this::recipeStepDetailToRecipeStepDetailResponseDto)
+                            .collect(Collectors.toList());
+                    recipeStep.setRecipeBoardSteps(stepDetails);
+                    return recipeStep;
+                }).collect(Collectors.toList());
+
+        response.setRecipeStep(step);
+
+        List<IngredientDto.Response> mainIngredients = recipeBoard.getRecipeBoardIngredients().stream()
+                .filter(recipeBoardIngredient -> recipeBoardIngredient.getIngredient() instanceof MainIngredient)
+                .map(recipeBoardIngredient -> {
+                    IngredientDto.Response recipeIngredient = new IngredientDto.Response();
+                    recipeIngredient.setIngredientId(recipeBoardIngredient.getIngredient().getIngredientId());
+                    recipeIngredient.setIngredientName(recipeBoardIngredient.getIngredient().getIngredientName());
+                    recipeIngredient.setImage(recipeBoardIngredient.getIngredient().getImage());
+                    recipeIngredient.setSubCategory(recipeBoardIngredient.getIngredient().getSubCategory());
+                    return recipeIngredient;
+                }).collect(Collectors.toList());
+        response.setMainIngredients(mainIngredients);
+
+        List<IngredientDto.Response> seasoningIngredients = recipeBoard.getRecipeBoardIngredients().stream()
+                .filter(recipeBoardIngredient -> recipeBoardIngredient.getIngredient() instanceof SeasoningIngredient)
+                .map(recipeBoardIngredient -> {
+                    IngredientDto.Response recipeIngredient = new IngredientDto.Response();
+                    recipeIngredient.setIngredientId(recipeBoardIngredient.getIngredient().getIngredientId());
+                    recipeIngredient.setIngredientName(recipeBoardIngredient.getIngredient().getIngredientName());
+                    recipeIngredient.setImage(recipeBoardIngredient.getIngredient().getImage());
+                    recipeIngredient.setSubCategory(null);
+                    return recipeIngredient;
+                }).collect(Collectors.toList());
+
+        response.setSeasoningIngredients(seasoningIngredients);
+
+        // 좋아요 수
+        response.setLikeCount(recipeBoard.getLike().size());
+        // 좋아요 여부
+        response.setLiked(false);
+        // 북마크 여부
+        response.setBookmarked(false);
+
+        return response;
+    }
+
     default RecipeStepDetailDto.Response recipeStepDetailToRecipeStepDetailResponseDto(RecipeStepDetail stepDetail) {
         if (stepDetail == null) return null;
 
@@ -234,5 +300,34 @@ public interface RecipeBoardMapper {
         }
 
         return list;
+    }
+
+    default List<RecipeBoardDto.Response> recipeBoardsToRecipeBoardResponseDtos(List<RecipeBoard> recipeBoards) {
+        if (recipeBoards == null) return null;
+
+        List<RecipeBoardDto.Response> list = new ArrayList<>(recipeBoards.size());
+        for (RecipeBoard recipeBoard : recipeBoards) {
+            list.add(recipeBoardToRecipeBoardResponseDto(recipeBoard));
+        }
+
+        return list;
+    }
+
+    default MenuDto.MenuCategory subMenuCategoriesToMenuCategoryResponseDto(MenuCategory menuCategory, Menu menu) {
+
+        List<SubMenuCategory> subMenuCategories = menuCategory.getSubMenuCategories();
+        MenuDto.MenuCategory response = new MenuDto.MenuCategory();
+        SubMenuCategory findSubMenuCategory = subMenuCategories.stream()
+                .filter(subMenuCategory ->
+                        subMenuCategory.getMenu().stream()
+                                .anyMatch(m -> m.getMenuId() == menu.getMenuId())
+                )
+                .findFirst()
+                .orElse(null);
+        response.setMenuCategoryId(menuCategory.getMenuCategoryId());
+        response.setMenuCategoryName(menuCategory.getMenuCategoryName());
+        String subCategoryName = findSubMenuCategory != null ? findSubMenuCategory.getSubMenuCategoryName() : null;
+        response.setMenuSubCategory(subCategoryName);
+        return response;
     }
 }

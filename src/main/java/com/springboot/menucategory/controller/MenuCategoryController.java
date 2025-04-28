@@ -84,8 +84,8 @@ public class MenuCategoryController {
     })
     @GetMapping
     public ResponseEntity getMenuCategories(
-            @Parameter(hidden = true) @AuthenticationPrincipal Member member, @RequestParam int size, @RequestParam int page) {
-        Page<MenuCategory> pageMenuCategories = menuCategoryService.findMenuCategories(size, page - 1);
+            @Parameter(hidden = true) @AuthenticationPrincipal Member member, @RequestParam int page, @RequestParam int size) {
+        Page<MenuCategory> pageMenuCategories = menuCategoryService.findMenuCategories(page - 1, size);
         List<MenuCategory> menuCategories = pageMenuCategories.getContent();
         List<MenuCategoryDto.Response> response = mapper.menuCategoriesToMenuCategoriesResponseDtos(menuCategories);
         return new ResponseEntity<>(new MultiResponseDto<>(response, pageMenuCategories), HttpStatus.OK);

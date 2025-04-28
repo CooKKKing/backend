@@ -72,3 +72,9 @@ server:
       force-response: true
 file:
   upload-dir: /fileImage
+payment:
+  toss:
+    test_client_api_key: test_ck_ZLKGPx4M3MR7vOEM9BBwVBaWypv1
+    test_secret_api_key: test_sk_yZqmkKeP8gaKW7Wpagd4VbQRxB9l
+    success_url: "http://localhost:3000/success"
+    fail_url: "http://localhost:3000/fail"
