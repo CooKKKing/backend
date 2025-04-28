@@ -4,9 +4,11 @@ import com.springboot.ingredient.dto.IngredientDto;
 import com.springboot.ingredient.entity.Ingredient;
 import com.springboot.ingredient.entity.MainIngredient;
 import com.springboot.ingredient.entity.SeasoningIngredient;
+import com.springboot.menu.dto.MenuDto;
 import org.mapstruct.Mapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface IngredientMapper {
@@ -77,4 +79,25 @@ public interface IngredientMapper {
     }
 
     List<IngredientDto.Response> ingredientsToIngredientResponseDtos(List<Ingredient> ingredients);
+
+    default Ingredient ingredientDtoToIngredient(MenuDto.IngredientDto IngredientDto) {
+        if (IngredientDto == null) return null;
+
+
+        Ingredient ingredient = IngredientDto.getType().equals("MAIN") ?
+                new MainIngredient() :
+                new SeasoningIngredient();
+
+        ingredient.setIngredientId(IngredientDto.getIngredientId());
+
+        return ingredient;
+    }
+
+    default List<Ingredient> ingredientsDtoToIngredients(MenuDto.RecommendationsIngredientDto ingredientDtos) {
+        if (ingredientDtos == null) return null;
+
+        return ingredientDtos.getIngredients().stream()
+                .map(this::ingredientDtoToIngredient)
+                .collect(Collectors.toList());
+    }
 }

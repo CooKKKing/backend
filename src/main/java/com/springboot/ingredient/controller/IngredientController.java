@@ -7,6 +7,7 @@ import com.springboot.ingredient.entity.Ingredient;
 import com.springboot.ingredient.mapper.IngredientMapper;
 import com.springboot.ingredient.service.IngredientService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -77,8 +78,11 @@ public class IngredientController {
     })
     @GetMapping
     public ResponseEntity getIngredients(
-            @RequestParam int page,
-            @RequestParam int size,
+            @Parameter(description = "페이지 번호 (1부터 시작), 누락시 기본값 1로 됨", example = "1")
+            @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "페이지당 데이터 개수, 누락시 기본값 10으로 됨", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "재료 타입 (MAIN, SEASONING), 누락시 타입 가리지 않고 전체 조회", example = "MAIN")
             @RequestParam(required = false) String dtype
     ) {
         Page<Ingredient> pageIngredients = ingredientService.findIngredients(page - 1, size, dtype);
