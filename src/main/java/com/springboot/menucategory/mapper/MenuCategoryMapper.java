@@ -1,6 +1,8 @@
 package com.springboot.menucategory.mapper;
 
 import com.springboot.menu.dto.MenuDto;
+import com.springboot.menu.entity.Menu;
+import com.springboot.menu.entity.SubMenuCategory;
 import com.springboot.menucategory.dto.MenuCategoryDto;
 import com.springboot.menucategory.entity.MenuCategory;
 import org.mapstruct.Mapper;
@@ -26,7 +28,8 @@ public interface MenuCategoryMapper {
         response.setMenus(menuCategory.getMenus().stream()
                 .map(menu -> new MenuDto.SimpleResponse(
                         menu.getMenuId(),
-                        menu.getMenuName()
+                        menu.getMenuName(),
+                        subMenuCategoriesToMenuCategoryResponseDto(menuCategory, menu).getMenuCategoryName()
                 ))
                 .collect(Collectors.toList()));
         return response;
@@ -34,6 +37,25 @@ public interface MenuCategoryMapper {
 
     List<MenuCategoryDto.Response> menuCategoriesToMenuCategoriesResponseDtos(List<MenuCategory> menuCategories);
 
+    default MenuDto.MenuCategory subMenuCategoriesToMenuCategoryResponseDto(MenuCategory menuCategory, Menu menu) {
 
+        List<SubMenuCategory> subMenuCategories = menuCategory.getSubMenuCategories();
+        MenuDto.MenuCategory response = new MenuDto.MenuCategory();
+//        SubMenuCategory findSubMenuCategory = subMenuCategories.stream()
+//                .filter(subMenuCategory -> subMenuCategory.getMenu().getMenuId() == menu.getMenuId())
+//                .findFirst().orElse(null);
+        SubMenuCategory findSubMenuCategory = subMenuCategories.stream()
+                .filter(subMenuCategory ->
+                        subMenuCategory.getMenu().stream()
+                                .anyMatch(m -> m.getMenuId() == menu.getMenuId())
+                )
+                .findFirst()
+                .orElse(null);
+        response.setMenuCategoryId(menuCategory.getMenuCategoryId());
+        response.setMenuCategoryName(menuCategory.getMenuCategoryName());
+        String subCategoryName = findSubMenuCategory != null ? findSubMenuCategory.getSubMenuCategoryName() : null;
+        response.setMenuSubCategory(subCategoryName);
+        return response;
+    }
 
 }
