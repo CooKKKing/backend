@@ -31,7 +31,7 @@ public class RecipeStepService {
     }
 
     public Page<RecipeStep> findRecipeSteps(int page, int size) {
-        return recipeStepRepository.findAll(PageRequest.of(page, size, Sort.by("recipeStepId").descending()));
+        return recipeStepRepository.findAll(PageRequest.of(page, size, Sort.by("recipeStepId").ascending()));
     }
 
     public RecipeStep updateRecipeStep(RecipeStep recipeStep) {
