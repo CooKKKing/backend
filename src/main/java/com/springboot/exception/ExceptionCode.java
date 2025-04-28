@@ -47,7 +47,10 @@ public enum ExceptionCode {
     PROFILE_IMAGE_NOT_FOUND(404, "프로필 이미지가 존재하지 않습니다."),
     TITLE_NOT_FOUND(404, "타이틀이 존재하지 않습니다."),
     INVALID_PAYMENT_AMOUNT(400, "유효하지 않은 결제 금액입니다."),
-    MEMBER_CHALLENGE_NOT_FOUND(404, "회원 도전과제가 존재하지 않습니다.");
+    MEMBER_CHALLENGE_NOT_FOUND(404, "회원 도전과제가 존재하지 않습니다."),
+    PAYMENT_NOT_FOUND(404, "결제 정보가 존재하지 않습니다."),
+    PAYMENT_FAILED(500, "결제 승인에 실패했습니다.");
+
 
     @Getter
     private int status;
