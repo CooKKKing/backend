@@ -34,7 +34,7 @@ public class ProfileService {
     }
 
     public Page<ProfileImage> findMemberProfileImages(int page, int size, long memberId) {
-        return profileImageRepository.findAllByMemberProfileImages_MemberId(memberId, PageRequest.of(page, size, Sort.by("profileImageId").descending()));
+        return profileImageRepository.findAllByMemberProfileImages_Member_MemberId(memberId, PageRequest.of(page, size, Sort.by("profileImageId").descending()));
     }
 
     public void purchaseProfile(MemberProfileImage memberProfileImage) {

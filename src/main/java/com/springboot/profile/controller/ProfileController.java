@@ -8,7 +8,10 @@ import com.springboot.profile.dto.ProfileDto;
 import com.springboot.profile.entity.ProfileImage;
 import com.springboot.profile.mapper.ProfileMapper;
 import com.springboot.profile.service.ProfileService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -33,6 +36,11 @@ public class ProfileController {
     }
 
     // 프로필 조회
+    @Operation(summary = "프로필 조회", description = "프로필 ID로 단일 프로필 이미지를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로필 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "프로필을 찾을 수 없음")
+    })
     @GetMapping("/{profile-id}")
     public ResponseEntity getProfile(@Parameter(hidden = true) @AuthenticationPrincipal Member member,
                                      @PathVariable(value = "profile-id") Long profileId) {
@@ -42,6 +50,10 @@ public class ProfileController {
     }
 
     // 전체 프로필 조회
+    @Operation(summary = "전체 프로필 조회", description = "전체 프로필 이미지를 페이지네이션으로 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 프로필 조회 성공")
+    })
     @GetMapping
     public ResponseEntity getAllProfiles(@RequestParam(defaultValue = "1") int page,
                                          @RequestParam(defaultValue = "10") int size) {
@@ -50,6 +62,12 @@ public class ProfileController {
         return new ResponseEntity(new MultiResponseDto<>(responseDtos, profileImages), HttpStatus.OK);
     }
 
+    // 회원 보유 프로필 조회
+    @Operation(summary = "회원의 보유 프로필 조회", description = "특정 회원이 보유한 프로필 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 보유 프로필 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
+    })
     @GetMapping("members/{member-id}")
     public ResponseEntity getMemberProfiles(@RequestParam(defaultValue = "1") int page,
                                             @RequestParam(defaultValue = "10") int size,
@@ -60,6 +78,11 @@ public class ProfileController {
     }
 
     // 프로필 구매
+    @Operation(summary = "프로필 이미지 구매", description = "회원이 프로필 이미지를 구매합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로필 구매 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 또는 밥풀이 부족함")
+    })
     @PostMapping("{profile-id}/purchase")
     public ResponseEntity purchaseProfile(@RequestBody @Valid ProfileDto.PurchaseRequest requestDto) {
         MemberProfileImage memberProfileImage = profileMapper.profileDtoToMemberProfileImage(requestDto);
