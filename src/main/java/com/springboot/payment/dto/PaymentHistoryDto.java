@@ -15,6 +15,8 @@ public class PaymentHistoryDto {
     private int amount;
     private int riceAmount;
     private Payment.PaymentStatus paymentStatus;
+    private String riceImage;
+    private String riceName;
     private LocalDateTime requestedAt;
     private LocalDateTime completedAt;
 }

@@ -51,6 +51,10 @@ public class Payment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToOne
+    @JoinColumn(name = "payment_master_id")
+    private PaymentMaster paymentMaster;
+
     public enum PaymentStatus {
         PENDING("결제 대기"),
         COMPLETED("결제 완료"),

@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TossCancelDto {
-    private String paymentKey;
-    private String cancelReason; // 취소 사유
+    private String orderId;
+    private String cancelReason;
 }
