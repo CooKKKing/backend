@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long> {
-    Page<ProfileImage> findAllByMemberProfileImages_MemberId(Long memberId, Pageable pageable);
+    Page<ProfileImage> findAllByMemberProfileImages_Member_MemberId(Long memberId, Pageable pageable);
 }
