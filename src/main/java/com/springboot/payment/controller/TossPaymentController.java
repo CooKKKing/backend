@@ -39,7 +39,7 @@ public class TossPaymentController {
     })
     @PostMapping("/request")
     public ResponseEntity requestTossPayment(@Parameter(hidden = true) @AuthenticationPrincipal Member member,
-                                                                 @RequestBody @Valid PaymentRequestDto dto) {
+                                             @RequestBody @Valid PaymentRequestDto dto) {
         long memberId = 1L;
 
         Payment payment = paymentService.requestTossPayment(dto, memberId);
@@ -70,21 +70,39 @@ public class TossPaymentController {
     }
 
     @PostMapping("/fail")
+    @Operation(summary = "토스 결제 실패 처리", description = "결제 실패 시 결제 상태를 실패로 업데이트합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "결제 실패 처리 완료"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
     public ResponseEntity tossPaymentFail(@RequestBody TossFailDto failDto) {
         paymentService.failPayment(failDto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<?> tossPaymentCancel(@RequestBody TossCancelDto cancelDto) {
+    @Operation(summary = "토스 결제 취소 처리", description = "결제 취소 시 결제 상태를 취소로 업데이트하고 포인트를 반환합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "결제 취소 처리 완료"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    public ResponseEntity tossPaymentCancel(@RequestBody TossCancelDto cancelDto) {
         paymentService.cancelPayment(cancelDto);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/history")
-    public ResponseEntity<?> getChargingHistory(@AuthenticationPrincipal Member member) {
-        List<PaymentHistoryDto> historyDtos = paymentService.historyPayment(member.getMemberId());
-
+    @Operation(summary = "결제 내역 조회", description = "로그인한 회원의 모든 결제 내역을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "결제 내역 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    public ResponseEntity getChargingHistory(@Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        long memberId = 1L;
+        List<PaymentHistoryDto> historyDtos = paymentService.historyPayment(memberId);
         return ResponseEntity.ok(historyDtos);
     }
 }
