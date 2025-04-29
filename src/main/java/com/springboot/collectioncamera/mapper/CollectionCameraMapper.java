@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface CollectionCameraMapper {
@@ -27,5 +28,30 @@ public interface CollectionCameraMapper {
         } else {
             return null; // 이미지 없으면 null
         }
+    }
+    default List<CollectionCameraDto.ResponseCamera> collectionCameraToCollectionCameraResponseDtos(List<CollectionCamera> collectionCameras) {
+        return collectionCameras.stream()
+                .map(this::collectionCametaDtoToCollectionCameraResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    default CollectionCameraDto.ResponseCamera collectionCametaDtoToCollectionCameraResponseDto(CollectionCamera collectionCamera) {
+        CollectionCameraDto.ResponseCamera responseCameraDto = new CollectionCameraDto.ResponseCamera();
+        responseCameraDto.setCustomCategoryName(collectionCamera.getCustomCategoryName());
+        responseCameraDto.setCollectionCameraId(collectionCamera.getCollectionCameraId());
+        responseCameraDto.setCollectionStatus(String.valueOf(collectionCamera.getCollectionStatus()));
+        responseCameraDto.setCameraImage(collectionCamera.getCameraImage().getImageUrl());
+        List<CollectionCameraDto.ResponseCollectionItem> responseCollectionItems = collectionCamera.getCollectionItems()
+                .stream()
+                .map(item -> {
+                    CollectionCameraDto.ResponseCollectionItem responseItem = new CollectionCameraDto.ResponseCollectionItem();
+                    responseItem.setCollectionItemId(item.getCollectionItemId());
+                    responseItem.setImageUrl(item.getImageUrl());
+                    responseItem.setMenuName(item.getMenuName());
+                    return responseItem;
+                })
+                .collect(Collectors.toList());
+        responseCameraDto.setResponseCollectionItems(responseCollectionItems);
+        return responseCameraDto;
     }
 }

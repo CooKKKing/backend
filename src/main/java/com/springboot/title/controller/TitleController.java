@@ -15,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -61,6 +58,22 @@ public class TitleController {
         Page<Title> pageTitles = titleService.findOwnedTitles(page, size, authenticatedmember.getMemberId());
         List<Title> titles = pageTitles.getContent();
         List<TitleDto.Response> response = mapper.titlesToTitleResponseDtos(titles, authenticatedmember.getMemberId());
+        return new ResponseEntity(new MultiResponseDto<>(response, pageTitles), HttpStatus.OK);
+    }
+
+    @Operation(summary = "회원의 모든 타이틀 조회", description = "회원에 모든 타이틀을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "타이틀 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "타이틀을 찾을 수 없습니다.")
+    })
+    @GetMapping("/members/{member-id}")
+    public ResponseEntity getMemberTitles(@Parameter(hidden = true) @AuthenticationPrincipal Member authenticatedmember,
+                                          @Parameter(description = "조회할 회원 정보") @PathVariable(value = "member-id") long memberId,
+                                          @RequestParam(name = "page", defaultValue = "0") int page,
+                                          @RequestParam(name = "size", defaultValue = "10") int size) {
+        Page<Title> pageTitles = titleService.findOwnedTitles(page, size, authenticatedmember.getMemberId());
+        List<Title> titles = pageTitles.getContent();
+        List<TitleDto.Response> response = mapper.titlesToTitleResponseDtos(titles, memberId);
         return new ResponseEntity(new MultiResponseDto<>(response, pageTitles), HttpStatus.OK);
     }
 

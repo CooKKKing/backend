@@ -192,4 +192,20 @@ public class CollectionCameraController {
 
         return ResponseEntity.ok(responseDtos);
     }
+
+    @Operation(summary = "특정 회원의 도감 카테고리 및 해당된 아이템 리스트 전체 조회", description = "특정 회원의 도감 카테고리 및 해당된 아이템 리스트를 전체 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "도감 카테고리 전체 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "Collection Validation failed")
+    })
+    @GetMapping("/members/{member-id}")
+    public ResponseEntity getMemberCollection(@Parameter(description = "조회할 회원 식별자")
+                                              @PathVariable("member-id") @Positive long memberId) {
+        // 도감 카테고리 전체 조회 로직 작성 해야함
+
+        List<CollectionCamera> collectionCameras = collectionCameraService.findCollections(memberId);
+        List<CollectionCameraDto.ResponseCamera> response = mapper.collectionCameraToCollectionCameraResponseDtos(collectionCameras);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 }

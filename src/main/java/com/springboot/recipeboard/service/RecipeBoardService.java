@@ -181,6 +181,11 @@ public class RecipeBoardService {
         return recipeBoardRepository.findByMenu_MenuId(menuId, PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
     }
 
+    // 회원별 레시피 게시글 전체 조회
+    public Page<RecipeBoard> findMemberRecipeBoards(int page, int size, long memberId) {
+        return recipeBoardRepository.findByMember_MemberId(memberId, PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
+    }
+
     // 레시피 게시글 북마크 추가/해제
     public void toggleBookmark(long recipeBoardId, long memberId) {
         // 게시글 존재 여부 검증
