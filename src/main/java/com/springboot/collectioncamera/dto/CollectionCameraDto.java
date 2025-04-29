@@ -5,12 +5,14 @@ import com.springboot.collectioncamera.entity.CollectionCamera;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 public class CollectionCameraDto {
@@ -71,5 +73,25 @@ public class CollectionCameraDto {
     public static class ResponseImage {
         private Long cameraImageId;
         private String imageUrl;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class ResponseCamera {
+        private long collectionCameraId;
+        private String customCategoryName;
+        private String cameraImage;
+        private String collectionStatus;
+        private List<ResponseCollectionItem> responseCollectionItems;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class ResponseCollectionItem {
+        private long collectionItemId;
+        private String imageUrl;
+        private String menuName;
     }
 }
