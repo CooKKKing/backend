@@ -474,7 +474,7 @@ INSERT INTO menu_ingredient (menu_id, ingredient_id, created_at, modified_at) VA
 INSERT INTO menu_ingredient (menu_id, ingredient_id, created_at, modified_at) VALUES
 (9, 19, NOW(), NOW()), -- 꽃게 (조개 대체)
 (9, 48, NOW(), NOW()), -- 양파
-9, 29, NOW(), NOW()), -- 마늘
+(9, 29, NOW(), NOW()), -- 마늘
 (9, 61, NOW(), NOW()); -- 토마토
 
 -- 미슐랭 원스타의 비법이 녹아있는 잠봉뵈르 (menu_id: 10)
