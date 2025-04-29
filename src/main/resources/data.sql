@@ -312,16 +312,16 @@ INSERT INTO menu (menu_name, menu_category_id, created_at, modified_at, sub_menu
 
 
 INSERT INTO recipe_board (title, image, recipe_status, recipe_board_status, member_id, menu_id, created_at, modified_at) VALUES
-( '어머니의 손맛이 느껴지는 김치찌개','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/1.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 5, 9, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '야채 김밥','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/2.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 10, 3, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '바다의 향이 느껴지는 연어 초밥','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/3.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 5, 2, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '바삭함이 느껴지는 가츠동','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/4.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 2, 6, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '한국인이 좋아하는 짜장면','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/5.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 8, 9, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '어머니의 손맛이 느껴지는 김치찌개','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/1.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 5, 1, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '야채 김밥','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/2.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 10, 2, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '바다의 향이 느껴지는 연어 초밥','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/3.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 5, 3, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '바삭함이 느껴지는 가츠동','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/4.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 2, 4, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '한국인이 좋아하는 짜장면','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/5.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 8, 5, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
 ( '맵찔이도 먹을 수 있는 짬뽕','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/6.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 2, 6, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '마라마라 마라탕','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/7.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 7, 6, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '본토의 맛이 느껴지는 소고기 스테이크','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/8.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 10, 4, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '이탈리아에서 전수받은 봉골레 파스타','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/9.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 9, 8, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '미슐랭 원스타의 비법이 녹아있는 잠봉뵈르','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/10.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 8, 9, '2024-01-01 10:00:00', '2024-01-02 10:00:00');
+( '마라마라 마라탕','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/7.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 7, 7, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '본토의 맛이 느껴지는 소고기 스테이크','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/8.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 10, 8, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '이탈리아에서 전수받은 봉골레 파스타','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/9.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 9, 9, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '미슐랭 원스타의 비법이 녹아있는 잠봉뵈르','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/10.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 8, 10, '2024-01-01 10:00:00', '2024-01-02 10:00:00');
 
 INSERT INTO bookmark (member_id, recipe_board_id, created_at, modified_at) VALUES
 ( 5, 1, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
