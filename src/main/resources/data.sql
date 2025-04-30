@@ -115,7 +115,7 @@ INSERT INTO title (name, level, image_path, type, challenge_category_id, created
 ('밥풀 고수', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/3.png', '밥풀', 7, NOW(), NOW()),
 ('밥풀 초고수', 4, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/4.png', '밥풀', 7, NOW(), NOW()),
 ('밥풀 초초고수', 5, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/5.png', '밥풀', 7, NOW(), NOW()),
-('늅늅하고 우는 뉴비', 0, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png', '웰컴', 9, NOW(), NOW());
+('초보자', 0, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png', '웰컴', 9, NOW(), NOW());
 
 INSERT INTO payment_master (amount, rice_amount, image, name) VALUES
 (1000, 10, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/1.png', '한 톨'),

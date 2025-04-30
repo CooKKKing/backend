@@ -38,13 +38,32 @@ public class EmailAuthController {
             @ApiResponse(responseCode = "400", description = "이메일 형식 오류 또는 요청 값 유효성 실패"),
             @ApiResponse(responseCode = "500", description = "서버 내부 오류 (이메일 발송 실패 등)")
     })
-    @PostMapping("/verify")
-    public ResponseEntity sendVerificationCode(@RequestBody EmailDto.Request dto) throws InterruptedException {
+    @PostMapping("/verify/register")
+    public ResponseEntity sendVerificationCodeRegister(@RequestBody EmailDto.Request dto) throws InterruptedException {
         if (memberRepository.findByEmail(dto.getEmail()).isPresent()) {
             // 이메일 이미 존재 → 409 Conflict 반환
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
         }
 
+        String code = generateCode(); // ex: 6자리
+        redisTemplate.opsForValue().set(dto.getEmail(), code, 3, TimeUnit.MINUTES);
+        emailSender.sendEmail(
+                new String[]{dto.getEmail()},
+                "쿡킹 🍳 회원가입을 위한 인증번호 안내드립니다",
+                "인증번호는 " + code + " 입니다.",
+                "email-verification"
+        );
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "이메일 인증 코드 발송(회원 정보 수정, 회원 탈퇴)", description = "입력한 이메일로 인증 코드를 전송합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인증번호 전송 성공"),
+            @ApiResponse(responseCode = "400", description = "이메일 형식 오류 또는 요청 값 유효성 실패"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류 (이메일 발송 실패 등)")
+    })
+    @PostMapping("/verify")
+    public ResponseEntity sendVerificationCode(@RequestBody EmailDto.Request dto) throws InterruptedException {
         String code = generateCode(); // ex: 6자리
         redisTemplate.opsForValue().set(dto.getEmail(), code, 3, TimeUnit.MINUTES);
         emailSender.sendEmail(
