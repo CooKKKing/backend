@@ -75,7 +75,7 @@ public class RecipeBoardController {
 
     @Operation(summary = "레시피 게시글 단일 조회", description = "레시피 게시글을 단일 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "레시피 게시글 단일   조회 완료"),
+            @ApiResponse(responseCode = "200", description = "레시피 게시글 단일 조회 완료"),
             @ApiResponse(responseCode = "400", description = "RecipeBoard Validation failed")
     })
     @GetMapping("/{recipe-id}")
