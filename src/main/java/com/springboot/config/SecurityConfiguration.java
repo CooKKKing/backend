@@ -71,11 +71,10 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.POST, "/members").permitAll()
                         .antMatchers(HttpMethod.GET, "/members").hasRole("ADMIN")
                         .antMatchers(HttpMethod.GET,"/members/**").hasAnyRole("USER", "ADMIN")
-                        .antMatchers(HttpMethod.PATCH, "/members/**").hasRole("USER")
+                        .antMatchers(HttpMethod.PATCH, "/members/**").permitAll()
                         .antMatchers(HttpMethod.DELETE, "/members").hasAnyRole("USER")
                         .antMatchers(HttpMethod.DELETE, "/members/**").hasAnyRole("USER", "ADMIN")
                         .antMatchers(HttpMethod.POST, "/members/**").permitAll()
-                        .antMatchers(HttpMethod.PATCH, "/members/password").permitAll()
                         // MyPage
                         .antMatchers(HttpMethod.GET, "/mypage").hasRole("USER")
                         .antMatchers(HttpMethod.GET, "/mypage/**").hasRole("USER")
