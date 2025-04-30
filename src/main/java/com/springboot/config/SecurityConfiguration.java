@@ -123,7 +123,6 @@ public class SecurityConfiguration {
                         // Challenge
                         .antMatchers(HttpMethod.GET, "/challenges/**").hasRole("USER")
                         // Ranking
-                        .antMatchers(HttpMethod.GET, "/rankings/**").hasRole("USER")
                         .anyRequest().permitAll()
                 );
         return http.build();

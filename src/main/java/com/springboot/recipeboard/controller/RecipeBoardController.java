@@ -65,18 +65,12 @@ public class RecipeBoardController {
     public ResponseEntity patchRecipeBoard(@PathVariable("recipe-id") @Positive long recipeId,
                                            @Valid @RequestBody RecipeBoardDto.Patch recipeBoardPatchDto,
                                            @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        // Patch Controller 로직 작성 해야함
-        member = new Member(); // 임시로 Member 객체 생성
-        member.setMemberId(1L); // 임시로 memberId 설정
-
-        long memberId = member.getMemberId();
-
         recipeBoardPatchDto.setRecipeBoardId(recipeId);
 
         RecipeBoard recipeBoard = mapper.recipeBoardPatchDtoToRecipeBoard(recipeBoardPatchDto);
-        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, memberId);
+        RecipeBoard updatedRecipeBoard = recipeBoardService.updateRecipeBoard(recipeBoard, member.getMemberId());
 
-        return new ResponseEntity<>(new SingleResponseDto<>(mapper.recipeBoardToRecipeBoardResponseDto(updatedRecipeBoard,memberId)), HttpStatus.OK);
+        return new ResponseEntity<>(new SingleResponseDto<>(mapper.recipeBoardToRecipeBoardResponseDto(updatedRecipeBoard, member.getMemberId())), HttpStatus.OK);
     }
 
     @Operation(summary = "레시피 게시글 단일 조회", description = "레시피 게시글을 단일 조회합니다.")
@@ -90,9 +84,7 @@ public class RecipeBoardController {
         // Get Controller 로직 작성 해야함
         RecipeBoard recipeBoard = recipeBoardService.findRecipeBoard(recipeId);
 
-        RecipeBoardDto.Response response = member == null
-                ? mapper.recipeBoardToRecipeBoardResponseDto(recipeBoard)
-                : mapper.recipeBoardToRecipeBoardResponseDto(recipeBoard, member.getMemberId());
+        RecipeBoardDto.Response response = mapper.recipeBoardToRecipeBoardResponseDto(recipeBoard, member.getMemberId());
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }

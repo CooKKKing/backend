@@ -419,7 +419,7 @@ INSERT INTO menu_ingredient (menu_id, ingredient_id, created_at, modified_at) VA
 (1, 62, NOW(), NOW()), -- 파
 (1, 21, NOW(), NOW()), -- 닭가슴살 (돼지고기 대체 불가 시)
 (1, 15, NOW(), NOW()), -- 고추
-(1, 60, NOW(), NOW()); -- 고추장
+(1, 66, NOW(), NOW()); -- 고추장
 
 -- 야채 김밥 (menu_id: 2)
 INSERT INTO menu_ingredient (menu_id, ingredient_id, created_at, modified_at) VALUES
@@ -491,7 +491,7 @@ INSERT INTO recipe_board_ingredient (recipe_board_id, ingredient_id, created_at,
 (1, 62, NOW(), NOW()), -- 파
 (1, 21, NOW(), NOW()), -- 닭가슴살
 (1, 15, NOW(), NOW()), -- 고추
-(1, 60, NOW(), NOW()); -- 고추장
+(1, 66, NOW(), NOW()); -- 고추장
 
 -- 야채 김밥 (recipe_board_id: 2)
 INSERT INTO recipe_board_ingredient (recipe_board_id, ingredient_id, created_at, modified_at) VALUES
