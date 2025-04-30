@@ -79,6 +79,7 @@ public class RecipeBoardDto {
     @Setter
     public static class Response {
         private Long recipeBoardId;
+        private long memberId;
         private String title;
         private String image;
         private long menuId;

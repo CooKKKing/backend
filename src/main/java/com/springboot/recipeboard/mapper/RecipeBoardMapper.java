@@ -154,6 +154,7 @@ public interface RecipeBoardMapper {
 
         RecipeBoardDto.Response response = new RecipeBoardDto.Response();
         response.setRecipeBoardId(recipeBoard.getRecipeBoardId());
+        response.setMemberId(recipeBoard.getMember().getMemberId());
         response.setTitle(recipeBoard.getTitle());
         response.setImage(recipeBoard.getImage());
         response.setMenuId(recipeBoard.getMenu().getMenuId());
