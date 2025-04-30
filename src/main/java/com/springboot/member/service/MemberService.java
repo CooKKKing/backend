@@ -110,7 +110,7 @@ public class MemberService {
         List<Title> titles = titleRepository.findAll();
 
         // 기본 타이틀 셋팅
-        titles.stream().filter(title -> title.getName().equals("늅늅하고 우는 뉴비"))
+        titles.stream().filter(title -> title.getName().equals("초보자"))
                 .findFirst()
                 .ifPresent(title -> {
                     MemberTitle memberTitle = new MemberTitle();
