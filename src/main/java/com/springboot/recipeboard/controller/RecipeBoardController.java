@@ -209,7 +209,7 @@ public class RecipeBoardController {
                                                       @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
         // 메뉴별 레시피 게시글 전체 조회 Controller 로직 작성 해야함
 
-        Page<RecipeBoard> pageBoards = recipeBoardService.findMenuRecipeBoards(page - 1, size, memberId);
+        Page<RecipeBoard> pageBoards = recipeBoardService.findMenuRecipeBoards(page - 1, size, member.getMemberId());
         List<RecipeBoard> recipeBoards = pageBoards.getContent();
 
         List<RecipeBoardDto.Response> responses =
