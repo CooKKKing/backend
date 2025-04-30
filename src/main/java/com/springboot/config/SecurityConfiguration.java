@@ -72,7 +72,7 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, "/members").hasRole("ADMIN")
                         .antMatchers(HttpMethod.GET,"/members/**").hasAnyRole("USER", "ADMIN")
                         .antMatchers(HttpMethod.PATCH, "/members/**").permitAll()
-                        .antMatchers(HttpMethod.DELETE, "/members").hasAnyRole("USER")
+                        .antMatchers(HttpMethod.DELETE, "/members").permitAll()
                         .antMatchers(HttpMethod.DELETE, "/members/**").hasAnyRole("USER", "ADMIN")
                         .antMatchers(HttpMethod.POST, "/members/**").permitAll()
                         // MyPage
@@ -113,7 +113,7 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.PATCH, "/recipes/**").hasRole("USER")
                         .antMatchers(HttpMethod.DELETE, "/recipes/**").hasRole("USER")
                         .antMatchers(HttpMethod.POST, "/recipes/**/bookmark").hasRole("USER")
-                        .antMatchers(HttpMethod.GET, "/recipes/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/recipes/**").hasRole("USER")
                         // RecipeStep
                         .antMatchers(HttpMethod.POST, "/recipe-steps").hasAnyRole("USER", "ADMIN")
                         .antMatchers(HttpMethod.PATCH, "/recipe-steps/**").hasAnyRole("USER", "ADMIN")
