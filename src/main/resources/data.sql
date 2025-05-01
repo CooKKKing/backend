@@ -85,7 +85,7 @@ INSERT INTO challenge_level (level, goal_count, challenge_category_id, descripti
 (1, 10, 8, '도감 10가지', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/1.png'),
 (2, 20, 8, '도감 20가지', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/2.png'),
 (3, 30, 8, '도감 30가지', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/3.png'),
-(0, 0, 9, '회원 가입시', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png');
+(1, 1, 9, '회원 가입시', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png');
 
 -- 3. 칭호 (도전과제별 레벨 달성 시 부여)
 INSERT INTO title (name, level, image_path, type, challenge_category_id, created_at, modified_at) VALUES
@@ -115,7 +115,7 @@ INSERT INTO title (name, level, image_path, type, challenge_category_id, created
 ('한 그릇', 3, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/3.png', '밥풀', 7, NOW(), NOW()),
 ('한 솥', 4, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/4.png', '밥풀', 7, NOW(), NOW()),
 ('한 포대', 5, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/5.png', '밥풀', 7, NOW(), NOW()),
-('초보자', 0, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png', '웰컴', 9, NOW(), NOW());
+('초보자', 1, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png', '웰컴', 9, NOW(), NOW());
 
 INSERT INTO payment_master (amount, rice_amount, image, name) VALUES
 (1000, 10, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/1.png', '한 톨'),
