@@ -113,6 +113,7 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.PATCH, "/recipes/**").hasRole("USER")
                         .antMatchers(HttpMethod.DELETE, "/recipes/**").hasRole("USER")
                         .antMatchers(HttpMethod.POST, "/recipes/**/bookmark").hasRole("USER")
+                        .antMatchers(HttpMethod.GET, "/recipes").permitAll()
                         .antMatchers(HttpMethod.GET, "/recipes/**").hasRole("USER")
                         // RecipeStep
                         .antMatchers(HttpMethod.POST, "/recipe-steps").hasAnyRole("USER", "ADMIN")
