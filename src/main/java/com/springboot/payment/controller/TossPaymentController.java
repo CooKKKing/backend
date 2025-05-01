@@ -40,9 +40,7 @@ public class TossPaymentController {
     @PostMapping("/request")
     public ResponseEntity requestTossPayment(@Parameter(hidden = true) @AuthenticationPrincipal Member member,
                                              @RequestBody @Valid PaymentRequestDto dto) {
-        long memberId = 1L;
-
-        Payment payment = paymentService.requestTossPayment(dto, memberId);
+        Payment payment = paymentService.requestTossPayment(dto, member.getMemberId());
 
         PaymentResponseDto responseDto = PaymentResponseDto.builder()
                 .orderId(payment.getOrderId())
@@ -101,8 +99,7 @@ public class TossPaymentController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     public ResponseEntity getChargingHistory(@Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        long memberId = 1L;
-        List<PaymentHistoryDto> historyDtos = paymentService.historyPayment(memberId);
+        List<PaymentHistoryDto> historyDtos = paymentService.historyPayment(member.getMemberId());
         return ResponseEntity.ok(historyDtos);
     }
 }
