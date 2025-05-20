@@ -38,7 +38,7 @@ public class TitleController {
     })
     @GetMapping()
     public ResponseEntity getTitles(@Parameter(hidden = true) @AuthenticationPrincipal Member authenticatedmember,
-                                    @RequestParam(name = "page", defaultValue = "0") int page,
+                                    @RequestParam(name = "page", defaultValue = "1") int page,
                                     @RequestParam(name = "size", defaultValue = "100") int size) {
         Page<Title> pageTitles = titleService.findTitles(page, size, authenticatedmember.getMemberId());
         List<Title> titles = pageTitles.getContent();
@@ -53,7 +53,7 @@ public class TitleController {
     })
     @GetMapping("/owned")
     public ResponseEntity getOwnedTitles(@Parameter(hidden = true) @AuthenticationPrincipal Member authenticatedmember,
-                                         @RequestParam(name = "page", defaultValue = "0") int page,
+                                         @RequestParam(name = "page", defaultValue = "1") int page,
                                          @RequestParam(name = "size", defaultValue = "100") int size) {
         Page<Title> pageTitles = titleService.findOwnedTitles(page, size, authenticatedmember.getMemberId());
         List<Title> titles = pageTitles.getContent();
@@ -69,7 +69,7 @@ public class TitleController {
     @GetMapping("/members/{member-id}")
     public ResponseEntity getMemberTitles(@Parameter(hidden = true) @AuthenticationPrincipal Member authenticatedmember,
                                           @Parameter(description = "조회할 회원 정보") @PathVariable(value = "member-id") long memberId,
-                                          @RequestParam(name = "page", defaultValue = "0") int page,
+                                          @RequestParam(name = "page", defaultValue = "1") int page,
                                           @RequestParam(name = "size", defaultValue = "10") int size) {
         Page<Title> pageTitles = titleService.findOwnedTitles(page, size, authenticatedmember.getMemberId());
         List<Title> titles = pageTitles.getContent();
@@ -84,11 +84,24 @@ public class TitleController {
     })
     @GetMapping("/unowned")
     public ResponseEntity getUnownedTitles(@Parameter(hidden = true) @AuthenticationPrincipal Member authenticatedmember,
-                                           @RequestParam(name = "page", defaultValue = "0") int page,
+                                           @RequestParam(name = "page", defaultValue = "1") int page,
                                            @RequestParam(name = "size", defaultValue = "100") int size) {
         Page<Title> pageTitles = titleService.findUnownedTitles(page, size, authenticatedmember.getMemberId());
         List<Title> titles = pageTitles.getContent();
         List<TitleDto.Response> response = mapper.titlesToTitleResponseDtos(titles, authenticatedmember.getMemberId());
         return new ResponseEntity(new MultiResponseDto<>(response, pageTitles), HttpStatus.OK);
     }
+    // 칭호 착용
+    @Operation(summary = "칭호 착용", description = "보유한 칭호를 착용합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "칭호 착용 성공"),
+            @ApiResponse(responseCode = "400", description = "보유하지 않은 칭호 또는 예외 발생")
+    })
+    @PostMapping("/{title-id}/equip")
+    public ResponseEntity equipTitle(@PathVariable("title-id") Long titleId,
+                                     @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        titleService.equipTitle(member.getMemberId(), titleId);
+        return ResponseEntity.ok().build();
+    }
+
 }

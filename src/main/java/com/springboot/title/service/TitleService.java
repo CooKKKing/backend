@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -33,14 +34,14 @@ public class TitleService {
     }
 
     public Page<Title> findTitles(int page, int size, Long memberId) {
-        return titleRepository.findAll(PageRequest.of(page, size, Sort.by("titleId").ascending()));
+        return titleRepository.findAll(PageRequest.of(page - 1, size, Sort.by("titleId").ascending()));
     }
     public Page<Title> findOwnedTitles(int page, int size, Long memberId) {
-        return titleRepository.findByMemberTitles_Member_MemberId(memberId, PageRequest.of(page, size, Sort.by("titleId").ascending()));
+        return titleRepository.findByMemberTitles_Member_MemberId(memberId, PageRequest.of(page - 1, size, Sort.by("titleId").ascending()));
     }
 
     public Page<Title> findUnownedTitles(int page, int size, Long memberId) {
-        return titleRepository.findTitlesNotOwnedByMember(memberId, PageRequest.of(page, size, Sort.by("titleId").ascending()));
+        return titleRepository.findTitlesNotOwnedByMember(memberId, PageRequest.of(page - 1, size, Sort.by("titleId").ascending()));
     }
 
     public void incrementChallengeCount(long memberChallengeId, long memberId) {
@@ -132,5 +133,21 @@ public class TitleService {
         }
 
         memberChallengeRepository.save(memberChallenge);
+    }
+
+    @Transactional
+    public void equipTitle(Long memberId, Long titleId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+
+        boolean hasTitle = member.getMemberTitles().stream()
+                .anyMatch(mt -> mt.getTitle().getTitleId() == titleId);
+
+        if (!hasTitle) {
+            throw new BusinessLogicException(ExceptionCode.TITLE_NOT_OWNED);
+        }
+
+        member.setActiveTitleId(titleId);
+        memberRepository.save(member); // 실제 DB 반영
     }
 }
