@@ -18,9 +18,13 @@ public class ProfileImage {
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private long profileImageId;
 
+    @Column(nullable = false)
     private String imagePath;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @Column(nullable = false)
+    private int price;
+
+    @OneToMany(mappedBy = "profileImage", cascade = CascadeType.ALL)
     private List<MemberProfileImage> memberProfileImages = new ArrayList<>();
 
     public void setMemberProfileImages(MemberProfileImage memberProfileImage) {
