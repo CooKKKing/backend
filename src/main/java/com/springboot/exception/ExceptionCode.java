@@ -51,7 +51,11 @@ public enum ExceptionCode {
     PAYMENT_NOT_FOUND(404, "결제 정보가 존재하지 않습니다."),
     PAYMENT_MASTER_NOT_FOUND(404, "결제 상품 정보(PaymentMaster)를 찾을 수 없습니다."),
     PAYMENT_FAILED(500, "결제 승인에 실패했습니다."),
-    PROFILE_NOT_FOUND(404, "프로필이 존재하지 않습니다.");
+    PROFILE_NOT_FOUND(404, "프로필이 존재하지 않습니다."),
+    INSUFFICIENT_RICE_POINT(400, "보유한 밥풀이 부족합니다."),
+    PROFILE_ALREADY_OWNED(409, "이미 보유 중인 프로필입니다."),
+    PROFILE_NOT_OWNED(400, "보유중인 프로필이 아닙니다."),
+    TITLE_NOT_OWNED(400, "칭호를 보유하고 있지 않습니다.");
 
 
     @Getter

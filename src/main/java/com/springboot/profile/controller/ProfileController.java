@@ -89,4 +89,17 @@ public class ProfileController {
         profileService.purchaseProfile(memberProfileImage);
         return ResponseEntity.ok().build();
     }
+
+    // 프로필 착용
+    @Operation(summary = "프로필 착용", description = "보유한 프로필을 착용합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로필 착용 성공"),
+            @ApiResponse(responseCode = "400", description = "프로필 미보유 또는 예외 발생")
+    })
+    @PostMapping("/{profile-id}/equip")
+    public ResponseEntity equipProfile(@PathVariable("profile-id") Long profileId,
+                                       @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+        profileService.equipProfile(member.getMemberId(), profileId);
+        return ResponseEntity.ok().build();
+    }
 }
