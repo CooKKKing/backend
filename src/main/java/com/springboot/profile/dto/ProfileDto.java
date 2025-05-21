@@ -11,6 +11,7 @@ public class ProfileDto {
     public static class Response {
         private long profileImageId;
         private String imagePath;
+        private int price;
     }
 
     @Getter
