@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface RecipeBoardMapper {
-
     default RecipeBoard recipeBoardPatchDtoToRecipeBoard(RecipeBoardDto.Patch patchDto) {
         if (patchDto == null) return null;
 
@@ -45,15 +44,18 @@ public interface RecipeBoardMapper {
 //        recipeBoard.setMenu(menu);
 
         // 단계 리스트 매핑
-        List<RecipeBoardStep> boardSteps = patchDto.getRecipeBoardSteps().stream()
+        // null일경우 바꾸지 않는것으로, null로 할당
+        List<RecipeBoardStep> boardSteps = patchDto.getRecipeBoardSteps() != null ? patchDto.getRecipeBoardSteps().stream()
                 .map(stepDto -> recipeBoardStepPostDtoToEntity(stepDto, recipeBoard))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : null;
         recipeBoard.setRecipeBoardSteps(boardSteps);
 
         // 재료 리스트 매핑
-        List<RecipeBoardIngredient> recipeBoardIngredients = patchDto.getIngredients().stream()
+        // null일경우 바꾸지 않는것으로, null로 할당
+        // 재료 리스트 매핑
+        List<RecipeBoardIngredient> recipeBoardIngredients = patchDto.getIngredients() != null ? patchDto.getIngredients().stream()
                 .map(ingredientDto -> RecipeBoardIngredientDtoToEntity(ingredientDto, recipeBoard))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : null;
         recipeBoard.setRecipeBoardIngredients(recipeBoardIngredients);
 
         return recipeBoard;

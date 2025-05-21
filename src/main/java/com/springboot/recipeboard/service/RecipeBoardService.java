@@ -22,6 +22,7 @@ import com.springboot.menucategory.entity.MenuCategory;
 import com.springboot.menucategory.repository.MenuCategoryRepository;
 import com.springboot.recipeboard.entity.Like;
 import com.springboot.recipeboard.entity.RecipeBoard;
+import com.springboot.recipeboard.entity.RecipeBoardIngredient;
 import com.springboot.recipeboard.repository.LikeRepository;
 import com.springboot.recipeboard.repository.RecipeBoardRepository;
 import com.springboot.title.service.TitleService;
@@ -30,6 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -104,7 +106,11 @@ public class RecipeBoardService {
         // 비공개 게시글 접근 권한 검증
         verifyCanAccessPrivate(existingRecipeBoard, memberId);
         // 메인 재료 개수 검증
-        verifyMainIngredientCount(recipeBoard);
+        // 수정일 경우 재료를 바꾸지 않을수도 있기에, 비어있는경우는 bypass
+        // 바꿀 경우, 진짜 재료를 저장소에서 찾아서 넣어줘야 함.
+        if(recipeBoard.getRecipeBoardIngredients() != null) {
+            verifyMainIngredientCount(recipeBoard);
+        }
 
         // 아레 코드 제네릭 이용해서 리팩토링 필요합니다.
         Optional.ofNullable(recipeBoard.getRecipeStatus()).ifPresent(status -> {
@@ -129,9 +135,19 @@ public class RecipeBoardService {
             }
         });
 
-        Optional.ofNullable(recipeBoard.getRecipeBoardIngredients()).ifPresent(ingredients -> {
-            if (ingredients != null) {
-                existingRecipeBoard.setRecipeBoardIngredients(ingredients);
+        Optional.ofNullable(recipeBoard.getRecipeBoardIngredients()).ifPresent(newIngredients -> {
+            List<RecipeBoardIngredient> target = existingRecipeBoard.getRecipeBoardIngredients();
+
+            // 기존 관계 모두 제거
+            target.clear();
+
+//            // 새 엔티티에 현재 board 연결
+//            newIngredients.forEach(ingredient -> ingredient.setRecipeBoard(existingRecipeBoard));
+//
+//            // 새로 받은 재료들 추가
+//            target.addAll(newIngredients);
+            for (RecipeBoardIngredient ingredient : newIngredients) {
+                ingredient.setRecipeBoard(existingRecipeBoard); // 이 한 줄이면 add도 되고 recipeBoard 설정도 됨
             }
         });
 
@@ -141,7 +157,7 @@ public class RecipeBoardService {
             }
         });
 
-        return recipeBoardRepository.save(recipeBoard);
+        return recipeBoardRepository.save(existingRecipeBoard);
     }
 
     // 게시글 단일 조회
