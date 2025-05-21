@@ -31,7 +31,8 @@ public class RecipeBoardStep extends BaseEntity {
     @JoinColumn(name = "recipe_step_id")
     private RecipeStep recipeStep;
 
-    @OneToMany(mappedBy = "recipeBoardStep", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    // cascade 수정
+    @OneToMany(mappedBy = "recipeBoardStep", cascade = {CascadeType.ALL})
     private List<RecipeStepDetail> recipeStepDetails = new ArrayList<>();
 
     public void setRecipeStepDetails(List<RecipeStepDetail> recipeStepDetails) {
