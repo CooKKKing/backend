@@ -68,7 +68,7 @@ public class RecipeBoardService {
         verifyMainIngredientCount(recipeBoard);
         // 메뉴 존재 여부 검증
         // 있다면 영속화, 없다면 새로 생성 후 영속화
-        Menu menu = menuExists(recipeBoard.getMenu().getMenuName(), recipeBoard.getMenu().getMenuCategory().getMenuSubCategory(), recipeBoard.getMenu().getMenuCategory().getMenuCategoryId(), recipeBoard.getMenu().getMenuId());
+        Menu menu = menuExists(recipeBoard.getMenu().getMenuName().replaceAll("\\s+", ""), recipeBoard.getMenu().getMenuCategory().getMenuSubCategory(), recipeBoard.getMenu().getMenuCategory().getMenuCategoryId(), recipeBoard.getMenu().getMenuId());
 
         // (추가) menuCategoryId로 menuCategory를 조회해서 menu에 연결
         MenuCategory menuCategory = menuCategoryRepository.findById(recipeBoard.getMenu().getMenuCategory().getMenuCategoryId())
@@ -299,39 +299,47 @@ public class RecipeBoardService {
 //    }
 
     private Menu menuExists(String menuName, String menuSubCategory, long menuCategoryId, long menuId) {
+        String normalizedName = menuName.replaceAll("\\s+", "");
+
         MenuCategory menuCategory = menuCategoryRepository.findById(menuCategoryId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MENU_CATEGORY_NOT_FOUND));
+
         SubMenuCategory subMenuCategory = null;
 
         if (menuCategory.getMenuCategoryId() == 5) {
-            // "기타" 카테고리인 경우
-            Optional<SubMenuCategory> subMenuCategoryOptional = subMenuCategoryRepository.findBySubMenuCategoryName(menuSubCategory);
-            if (subMenuCategoryOptional.isPresent()) {
-                subMenuCategory = subMenuCategoryOptional.get();
-            } else {
-                subMenuCategory = new SubMenuCategory();
-                subMenuCategory.setSubMenuCategoryName(menuSubCategory);
-                subMenuCategory.setMenuCategory(menuCategory);
-                subMenuCategory = subMenuCategoryRepository.save(subMenuCategory);
-            }
+            // "기타" 카테고리인 경우: SubMenuCategory 처리
+            subMenuCategory = subMenuCategoryRepository.findBySubMenuCategoryName(menuSubCategory)
+                    .orElseGet(() -> {
+                        SubMenuCategory newSub = new SubMenuCategory();
+                        newSub.setSubMenuCategoryName(menuSubCategory);
+                        newSub.setMenuCategory(menuCategory);
+                        return subMenuCategoryRepository.save(newSub);
+                    });
         }
 
-        Optional<Menu> findMenu = menuRepository.findByMenuNameAndMenuCategory_MenuCategoryIdAndMenuCategory_MenuSubCategory(menuName, menuCategoryId, menuSubCategory);
+        // ✅ 수정된 부분
+        Optional<Menu> findMenu = menuRepository.findByMenuNameAndMenuCategory_MenuCategoryIdAndSubMenuCategory_SubMenuCategoryId(
+                menuName,
+                menuCategoryId,
+                subMenuCategory != null ? subMenuCategory.getSubMenuCategoryId() : null
+        );
+
         if (findMenu.isPresent()) {
             return findMenu.get();
         }
 
-        // ❗ 메뉴를 새로 생성
+        // 새 Menu 생성
         Menu menu = new Menu();
-        menu.setMenuName(menuName);
+        menu.setMenuName(normalizedName);
         menu.setMenuCategory(menuCategory);
 
         if (menuCategory.getMenuCategoryId() == 5) {
             menu.setSubMenuCategory(subMenuCategory);
         }
 
-        return menuRepository.save(menu); // ✅ 여기서 최종 1번만 저장
+        return menuRepository.save(menu);
     }
+
 
 
 
@@ -397,6 +405,10 @@ public class RecipeBoardService {
                 throw new BusinessLogicException(ExceptionCode.INGREDIENT_NOT_FOUND);
             }
         }
+    }
+
+    public Page<RecipeBoard> findRecipeBoardsByMenuName(String menuName, int page, int size) {
+        return recipeBoardRepository.findByMenu_MenuName(menuName, PageRequest.of(page, size, Sort.by("recipeBoardId").descending()));
     }
 
 }
