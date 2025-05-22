@@ -94,4 +94,14 @@ public class MenuDto {
         @Schema(description = "메뉴 카테고리 서브 카테고리 이름", example = "국물요리, (기타가 아닌경우 null)")
         private String menuSubCategory;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecommendationResponse {
+        private Long menuId;
+        private String menuName; // 공백 제거된 이름
+    }
+
 }

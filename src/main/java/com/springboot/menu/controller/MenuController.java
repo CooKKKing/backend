@@ -8,8 +8,10 @@ import com.springboot.menu.dto.MenuDto;
 import com.springboot.menu.entity.Menu;
 import com.springboot.menu.mapper.MenuMapper;
 import com.springboot.menu.service.MenuService;
+import com.springboot.recipeboard.dto.RecipeBoardDto;
 import com.springboot.recipeboard.entity.RecipeBoard;
 import com.springboot.recipeboard.mapper.RecipeBoardMapper;
+import com.springboot.recipeboard.service.RecipeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "메뉴 컨트롤러", description = "메뉴 관련 컨트롤러")
 @RestController
@@ -34,38 +37,58 @@ public class MenuController {
     private final MenuMapper menuMapper;
     private final IngredientMapper ingredientMapper;
     private final RecipeBoardMapper recipeBoardMapper;
+    private final RecipeBoardService recipeBoardService;
     private static final String MENU_URI = "menus/";
 
-    public MenuController(MenuService menuService, MenuMapper menuMapper, IngredientMapper ingredientMapper, RecipeBoardMapper recipeBoardMapper) {
+    public MenuController(MenuService menuService, MenuMapper menuMapper, IngredientMapper ingredientMapper, RecipeBoardMapper recipeBoardMapper, RecipeBoardService recipeBoardService) {
         this.menuService = menuService;
         this.menuMapper = menuMapper;
         this.ingredientMapper = ingredientMapper;
         this.recipeBoardMapper = recipeBoardMapper;
+        this.recipeBoardService = recipeBoardService;
     }
+
+//    @Operation(summary = "메뉴 추천 및 재추천", description = "사용자가 선택한 재료를 바탕으로 카테고리별 메뉴를 추천합니다. 매번 랜덤하게 레시피를 추천합니다.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "추천된 메뉴 조회 완료"),
+//            @ApiResponse(responseCode = "400", description = "잘못된 재료 선택 (주재료 2개 이상 필수)")
+//    })
+//    @PostMapping("/recommendations")
+//    public ResponseEntity recommendMenus( // RequestBody 담아야됨
+//                                          @Parameter(hidden = true) @AuthenticationPrincipal Member member,
+//                                          @RequestBody MenuDto.RecommendationsIngredientDto IngredientDto,
+//                                          @Parameter(description = "페이지, 기본값은 1") @RequestParam(value = "page", defaultValue = "1") int page,
+//                                          @Parameter(description = "사이즈, 기본값은 10") @RequestParam(value = "size", defaultValue = "10") int size) {
+//
+//        List<RecipeBoard> recipeBoard = menuService.recommendMenus(ingredientMapper.ingredientsDtoToIngredients(IngredientDto), page - 1, size);
+////        List<RecipeBoard> recipeBoardList = recipeBoard.getContent();
+//        Page<RecipeBoard> pageImpe = new PageImpl<>(
+//                recipeBoard,                      // content
+//                PageRequest.of(page - 1, size),     // pageable (현재 page-1 주는 거 맞게)
+//                recipeBoard.size()                 // totalElements (전체 개수 그냥 리스트 사이즈로)
+//        );
+//
+//        return new ResponseEntity(
+//                new MultiResponseDto<>(recipeBoardMapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoard),
+//                        pageImpe), HttpStatus.OK);
+//    }
 
     @Operation(summary = "메뉴 추천 및 재추천", description = "사용자가 선택한 재료를 바탕으로 카테고리별 메뉴를 추천합니다. 매번 랜덤하게 레시피를 추천합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "추천된 메뉴 조회 완료"),
-            @ApiResponse(responseCode = "400", description = "잘못된 재료 선택 (주재료 2개 이상 필수)")
+            @ApiResponse(responseCode = "200", description = "메뉴 이름 추천 성공"),
+            @ApiResponse(responseCode = "400", description = "주재료 부족 또는 예외 발생")
     })
     @PostMapping("/recommendations")
-    public ResponseEntity recommendMenus( // RequestBody 담아야됨
-                                          @Parameter(hidden = true) @AuthenticationPrincipal Member member,
-                                          @RequestBody MenuDto.RecommendationsIngredientDto IngredientDto,
-                                          @Parameter(description = "페이지, 기본값은 1") @RequestParam(value = "page", defaultValue = "1") int page,
-                                          @Parameter(description = "사이즈, 기본값은 10") @RequestParam(value = "size", defaultValue = "10") int size) {
+    public ResponseEntity recommendMenuName(@RequestBody MenuDto.RecommendationsIngredientDto ingredientDto) {
+        Menu recommendedMenu = menuService.recommendRandomMenu(ingredientMapper.ingredientsDtoToIngredients(ingredientDto));
 
-        List<RecipeBoard> recipeBoard = menuService.recommendMenus(ingredientMapper.ingredientsDtoToIngredients(IngredientDto), page - 1, size);
-//        List<RecipeBoard> recipeBoardList = recipeBoard.getContent();
-        Page<RecipeBoard> pageImpe = new PageImpl<>(
-                recipeBoard,                      // content
-                PageRequest.of(page - 1, size),     // pageable (현재 page-1 주는 거 맞게)
-                recipeBoard.size()                 // totalElements (전체 개수 그냥 리스트 사이즈로)
+        // ✅ 공백 제거해서 보냄
+        MenuDto.RecommendationResponse response = new MenuDto.RecommendationResponse(
+                recommendedMenu.getMenuId(),
+                recommendedMenu.getMenuName().replaceAll("\\s+", "")
         );
 
-        return new ResponseEntity(
-                new MultiResponseDto<>(recipeBoardMapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoard),
-                        pageImpe), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "메뉴 등록", description = "새로운 메뉴를 등록합니다.")
@@ -126,6 +149,23 @@ public class MenuController {
         List<MenuDto.Response> menuSimpleResponses = menuMapper.menusToMenuResponseDtos(menus);
         return new ResponseEntity<>(new MultiResponseDto<>(menuSimpleResponses, pageMenus), HttpStatus.OK);
 
+    }
+
+    @Operation(summary = "메뉴 이름으로 레시피 게시글 조회", description = "특정 메뉴 이름에 해당하는 레시피 게시글들을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "레시피 게시글 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 메뉴 이름의 레시피 게시글이 없습니다.")
+    })
+    @GetMapping("/recipes")
+    public ResponseEntity getRecipeBoardsByMenuName(@RequestParam("name") String menuName,
+                                                    @RequestParam(defaultValue = "1") int page,
+                                                    @RequestParam(defaultValue = "10") int size,
+                                                    @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+
+        Page<RecipeBoard> recipeBoards = recipeBoardService.findRecipeBoardsByMenuName(menuName, page - 1, size);
+        List<RecipeBoardDto.Response> responses = recipeBoardMapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards.getContent(), member.getMemberId());
+
+        return new ResponseEntity<>(new MultiResponseDto<>(responses, recipeBoards), HttpStatus.OK);
     }
 
 }

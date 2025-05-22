@@ -10,6 +10,7 @@ import com.springboot.recipeboard.entity.RecipeBoard;
 import com.springboot.recipeboard.repository.RecipeBoardRepository;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,5 +116,26 @@ public class MenuService {
         }
 
         return optionalMenu.get();
+    }
+
+    @Transactional(readOnly = true)
+    public Menu recommendRandomMenu(List<Ingredient> ingredients) {
+        verifyIngredient(ingredients);
+
+        List<RecipeBoard> recipeBoards = getRecipeBoardsWithIngredients(ingredients, Pageable.unpaged());
+
+        // 레시피 게시글에 연결된 메뉴들만 추출해서 중복 제거
+        List<Menu> menus = recipeBoards.stream()
+                .map(RecipeBoard::getMenu)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (menus.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.MENU_NOT_FOUND);
+        }
+
+        // 랜덤 메뉴 하나 반환
+        Collections.shuffle(menus);
+        return menus.get(0);
     }
 }

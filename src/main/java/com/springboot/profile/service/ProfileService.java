@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -87,5 +88,10 @@ public class ProfileService {
 
         member.setActiveImageId(profileId);
         memberRepository.save(member);
+    }
+
+    public Page<ProfileImage> findUnownedProfileImages(int page, int size, long memberId) {
+        List<Long> ownedIds = memberProfileImageRepository.findProfileImageIdsByMemberId(memberId);
+        return profileImageRepository.findByProfileImageIdNotIn(ownedIds, PageRequest.of(page, size));
     }
 }

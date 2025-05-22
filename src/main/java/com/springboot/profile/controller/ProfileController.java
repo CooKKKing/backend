@@ -102,4 +102,32 @@ public class ProfileController {
         profileService.equipProfile(member.getMemberId(), profileId);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "내가 보유한 프로필 조회", description = "보유한 프로필 이미지 목록을 조회하고 isOwned=true로 응답합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "보유한 프로필 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
+    })
+    @GetMapping("/owned")
+    public ResponseEntity getOwnedProfiles(@Parameter(hidden = true) @AuthenticationPrincipal Member member,
+                                           @RequestParam(defaultValue = "1") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
+        Page<ProfileImage> profileImages = profileService.findMemberProfileImages(page - 1, size, member.getMemberId());
+        List<ProfileDto.OwnershipResponse> responses = profileMapper.profileImagesToOwnershipDtos(profileImages.getContent(), member.getMemberId());
+        return new ResponseEntity(new MultiResponseDto<>(responses, profileImages), HttpStatus.OK);
+    }
+
+    @Operation(summary = "내가 보유하지 않은 프로필 조회", description = "보유하지 않은 프로필 이미지 목록을 조회하고 isOwned=false로 응답합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "보유하지 않은 프로필 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
+    })
+    @GetMapping("/unowned")
+    public ResponseEntity getUnownedProfiles(@Parameter(hidden = true) @AuthenticationPrincipal Member member,
+                                             @RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
+        Page<ProfileImage> profileImages = profileService.findUnownedProfileImages(page - 1, size, member.getMemberId());
+        List<ProfileDto.OwnershipResponse> responses = profileMapper.profileImagesToOwnershipDtos(profileImages.getContent(), member.getMemberId());
+        return new ResponseEntity(new MultiResponseDto<>(responses, profileImages), HttpStatus.OK);
+    }
 }

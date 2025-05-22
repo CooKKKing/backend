@@ -50,4 +50,6 @@ public interface RecipeBoardRepository extends JpaRepository<RecipeBoard, Long> 
             @Param("ingredientIds") List<Long> ingredientIds,
             @Param("ingredientCount") long ingredientCount
     );
+
+    Page<RecipeBoard> findByMenu_MenuName(String menuName, Pageable pageable);
 }
