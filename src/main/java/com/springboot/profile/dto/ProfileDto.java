@@ -21,4 +21,14 @@ public class ProfileDto {
         private Long profileId;
         private Long memberId;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class OwnershipResponse {
+        private long profileId;
+        private String imagePath;
+        private int price;
+        private boolean isOwned;
+    }
 }
