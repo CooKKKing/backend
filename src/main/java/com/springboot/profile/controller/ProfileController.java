@@ -75,7 +75,7 @@ public class ProfileController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "내 모든 프로필 조회", description = "전체 프로필 이미지 중 보유 여부를 포함하여 조회합니다.")
+    @Operation(summary = "전체 프로필 조회", description = "전체 프로필 이미지 중 보유 여부를 포함하여 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 프로필 조회 성공"),
             @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
