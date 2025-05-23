@@ -199,7 +199,7 @@ public class RecipeBoardController {
 
     @Operation(summary = "회원별 레시피 게시글 전체 조회", description = "회원별 레시피 게시글을 전체 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "메뉴별 레시피 게시글 전체 조회 완료"),
+            @ApiResponse(responseCode = "200", description = "회원별 레시피 게시글 전체 조회 완료"),
             @ApiResponse(responseCode = "400", description = "RecipeBoard Validation failed")
     })
     @GetMapping("/members/{member-id}")
@@ -207,15 +207,15 @@ public class RecipeBoardController {
                                                       @Positive @RequestParam(defaultValue = "1") int page,
                                                       @Positive @RequestParam(defaultValue = "10") int size,
                                                       @Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-        // 메뉴별 레시피 게시글 전체 조회 Controller 로직 작성 해야함
+        // 회원별 레시피 게시글 전체 조회 Controller 로직 작성 해야함
 
-        Page<RecipeBoard> pageBoards = recipeBoardService.findMenuRecipeBoards(page - 1, size, member.getMemberId());
+        Page<RecipeBoard> pageBoards = recipeBoardService.findMemberRecipeBoards(page - 1, size, memberId);
         List<RecipeBoard> recipeBoards = pageBoards.getContent();
 
         List<RecipeBoardDto.Response> responses =
                 member == null
                         ? mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards)
-                        : mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards, member.getMemberId());
+                        : mapper.recipeBoardsToRecipeBoardResponseDtos(recipeBoards, memberId);
         return new ResponseEntity(new MultiResponseDto<>(responses,
                 pageBoards), HttpStatus.OK);
     }
