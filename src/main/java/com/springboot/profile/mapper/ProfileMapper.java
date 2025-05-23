@@ -12,19 +12,6 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface ProfileMapper {
     ProfileDto.Response ProfileImageToProfileResponseDto(ProfileImage profileImage);
-    List<ProfileDto.Response> ProfileImageToProfileDtoList(List<ProfileImage> profileImage);
-    default MemberProfileImage profileDtoToMemberProfileImage(ProfileDto.PurchaseRequest profileDto) {
-        MemberProfileImage memberProfileImage = new MemberProfileImage();
-        Member member = new Member();
-        member.setMemberId(profileDto.getMemberId());
-        memberProfileImage.setMember(member);
-        ProfileImage profileImage = new ProfileImage();
-        profileImage.setProfileImageId(profileDto.getProfileId());
-        memberProfileImage.setProfileImage(profileImage);
-
-        return memberProfileImage;
-    }
-
     default List<ProfileDto.OwnershipResponse> profileImagesToOwnershipDtos(List<ProfileImage> profileImages, long memberId) {
         return profileImages.stream().map(profileImage -> {
             ProfileDto.OwnershipResponse response = new ProfileDto.OwnershipResponse();

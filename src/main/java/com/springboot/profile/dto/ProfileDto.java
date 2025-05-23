@@ -17,14 +17,6 @@ public class ProfileDto {
     @Getter
     @Setter
     @NoArgsConstructor
-    public static class PurchaseRequest {
-        private Long profileId;
-        private Long memberId;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
     public static class OwnershipResponse {
         private long profileId;
         private String imagePath;
