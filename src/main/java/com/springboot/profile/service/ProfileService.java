@@ -10,12 +10,10 @@ import com.springboot.profile.repository.MemberProfileImageRepository;
 import com.springboot.profile.repository.ProfileImageRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,14 +37,7 @@ public class ProfileService {
         return profileImageRepository.findAll(PageRequest.of(page, size, Sort.by("profileImageId").descending()));
     }
 
-    public Page<ProfileImage> findMemberProfileImages(int page, int size, long memberId) {
-        return profileImageRepository.findAllByMemberProfileImages_Member_MemberId(memberId, PageRequest.of(page, size, Sort.by("profileImageId").descending()));
-    }
-
-    public void purchaseProfile(MemberProfileImage memberProfileImage) {
-
-        long memberId = memberProfileImage.getMember().getMemberId();
-        long profileId = memberProfileImage.getProfileImage().getProfileImageId();
+    public void purchaseProfile(Long memberId, Long profileId) {
 
         // 🔥 1. 이미 보유 중인지 확인
         boolean alreadyOwned = memberProfileImageRepository
@@ -55,10 +46,10 @@ public class ProfileService {
         if (alreadyOwned) {
             throw new BusinessLogicException(ExceptionCode.PROFILE_ALREADY_OWNED);
         }
-        Member member = memberRepository.findById(memberProfileImage.getMember().getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
 
-        ProfileImage profileImage = profileImageRepository.findById(memberProfileImage.getProfileImage().getProfileImageId())
+        ProfileImage profileImage = profileImageRepository.findById(profileId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.PROFILE_IMAGE_NOT_FOUND));
 
         int price = profileImage.getPrice();
@@ -70,6 +61,9 @@ public class ProfileService {
 
         // 3. 밥풀 차감
         member.setRicePoint(member.getRicePoint() - price);
+        MemberProfileImage memberProfileImage = new MemberProfileImage();
+        memberProfileImage.setMember(member);
+        memberProfileImage.setProfileImage(profileImage);
 
         memberProfileImageRepository.save(memberProfileImage);
     }
@@ -88,10 +82,5 @@ public class ProfileService {
 
         member.setActiveImageId(profileId);
         memberRepository.save(member);
-    }
-
-    public Page<ProfileImage> findUnownedProfileImages(int page, int size, long memberId) {
-        List<Long> ownedIds = memberProfileImageRepository.findProfileImageIdsByMemberId(memberId);
-        return profileImageRepository.findByProfileImageIdNotIn(ownedIds, PageRequest.of(page, size));
     }
 }
