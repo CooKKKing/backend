@@ -5,7 +5,9 @@ import com.springboot.member.dto.MemberDto;
 import com.springboot.member.dto.MyPageResponseDto;
 import com.springboot.member.entity.Member;
 import com.springboot.member.entity.MemberChallenge;
+import com.springboot.member.entity.MemberProfileImage;
 import com.springboot.member.entity.MemberTitle;
+import com.springboot.profile.entity.ProfileImage;
 import com.springboot.title.dto.TitleDto;
 import com.springboot.title.entity.Title;
 import org.mapstruct.Mapper;
@@ -29,8 +31,16 @@ public interface MemberMapper {
     default MyPageResponseDto memberToMyPageResponseDto(Member member) {
         MyPageResponseDto response = new MyPageResponseDto();
         response.setNickName(member.getNickName());
-        response.setProfile(member.getProfile());
         response.setRicePoint(member.getRicePoint());
+        // 🔥 activeImageId로 프로필 이미지 직접 조회
+        ProfileImage activeProfile = member.getMemberProfileImages().stream()
+                .map(MemberProfileImage::getProfileImage)
+                .filter(img -> img.getProfileImageId() == member.getActiveImageId())
+                .findFirst()
+                .orElse(null);
+
+        response.setProfile(activeProfile != null ? activeProfile.getImagePath() : null);
+
         Title title = member.getMemberTitles().stream()
                 .filter(memberTitle -> memberTitle.getTitle().getTitleId() == member.getActiveTitleId())
                 .map(MemberTitle::getTitle)
