@@ -11,6 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class MyPageResponseDto {
+    private Long activeProfileId;
     private String profile;
     private String nickName;
     private String title;
