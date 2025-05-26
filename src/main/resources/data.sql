@@ -329,7 +329,7 @@ INSERT INTO recipe_board (title, image, recipe_status, recipe_board_status, memb
 ( '바다의 향이 느껴지는 연어 초밥','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/3.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 5, 3, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
 ( '바삭함이 느껴지는 가츠동','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/4.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 2, 4, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
 ( '한국인이 좋아하는 짜장면','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/5.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 8, 5, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-( '맵찔이도 먹을 수 있는 짬뽕','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/6.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 2, 6, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+( '맵찔이도 먹을 수 있는 짬뽕','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/6.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 1, 6, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
 ( '마라마라 마라탕','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/7.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 7, 7, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
 ( '본토의 맛이 느껴지는 소고기 스테이크','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/8.png',  'RECIPE_PUBLIC', 'RECIPE_BOARD_POST', 10, 8, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
 ( '이탈리아에서 전수받은 봉골레 파스타','https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/menu/9.png',  'RECIPE_PRIVATE', 'RECIPE_BOARD_POST', 9, 9, '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
