@@ -152,6 +152,7 @@ public class MemberDto {
         private Member.MemberStatus memberStatus;
         private String profileImagePath;
         private List<TitleDto.Response> titles;
+        private long activeProfileId;
         private long activeTitleId;
     }
 }

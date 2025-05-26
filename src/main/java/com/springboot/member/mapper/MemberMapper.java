@@ -40,6 +40,7 @@ public interface MemberMapper {
                 .orElse(null);
 
         response.setProfile(activeProfile != null ? activeProfile.getImagePath() : null);
+        response.setActiveProfileId(member.getActiveImageId());
 
         Title title = member.getMemberTitles().stream()
                 .filter(memberTitle -> memberTitle.getTitle().getTitleId() == member.getActiveTitleId())
@@ -60,9 +61,22 @@ public interface MemberMapper {
         response.setPhoneNumber(member.getPhoneNumber());
         response.setProfileImagePath(member.getProfile());
         response.setActiveTitleId(member.getActiveTitleId());
+        response.setActiveProfileId(member.getActiveImageId());
         response.setRicePoint(member.getRicePoint());
         response.setMemberStatus(member.getMemberStatus());
+
+        // 🔥 activeImageId 기준으로 profileImagePath 설정
+        ProfileImage activeProfile = member.getMemberProfileImages().stream()
+                .map(MemberProfileImage::getProfileImage)
+                .filter(img -> img.getProfileImageId() == member.getActiveImageId())
+                .findFirst()
+                .orElse(null);
+
+        response.setProfileImagePath(activeProfile != null ? activeProfile.getImagePath() : null);
+
+
         List<TitleDto.Response> titles = new ArrayList<>();
+
         member.getMemberTitles().stream()
                 .forEach(memberTitle -> {
                     titles.add(titleToTitleResponseDto(memberTitle.getTitle(), member.getMemberId()));

@@ -45,19 +45,19 @@ public class MyPageController {
         this.myPageService = myPageService;
     }
 
-    @Operation(summary = "내 정보 조회", description = "내 프로필 사진, 닉네임, 포인트, 착용 칭호 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "내 정보 조회 완료")
-    })
-    @GetMapping
-    public ResponseEntity getMyInfo(@Parameter(hidden = true) @AuthenticationPrincipal Member member) {
-
-        Member findMember = myPageService.findMyInfo(member.getMemberId());
-
-        MyPageResponseDto responseDto = memberMapper.memberToMyPageResponseDto(findMember);
-
-        return new ResponseEntity<>(new SingleResponseDto<>(responseDto), HttpStatus.OK);
-    }
+//    @Operation(summary = "내 정보 조회", description = "내 프로필 사진, 닉네임, 포인트, 착용 칭호 조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "내 정보 조회 완료")
+//    })
+//    @GetMapping
+//    public ResponseEntity getMyInfo(@Parameter(hidden = true) @AuthenticationPrincipal Member member) {
+//
+//        Member findMember = myPageService.findMyInfo(member.getMemberId());
+//
+//        MyPageResponseDto responseDto = memberMapper.memberToMyPageResponseDto(findMember);
+//
+//        return new ResponseEntity<>(new SingleResponseDto<>(responseDto), HttpStatus.OK);
+//    }
 
     @Operation(summary = "내 북마크 리스트 조회", description = "내가 북마크한 게시글 리스트를 조회")
     @ApiResponses(value = {
