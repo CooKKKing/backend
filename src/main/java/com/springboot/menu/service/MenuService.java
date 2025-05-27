@@ -134,6 +134,15 @@ public class MenuService {
             throw new BusinessLogicException(ExceptionCode.MENU_NOT_FOUND);
         }
 
+        // ✅ 게시글이 있는 메뉴만 필터링
+        List<Menu> filteredMenus = menus.stream()
+                .filter(menu -> recipeBoardRepository.countByMenu_MenuId(menu.getMenuId()) > 0)
+                .collect(Collectors.toList());
+
+        if (filteredMenus.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.RECIPEBOARD_NOT_FOUND);
+        }
+
         // 랜덤 메뉴 하나 반환
         Collections.shuffle(menus);
         return menus.get(0);
