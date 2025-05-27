@@ -14,20 +14,6 @@ import java.util.List;
 
 public interface RecipeBoardRepository extends JpaRepository<RecipeBoard, Long> {
     Page<RecipeBoard> findByMemberAndRecipeBoardStatusNot(Member member, RecipeBoard.RecipeBoardStatus status, Pageable pageable);
-    // 내 레시피 게시글 검색 JPQL
-//    @Query("SELECT rb FROM RecipeBoard rb " +
-//            "WHERE rb.member = :member " +
-//            "AND rb.recipeBoardStatus <> :status " +
-//            "AND (" +
-//            "   :keyword IS NULL OR " +
-//            "   LOWER(rb.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-//            "   LOWER(rb.content) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
-//            ")")
-//    Page<RecipeBoard> searchMyRecipeBoards(
-//            @Param("member") Member member,
-//            @Param("status") RecipeBoard.RecipeBoardStatus status,
-//            @Param("keyword") String keyword,
-//            Pageable pageable);
     Page<RecipeBoard> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
     Page<RecipeBoard> findByMenu_MenuCategory_MenuCategoryId(long menuMenuCategoryMenuCategoryId, Pageable pageable);
     Page<RecipeBoard> findByMenu_MenuId(long menuMenuId, Pageable pageable);
@@ -35,6 +21,7 @@ public interface RecipeBoardRepository extends JpaRepository<RecipeBoard, Long> 
     Page<RecipeBoard> findByLike_Member_MemberId(long memberId, Pageable pageable);
     Page<RecipeBoard> findByMember_MemberId(long memberId, Pageable pageable);
     Page<RecipeBoard> findByMember_MemberIdAndTitleContaining(long memberId, String title, Pageable pageable);
+    long countByMenu_MenuId(Long menuId);
 
     @Query(
             value = "SELECT rb.* " +
