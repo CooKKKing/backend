@@ -30,6 +30,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -90,9 +91,9 @@ public class MenuController {
         Menu recommendedMenu = menuService.recommendRandomMenu(ingredientMapper.ingredientsDtoToIngredients(ingredientDto));
 
         // 해당 메뉴에 연결된 모든 RecipeBoard 가져오기
-        List<RecipeBoard> recipeBoards = recipeBoardRepository
-                .findByMenu_MenuId(recommendedMenu.getMenuId(), Pageable.unpaged())
-                .getContent();
+        List<RecipeBoard> recipeBoards = new ArrayList<>(
+                recipeBoardRepository.findByMenu_MenuId(recommendedMenu.getMenuId(), Pageable.unpaged()).getContent()
+        );
 
         if (recipeBoards.isEmpty()) {
             throw new BusinessLogicException(ExceptionCode.RECIPEBOARD_NOT_FOUND);
