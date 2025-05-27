@@ -102,6 +102,7 @@ public class MenuDto {
     public static class RecommendationResponse {
         private Long menuId;
         private String menuName; // 공백 제거된 이름
+        private String image;
     }
 
 }

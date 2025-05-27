@@ -2,6 +2,8 @@ package com.springboot.menu.controller;
 
 import com.springboot.dto.MultiResponseDto;
 import com.springboot.dto.SingleResponseDto;
+import com.springboot.exception.BusinessLogicException;
+import com.springboot.exception.ExceptionCode;
 import com.springboot.ingredient.mapper.IngredientMapper;
 import com.springboot.member.entity.Member;
 import com.springboot.menu.dto.MenuDto;
@@ -11,6 +13,7 @@ import com.springboot.menu.service.MenuService;
 import com.springboot.recipeboard.dto.RecipeBoardDto;
 import com.springboot.recipeboard.entity.RecipeBoard;
 import com.springboot.recipeboard.mapper.RecipeBoardMapper;
+import com.springboot.recipeboard.repository.RecipeBoardRepository;
 import com.springboot.recipeboard.service.RecipeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,12 +23,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -38,14 +43,16 @@ public class MenuController {
     private final IngredientMapper ingredientMapper;
     private final RecipeBoardMapper recipeBoardMapper;
     private final RecipeBoardService recipeBoardService;
+    private final RecipeBoardRepository recipeBoardRepository;
     private static final String MENU_URI = "menus/";
 
-    public MenuController(MenuService menuService, MenuMapper menuMapper, IngredientMapper ingredientMapper, RecipeBoardMapper recipeBoardMapper, RecipeBoardService recipeBoardService) {
+    public MenuController(MenuService menuService, MenuMapper menuMapper, IngredientMapper ingredientMapper, RecipeBoardMapper recipeBoardMapper, RecipeBoardService recipeBoardService, RecipeBoardRepository recipeBoardRepository) {
         this.menuService = menuService;
         this.menuMapper = menuMapper;
         this.ingredientMapper = ingredientMapper;
         this.recipeBoardMapper = recipeBoardMapper;
         this.recipeBoardService = recipeBoardService;
+        this.recipeBoardRepository = recipeBoardRepository;
     }
 
 //    @Operation(summary = "메뉴 추천 및 재추천", description = "사용자가 선택한 재료를 바탕으로 카테고리별 메뉴를 추천합니다. 매번 랜덤하게 레시피를 추천합니다.")
@@ -82,10 +89,24 @@ public class MenuController {
     public ResponseEntity recommendMenuName(@RequestBody MenuDto.RecommendationsIngredientDto ingredientDto) {
         Menu recommendedMenu = menuService.recommendRandomMenu(ingredientMapper.ingredientsDtoToIngredients(ingredientDto));
 
-        // ✅ 공백 제거해서 보냄
+        // 해당 메뉴에 연결된 모든 RecipeBoard 가져오기
+        List<RecipeBoard> recipeBoards = recipeBoardRepository
+                .findByMenu_MenuId(recommendedMenu.getMenuId(), Pageable.unpaged())
+                .getContent();
+
+        if (recipeBoards.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.RECIPEBOARD_NOT_FOUND);
+        }
+
+        // 대표 이미지 랜덤 추출
+        Collections.shuffle(recipeBoards);
+        String representativeImage = recipeBoards.get(0).getImage();
+
+        // 공백 제거해서 보냄
         MenuDto.RecommendationResponse response = new MenuDto.RecommendationResponse(
                 recommendedMenu.getMenuId(),
-                recommendedMenu.getMenuName().replaceAll("\\s+", "")
+                recommendedMenu.getMenuName().replaceAll("\\s+", ""),
+                representativeImage
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
