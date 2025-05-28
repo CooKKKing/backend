@@ -29,8 +29,8 @@ public class ChallengeCategory extends BaseEntity {
     @Column(nullable = false)
     private String category;
 
-//    @Column(nullable = false)
-//    private String imagePath;
+    @Column(nullable = false)
+    private int maxLevel;
 
     @OneToMany(mappedBy = "challengeCategory", cascade = CascadeType.PERSIST)
     private List<MemberChallenge> memberChallenges = new ArrayList<>();
