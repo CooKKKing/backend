@@ -46,16 +46,16 @@ INSERT INTO camera_image (camera_image_id, image_url, camera_color_id) VALUES
 
 
 -- 1. 도전과제 카테고리
-INSERT INTO challenge_category (name, description, category, created_at, modified_at) VALUES
-('한식', '한식 요리 관련 도전과제', '한식', NOW(), NOW()),
-('일식', '일식 요리 관련 도전과제', '일식', NOW(), NOW()),
-('중식', '중식 요리 관련 도전과제', '중식', NOW(), NOW()),
-('양식', '양식 요리 관련 도전과제', '양식', NOW(), NOW()),
-('좋아요', '좋아요 요리 관련 도전과제', '좋아요', NOW(), NOW()),
-('북마크', '북마크 요리 관련 도전과제', '북마크', NOW(), NOW()),
-('밥풀', '밥풀 요리 관련 도전과제', '밥풀', NOW(), NOW()),
-('도감', '도감 요리 관련 도전과제', '도감', NOW(), NOW()),
-('웰컴', '회원가입 도전과제', '뉴비', NOW(), NOW());
+INSERT INTO challenge_category (name, description, category, max_level, created_at, modified_at) VALUES
+('한식', '한식 요리 관련 도전과제', '한식', 3, NOW(), NOW()),
+('일식', '일식 요리 관련 도전과제', '일식', 3, NOW(), NOW()),
+('중식', '중식 요리 관련 도전과제', '중식', 3, NOW(), NOW()),
+('양식', '양식 요리 관련 도전과제', '양식', 3, NOW(), NOW()),
+('좋아요', '좋아요 요리 관련 도전과제', '좋아요', 3, NOW(), NOW()),
+('북마크', '북마크 요리 관련 도전과제', '북마크', 3, NOW(), NOW()),
+('밥풀', '밥풀 요리 관련 도전과제', '밥풀', 5, NOW(), NOW()),
+('도감', '도감 요리 관련 도전과제', '도감', 3, NOW(), NOW()),
+('초보자', '회원가입 도전과제', '초보자', 0, NOW(), NOW());
 
 -- 2. 도전과제 레벨 (각 카테고리당 레벨별 목표 수치)
 INSERT INTO challenge_level (level, goal_count, challenge_category_id, description, image_path) VALUES
@@ -85,7 +85,7 @@ INSERT INTO challenge_level (level, goal_count, challenge_category_id, descripti
 (1, 10, 8, '도감 10가지', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/1.png'),
 (2, 20, 8, '도감 20가지', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/2.png'),
 (3, 30, 8, '도감 30가지', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/recipe/3.png'),
-(1, 1, 9, '회원 가입시', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png');
+(0, 0, 9, '회원 가입시', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/challenge/basic/basic.png');
 
 -- 3. 칭호 (도전과제별 레벨 달성 시 부여)
 INSERT INTO title (name, level, image_path, type, challenge_category_id, created_at, modified_at) VALUES
