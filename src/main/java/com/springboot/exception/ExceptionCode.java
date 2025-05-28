@@ -55,7 +55,9 @@ public enum ExceptionCode {
     INSUFFICIENT_RICE_POINT(400, "보유한 밥풀이 부족합니다."),
     PROFILE_ALREADY_OWNED(409, "이미 보유 중인 프로필입니다."),
     PROFILE_NOT_OWNED(400, "보유중인 프로필이 아닙니다."),
-    TITLE_NOT_OWNED(400, "칭호를 보유하고 있지 않습니다.");
+    TITLE_NOT_OWNED(400, "칭호를 보유하고 있지 않습니다."),
+    LEVEL_UP_CONDITION_NOT_MET(400, "레벨업 조건이 충족되지 않았습니다. 목표 수치를 달성했는지 확인해주세요."),
+    ALREADY_MAX_LEVEL(409, "이미 최대 레벨에 도달했습니다.");
 
 
     @Getter

@@ -1,5 +1,8 @@
 package com.springboot.collectioncamera.service;
 
+import com.springboot.challenge.entity.ChallengeCategory;
+import com.springboot.challenge.repository.ChallengeCategoryRepository;
+import com.springboot.challenge.repository.MemberChallengeRepository;
 import com.springboot.collectioncamera.dto.CollectionCameraDto;
 import com.springboot.collectioncamera.entity.CameraImage;
 import com.springboot.collectioncamera.entity.CollectionCamera;
@@ -11,8 +14,10 @@ import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.file.service.StorageService;
 import com.springboot.member.entity.Member;
+import com.springboot.member.entity.MemberChallenge;
 import com.springboot.member.repository.MemberRepository;
 import com.springboot.member.service.MemberService;
+import com.springboot.title.service.TitleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,14 +32,20 @@ public class CollectionCameraService {
     private final CollectionItemRepository collectionItemRepository;
     private final CameraImageRepository cameraImageRepository;
     private final StorageService storageService;
+    private final ChallengeCategoryRepository challengeCategoryRepository;
+    private final MemberChallengeRepository memberChallengeRepository;
+    private final TitleService titleService;
 
-    public CollectionCameraService(MemberService memberService, MemberRepository memberRepository, CollectionCameraRepository collectionCameraRepository, CollectionItemRepository collectionItemRepository, CameraImageRepository cameraImageRepository, StorageService storageService) {
+    public CollectionCameraService(MemberService memberService, MemberRepository memberRepository, CollectionCameraRepository collectionCameraRepository, CollectionItemRepository collectionItemRepository, CameraImageRepository cameraImageRepository, StorageService storageService, ChallengeCategoryRepository challengeCategoryRepository, MemberChallengeRepository memberChallengeRepository, TitleService titleService) {
         this.memberService = memberService;
         this.memberRepository = memberRepository;
         this.collectionCameraRepository = collectionCameraRepository;
         this.collectionItemRepository = collectionItemRepository;
         this.cameraImageRepository = cameraImageRepository;
         this.storageService = storageService;
+        this.challengeCategoryRepository = challengeCategoryRepository;
+        this.memberChallengeRepository = memberChallengeRepository;
+        this.titleService = titleService;
     }
 
 
@@ -138,7 +149,18 @@ public class CollectionCameraService {
         collectionItem.setImageUrl(imageUrl);
         collectionItem.setCollectionCamera(collectionCamera); // 소속 설정
 
-        return collectionItemRepository.save(collectionItem);
+        CollectionItem saved = collectionItemRepository.save(collectionItem);
+
+        // 🔥 도전과제 증가 로직
+        ChallengeCategory challengeCategory = challengeCategoryRepository.findByCategory("도감")
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHALLENGE_CATEGORY_NOT_FOUND));
+        MemberChallenge memberChallenge = memberChallengeRepository.findByMember_MemberIdAndChallengeCategory_ChallengeCategoryid(
+                        memberId, challengeCategory.getChallengeCategoryid())
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_CHALLENGE_NOT_FOUND));
+
+        titleService.incrementChallengeCount(memberChallenge.getMemberChallengeId(), memberId);
+
+        return saved;
     }
 
     // 도감 카테고리 메뉴 삭제

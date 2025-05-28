@@ -16,4 +16,5 @@ public class ChallengeResponseDto {
     private int currentCount;
     private int goalCount;
     private String description;
+    private int maxLevel;
 }

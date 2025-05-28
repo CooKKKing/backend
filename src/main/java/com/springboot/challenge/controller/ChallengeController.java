@@ -8,6 +8,7 @@ import com.springboot.dto.MultiResponseDto;
 import com.springboot.member.dto.MemberChallengeDto;
 import com.springboot.member.entity.Member;
 import com.springboot.member.entity.MemberChallenge;
+import com.springboot.title.service.TitleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,10 +33,12 @@ import java.util.List;
 public class ChallengeController {
     private final ChallengeService challengeService;
     private final ChallengeMapper challengeMapper;
+    private final TitleService titleService;
 
-    public ChallengeController(ChallengeService challengeService, ChallengeMapper challengeMapper) {
+    public ChallengeController(ChallengeService challengeService, ChallengeMapper challengeMapper, TitleService titleService) {
         this.challengeService = challengeService;
         this.challengeMapper = challengeMapper;
+        this.titleService = titleService;
     }
 
     @Operation(summary = "내가 달성한 도전과제만 조회", description = "도전과제 전체 목록을 조회합니다.")
@@ -70,5 +73,19 @@ public class ChallengeController {
         List<ChallengeResponseDto> responseDtos = challengeMapper.challengesToChallengeResponseDtos(challengeCategories);
 
         return new ResponseEntity(new MultiResponseDto<>(responseDtos, pageChallengeCategories), HttpStatus.OK);
+    }
+
+    @Operation(summary = "도전과제 레벨업", description = "진행도가 목표치에 도달한 도전과제를 레벨업합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "레벨업 성공"),
+            @ApiResponse(responseCode = "400", description = "레벨업 조건 미충족 또는 예외 발생")
+    })
+    @PostMapping("/{challenge-category-id}/level-up")
+    public ResponseEntity levelUpChallenge(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member member,
+            @PathVariable("challenge-category-id") @Positive long challengeCategoryId) {
+
+        titleService.levelUp(member.getMemberId(), challengeCategoryId);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

@@ -33,8 +33,6 @@ public class ChallengeService {
         return null;
     }
 
-    // 회원 존재 여부
-
     // 도전과제 존재 여부
     public ChallengeCategory verifyChallengeExists(long challengeId) {
         return challengeRepository.findById(challengeId)
