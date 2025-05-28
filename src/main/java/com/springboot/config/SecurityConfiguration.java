@@ -138,7 +138,13 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // 모든 출처에서 통신 허용
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://54.180.8.125", "https://frontend-rho-rosy-19.vercel.app"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",
+                "http://54.180.8.125",
+                "https://frontend-rho-rosy-19.vercel.app",
+                "https://api.cookkking.com",
+                "https://cookkking.com",
+                "https://www.cookkking.com"));
 //        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000"));
         // 전체 요청 -> 특정 요청 Arrays.asList("http://localhost:3000");
         // 지정한 HTTP Method 에 대한 통신 허용
