@@ -148,7 +148,7 @@ public class SecurityConfiguration {
 //        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000"));
         // 전체 요청 -> 특정 요청 Arrays.asList("http://localhost:3000");
         // 지정한 HTTP Method 에 대한 통신 허용
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PATCH", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PATCH", "DELETE", "OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         //클라이언트에서 해당 헤더를 사용할 수 있도록 설정한다. ( 설정하지 않으면 아래 헤더만 받음 )
         //Cache-Control, Content-Language ,Content-Type, Expires, Last-Modified, Pragma
