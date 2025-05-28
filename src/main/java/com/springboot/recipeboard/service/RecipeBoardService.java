@@ -269,6 +269,21 @@ public class RecipeBoardService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHALLENGE_CATEGORY_NOT_FOUND));
         MemberChallenge memberChallenge = memberChallengeRepository.findByMember_MemberIdAndChallengeCategory_ChallengeCategoryid(memberId, challengeCategory.getChallengeCategoryid())
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_CHALLENGE_NOT_FOUND));
+
+        if (category.equals("좋아요")) {
+            long totalLikes = likeRepository.countByRecipeBoard_Member_MemberId(memberId);
+            memberChallenge.setCurrentCount((int) totalLikes);
+            memberChallengeRepository.save(memberChallenge);
+            return;
+        }
+
+        if (category.equals("북마크")) {
+            long totalBookmarks = bookmarkRepository.countByRecipeBoard_Member_MemberId(memberId);
+            memberChallenge.setCurrentCount((int) totalBookmarks);
+            memberChallengeRepository.save(memberChallenge);
+            return;
+        }
+
         titleService.incrementChallengeCount(memberChallenge.getMemberChallengeId(), memberId);
     }
 
