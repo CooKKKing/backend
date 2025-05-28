@@ -2,6 +2,7 @@ package com.springboot.member.service;
 
 import com.springboot.auth.utils.AuthorityUtils;
 import com.springboot.challenge.entity.ChallengeCategory;
+import com.springboot.challenge.repository.ChallengeCategoryRepository;
 import com.springboot.challenge.repository.ChallengeRepository;
 import com.springboot.collectioncamera.entity.CameraImage;
 import com.springboot.collectioncamera.entity.CollectionCamera;
@@ -40,8 +41,9 @@ public class MemberService {
     private final CameraImageRepository cameraImageRepository;
     private final CollectionCameraRepository collectionCameraRepository;
     private final ProfileImageRepository imageRepository;
+    private final ChallengeCategoryRepository challengeCategoryRepository;
 
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthorityUtils authorityUtils, RedisTemplate<String, String> redisTemplate, ChallengeRepository challengeRepository, ProfileImageRepository profileImageRepository, TitleRepository titleRepository, CameraImageRepository cameraImageRepository, CollectionCameraRepository collectionCameraRepository, ProfileImageRepository imageRepository) {
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthorityUtils authorityUtils, RedisTemplate<String, String> redisTemplate, ChallengeRepository challengeRepository, ProfileImageRepository profileImageRepository, TitleRepository titleRepository, CameraImageRepository cameraImageRepository, CollectionCameraRepository collectionCameraRepository, ProfileImageRepository imageRepository, ChallengeCategoryRepository challengeCategoryRepository) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityUtils = authorityUtils;
@@ -52,6 +54,7 @@ public class MemberService {
         this.cameraImageRepository = cameraImageRepository;
         this.collectionCameraRepository = collectionCameraRepository;
         this.imageRepository = imageRepository;
+        this.challengeCategoryRepository = challengeCategoryRepository;
     }
 
     public Member createMember(Member member, long profileImageId) {
@@ -87,12 +90,22 @@ public class MemberService {
         // 회원 기본 도전과제 셋팅
         long challengeSize = challengeRepository.count();
 
-        for(int i = 1; i <= challengeSize; i++) {
+        for (int i = 1; i <= challengeSize; i++) {
             MemberChallenge memberChallenge = new MemberChallenge();
             ChallengeCategory challengeCategory = new ChallengeCategory();
             challengeCategory.setChallengeCategoryid(i);
             memberChallenge.setChallengeCategory(challengeCategory);
             memberChallenge.setMember(member);
+
+            // 🔥 초보자 도전과제는 기본 세팅 (level 1, count 0)
+            ChallengeCategory foundCategory = challengeCategoryRepository.findById((long) i)
+                    .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHALLENGE_CATEGORY_NOT_FOUND));
+
+            if ("초보자".equals(foundCategory.getCategory())) {
+                memberChallenge.setCurrentLevel(0);
+                memberChallenge.setCurrentCount(0);
+            }
+
             member.getMemberChallenges().add(memberChallenge);
         }
 
