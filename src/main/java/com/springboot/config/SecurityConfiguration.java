@@ -64,7 +64,16 @@ public class SecurityConfiguration {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .antMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/configuration/ui",
+                                "/swagger-resources",
+                                "/configuration/security",
+                                "/webjars/**",
+                                "/swagger-resources/configuration/ui",
+                                "/swagger-resources/configuration/security").permitAll()
+                        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Admin
                         .antMatchers("/admin/**").hasRole("ADMIN")
                         // Member
