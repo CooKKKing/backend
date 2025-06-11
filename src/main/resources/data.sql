@@ -125,16 +125,16 @@ INSERT INTO payment_master (amount, rice_amount, image, name) VALUES
 (10000, 100, 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/rice/5.png', '한 포대');
 
 INSERT INTO member (login_id, email, nick_name, password, phone_number, profile, active_title_id, rice_point, member_status, created_at, modified_at, active_image_id) VALUES
-('tjsk2222', 'tjsk2222@gmail.com', '택택', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '010-1111-2222', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', '4', 300, 'MEMBER_ACTIVE',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
-( 'user2', 'user1@example.com', '정희', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '052-115-7815', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 1, 49, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user3', 'user3@example.com', '현우', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '052-232-0947', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 27, 53, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user4', 'user4@example.com', '민재', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '063-515-9179', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 1, 5, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user5', 'user5@example.com', '숙자', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '033-399-1615', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 27, 33, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
-( 'user6', 'user6@example.com', '정순', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '061-208-7091', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 7, 65, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
-( 'user7', 'user7@example.com', '영희', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '062-207-6984', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 3, 62, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
-( 'user8', 'user8@example.com', '순자', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '070-6109-3523', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 27, 51, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
-( 'user9', 'user9@example.com', '영수', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '031-754-7063', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 27, 100, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
-( 'user10', 'user10@example.com', '민지', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '051-217-6104', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 27, 38, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00',2);
+('tjsk2222', 'tjsk2222@gmail.com', '택택', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '010-1111-2222', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 4, 100, 'MEMBER_ACTIVE',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1),
+( 'user2', 'user2@example.com', '정희', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '052-115-7815', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 1, 100, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
+( 'user3', 'user3@example.com', '현우', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '052-232-0947', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 27, 100, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
+( 'user4', 'user4@example.com', '민재', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '063-515-9179', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 1, 50, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
+( 'user5', 'user5@example.com', '숙자', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '033-399-1615', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/m_default.png', 27, 100, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 1),
+( 'user6', 'user6@example.com', '정순', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '061-208-7091', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 7, 150, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
+( 'user7', 'user7@example.com', '영희', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '062-207-6984', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 3, 200, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
+( 'user8', 'user8@example.com', '순자', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '070-6109-3523', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 27, 225, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
+( 'user9', 'user9@example.com', '영수', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '031-754-7063', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 27, 120, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00', 2),
+( 'user10', 'user10@example.com', '민지', '{bcrypt}$2a$10$n1ZYr9wraXA.1sJ4YRoIH./kfrVUKtgwAwPhyshUXK3xc32.Jvd6.', '051-217-6104', 'https://aws-cookking-bucket.s3.ap-northeast-2.amazonaws.com/profile/w_default.png', 27, 50, 'MEMBER_ACTIVE', '2024-01-01 10:00:00', '2024-01-02 10:00:00',2);
 
 -- 5. 회원별 도전과제 진행 상태
 INSERT INTO member_challenge (member_id, challenge_category_id, current_level, current_count, created_at, modified_at) VALUES
@@ -288,16 +288,16 @@ VALUES
 INSERT INTO payment
 (amount, rice_amount, refund_reason, payment_status, member_id, payment_key, order_id, requested_at, completed_at, created_at, modified_at)
 VALUES
-(8653, 15, '사유1', 'COMPLETED', 10, 'payment_key_1', 'order_id_1', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(2653, 99, '사유2', 'COMPLETED', 7,  'payment_key_2', 'order_id_2', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(4266, 43, '사유3', 'COMPLETED', 6,  'payment_key_3', 'order_id_3', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(8704, 82, '사유4', 'COMPLETED', 3,  'payment_key_4', 'order_id_4', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(4332, 17, '사유5', 'COMPLETED', 3,  'payment_key_5', 'order_id_5', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(3653, 53, '사유6', 'COMPLETED', 9,  'payment_key_6', 'order_id_6', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(5107, 25, '사유7', 'COMPLETED', 10, 'payment_key_7', 'order_id_7', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(8246, 95, '사유8', 'COMPLETED', 3,  'payment_key_8', 'order_id_8', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(1216, 70, '사유9', 'COMPLETED', 7,  'payment_key_9', 'order_id_9', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
-(9332, 49, '사유10', 'COMPLETED', 6, 'payment_key_10', 'order_id_10', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00');
+(1000, 10, '사유1', 'COMPLETED', 10, 'payment_key_1', 'order_id_1', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(5000, 50, '사유2', 'COMPLETED', 7,  'payment_key_2', 'order_id_2', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(2500, 25, '사유3', 'COMPLETED', 6,  'payment_key_3', 'order_id_3', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(5000, 50, '사유4', 'COMPLETED', 3,  'payment_key_4', 'order_id_4', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(7500, 75, '사유5', 'COMPLETED', 3,  'payment_key_5', 'order_id_5', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(10000, 100, '사유6', 'COMPLETED', 9,  'payment_key_6', 'order_id_6', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(10000, 100, '사유7', 'COMPLETED', 10, 'payment_key_7', 'order_id_7', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(1000, 10, '사유8', 'COMPLETED', 3,  'payment_key_8', 'order_id_8', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(5000, 50, '사유9', 'COMPLETED', 7,  'payment_key_9', 'order_id_9', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
+(2500, 25, '사유10', 'COMPLETED', 6, 'payment_key_10', 'order_id_10', '2025-04-18 03:14:15', '2025-04-18 03:14:15', '2024-01-01 10:00:00', '2024-01-02 10:00:00');
 
 INSERT INTO menu_category (menu_category_name, created_at, modified_at) VALUES
 ( '한식', '2024-01-01 10:00:00', '2024-01-02 10:00:00'),
