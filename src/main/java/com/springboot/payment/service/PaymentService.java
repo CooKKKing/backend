@@ -140,7 +140,7 @@ public class PaymentService {
 
     @Transactional
     public List<PaymentHistoryDto> historyPayment(long memberId) {
-        List<Payment> payments = paymentRepository.findAllByMember_MemberId(memberId);
+        List<Payment> payments = paymentRepository.findAllByMember_MemberIdOrderByRequestedAtDesc(memberId);
 
         List<PaymentHistoryDto> response = payments.stream()
                 .map(payment -> PaymentHistoryDto.builder()
