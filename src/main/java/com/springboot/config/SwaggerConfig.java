@@ -10,7 +10,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-// Swagger 설정
+// Swagger
 @Configuration
 public class SwaggerConfig {
     @Bean
